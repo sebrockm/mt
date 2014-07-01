@@ -1,0 +1,101 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+\begin{document}
+
+\section*{Column Generation zum Anordnen der Bins und der Jobgruppen in den Bins}
+Mengen\\
+\begin{tabular}{lll}
+    $M=\{1,\dots,m\}$ & & Bins \\
+    $K_i$ & & mögliche Konstellationen der Jobgruppen in Bin $i\in M$
+\end{tabular}%
+\\
+\\
+Parameter\\
+\begin{tabular}{lll}
+    $B$ & & Größe der Bins\\
+    $G_i$ & & Anzahl der Jobgruppen in Bin $i$ \\
+    $l_{\pi g}$ & $\pi\in K_i, 1\leq g\leq G_i, i\in M$ & Gruppengröße \\
+    $c_{\pi\rho}^k$ & $\pi\in K_i,\rho\in K_j, k\!,\!i\!,\!j\in M, i\neq j$ & Kosten zwischen Konstellationen \label{c} \\
+    $p_{\pi g}^d$ & $\pi\in K_i,1\leq g\leq G_i, d\in\{1,2\}, i\in M$ & Prozesszeiten von Gruppen \\
+    $p_{\pi \iota}^d$ & $\pi\in K_i,1\leq \iota\leq B, d\in\{1,2\}, i\in M$ & Prozesszeiten von Einzeljobs
+\end{tabular}%
+\\
+\\
+Variablen\\
+\begin{tabular}{lll}
+    $\lambda_{\pi\rho}^k\in\{0,1\}$ & $\pi\in K_i,\rho\in K_j,k\in M$  & \\
+    $y_{jg}^{kd}$ & $k,j\in M, 1\leq g\leq G_j, d\in\{1,2\}$ & duale Variablen zu \ref{const1} \\
+    $z_1^i$ & $i\in M$ & duale Variablen zu \ref{const2} \\
+    $z_2^k$ & $k\in M$ & duale Variablen zu \ref{const3}
+\end{tabular}
+\\
+\\
+\\
+%
+Masterproblem\\
+\begin{align}
+    \text{min}\quad &\sum_{k\in M}\sum_{\substack{i,j\in M \\ i\neq j}}\sum_{\substack{\pi\in K_i \\ \rho\in K_j}} c_{\pi\rho}^k \lambda_{\pi\rho}^k \label{objfunc} \\
+    \text{s.t.} \quad &\sum_{\substack{i\in M \\ i\neq j}}\sum_{\pi\in K_i}\sum_{\rho\in K_j} \lambda_{\pi\rho}^k p_{\rho g}^d \notag \\
+    &= \sum_{\rho\in K_j}\sum_{\substack{h\in M \\ h\neq j}}\sum_{\sigma\in K_h} \lambda_{\rho\sigma}^{k\bmod m+1} p_{\rho g}^d 
+    & j\!,\!k\in{M}, 1\leq g\leq G_j, d\in\{1,2\} \label{const1} \\
+    &\sum_{k\in M}\sum_{\pi\in K_i}\sum_{\substack{j\in M \\ j\neq i}}\sum_{\rho\in K_j} \lambda_{\pi\rho}^k \geq 1 & i\in M \label{const2} \\
+    &\sum_{i\in M}\sum_{\pi\in K_i}\sum_{\substack{j\in M \\ j\neq i}}\sum_{\rho\in K_j} \lambda_{\pi\rho}^k \geq 1 & k\in M \label{const3}
+\end{align}%
+Es ist $\lambda_{\pi\rho}^k = 1$ (mit $\pi\in K_i,\rho\in K_j$) genau dann, wenn Bin $i$ mit Konstellation $\pi$ an Position $k$ steht und
+Bin $j$ mit Konstellation $\rho$ an Position $k\bmod m+1$.
+Zu jedem $\lambda_{\pi\rho}^k$ gibt es Kosten $c_{\pi\rho}^k$, die in die Zielfunktion (\ref{objfunc}) eingehen.
+Jeder Bin soll mit einer Konstellation an einer Position sein (\ref{const2}) und an jeder Position soll ein Bin mit einer Konstellation sein (\ref{const3}).
+(\ref{const1}) bewirkt, dass für alle Positionen $k$ und ein $\sigma$ $\lambda_{\rho\sigma}^{k\bmod m+1} = 1$, wenn für ein $\pi$ $\lambda_{\pi\rho}^k = 1$ ist.
+Die Parameter $p_{\rho g}^d$ geben die Prozesszeit der $g$-ten Jobgruppe in Konstellation $\rho$ auf Maschine $d$ an.
+Um die Konstellationen $\rho$ zu vergleichen, werden stattdessen diese Prozesszeiten verglichen, die sich dann im Pricing wiederfinden.
+%
+\\
+Pricing\\
+\\
+\begin{align*}
+    \min_{\substack{k,i,j\in M \\ i\neq j \\ \pi\in K_i \\ \rho\in K_j}} & c_{\pi\rho}^k
+    - \sum_{g=1}^{G_j} y_{jg}^{k1} p_{\rho g}^1 + y_{jg}^{k2} p_{\rho g}^2
+    + \sum_{g=1}^{G_i} y_{ig}^{(k-1)1} p_{\pi g}^1 + y_{ig}^{(k-1)2} p_{\pi g}^2
+    - z_1^i - z_2^k \\
+    &= \left\{\begin{array}{l l}
+        \sum_{\iota=1}^{B} \max\{p_{\pi\iota}^2,p_{\rho\iota}^1\} \quad (k<m)\\
+        \sum_{\iota=0}^{B} \max\{p_{\pi\iota}^2,p_{\rho(\iota+1)}^1\} \quad (k=m)
+    \end{array}\right\} \notag \\
+    &- \sum_{g=1}^{G_j} y_{jg}^{k1} p_{\rho g}^1 + y_{jg}^{k2} p_{\rho g}^2 \notag \\
+    &+ \sum_{g=1}^{G_i} y_{ig}^{(k-1)1} p_{\pi g}^1 + y_{ig}^{(k-1)2} p_{\pi g}^2
+    \quad - z_1^i - z_2^k \\
+    &= \left\{\begin{array}{l l}
+        \sum_{\iota=1}^{B} \max\{p_{\pi\iota}^2,p_{\rho\iota}^1\} \quad &(k<m)\\
+        \sum_{\iota=0}^{B} \max\{p_{\pi\iota}^2,p_{\rho(\iota+1)}^1\} \quad &(k=m)
+    \end{array}\right\} \notag \\
+    &- \sum_{\iota=1}^{B} \frac{y_{jg(\iota)}^{k1}}{l_{\rho g(\iota)}} p_{\rho g(\iota)}^1 + y_{jg(\iota)}^{k2} p_{\rho g(\iota)}^2 \notag \\
+    &+ \sum_{\iota=1}^{B} \frac{y_{ig(\iota)}^{(k-1)1}}{l_{\pi g(\iota)}} p_{\pi g(\iota)}^1 + y_{ig(\iota)}^{(k-1)2} p_{\pi g(\iota)}^2 
+    \quad - z_1^i - z_2^k \\
+    &= \left\{\begin{array}{l l}
+        \sum_{\iota=1}^{B} \max\{p_{\pi\iota}^2,p_{\rho\iota}^1\} - 
+            \frac{y_{jg(\iota)}^{k1}}{l_{\rho g(\iota)}} p_{\rho g(\iota)}^1 + \frac{y_{jg(\iota)}^{k2}}{l_{\rho g(\iota)}} p_{\rho g(\iota)}^2 \quad (k<m)\\
+        \sum_{\iota=0}^{B} \max\{p_{\pi\iota}^2,p_{\rho(\iota+1)}^1\} - 
+            \frac{y_{jg(\iota)}^{k1}}{l_{\rho g(\iota)}} p_{\rho g(\iota)}^1 + \frac{y_{jg(\iota)}^{k2}}{l_{\rho g(\iota)}} p_{\rho g(\iota)}^2 \quad (k=m)
+    \end{array}\right\} \notag \\
+    &+ \left\{\begin{array}{l l}
+    \frac{y_{ig(\iota)}^{(k-1)1}}{l_{\pi g(\iota)}} p_{\pi g(\iota)}^1 + \frac{y_{ig(\iota)}^{(k-1)2}}{l_{\pi g(\iota)}} p_{\pi g(\iota)}^2 \quad (k>1) \\
+        \frac{y_{ig(\iota)}^{m1}}{l_{\pi g(\iota)}} p_{\pi g(\iota)}^1 + \frac{y_{ig(\iota)}^{m2}}{l_{\pi g(\iota)}} p_{\pi g(\iota)}^2 \quad (k=1)
+    \end{array}\right\}
+    - z_1^i - z_2^k 
+\end{align*}%
+Im Pricing müssen neue Konstellationen $\pi$ und $\rho$ erzeugt werden.
+Dazu müssen für alle Kombinationen von $k,i,j$ Konstellationen der Jobgruppen in den Bins $i$ und $j$ berechnet werden 
+(mit gewichtetem bipartiten Matching möglich?).
+Diese Konstellationen werden durch die $p_{\pi g}^d$ beschrieben.
+\\
+Die Funktion $g$ bildet die Position eines einzelnen Jobs im Bin $\iota$ auf die Position der entsprechenden Jobgruppe $g$ ab.
+Es sei $p_{\pi 0}^2 = p_{\pi (B+1)}^1 = 0$ $\forall i\in M, \pi\in K_i$, um im Fall $k=m$ auch die Prozesszeiten des ersten
+und letzten Jobs im Gesamtschedule zu berücksichtigen.
+
+
+\end{document}

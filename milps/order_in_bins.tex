@@ -1,0 +1,120 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+\begin{document}
+
+\section*{MIP zum Anordnen der Jobgruppen in den Bins}
+Mengen\\
+\begin{tabular}{lll}
+    $N=\{1,\dots,n\}$ & & Jobgruppen\\
+    $M=\{1,\dots,m\}$ & & Bins\\
+    $N_b\subseteq N$ & $\forall b\in M$ & Jobgruppen in Bin $b$\\
+    $N_b^*\subseteq N$ & $\forall b\in M$ & Jobgruppen im Nachbarbin $b\bmod m+1$
+\end{tabular}%
+\\
+\\
+Parameter\\
+\begin{tabular}{lll}
+    $B$ & & Größe der Bins\\
+    $g_i$ & $i\in N$ & Größe von Jobgruppe $i$\\
+    $p_{1i},p_{2i}$ & $i\in N$ & Prozesszeiten der Jobs in Gruppe $i$\\
+    $b_i$ & $i\in N$ & Bin von Jobgruppe $i$
+\end{tabular}%
+\\
+\\
+Variablen\\
+\begin{tabular}{lll}
+    $x_{ij}\in\{0,1\}$ & $i\in N,j\in N_{b_i}, i\neq j$ &
+            Jobgruppe $i$ liegt vor $j$\\
+    $s_i\in\mathbb{R}$ & $i\in N$ & Startzeitpunkt der Jobgruppe $i$\\
+    $o_{ij}\in\mathbb{R}$ & $i\in N,j\in N_{b_i}^*$ &
+            Überschneidung von Jobgruppe $i$ und $j$ \\
+    $\tilde{o}_{ij}\in\mathbb{R}$ & $i\in N,j\in N_{b_i}^*$ &
+            Hilfsvariable für Überschneidung \\
+    $y_{ij},z_{ij}\in\{0,1\}$ & $i\in N,j\in N_{b_i}^*$ & Indikatorvariablen
+\end{tabular}
+\\
+\\
+\\
+%
+%\begin{figure}[ht]
+\begin{align}
+    \text{min}\quad \sum_{b\in M}\sum_{\substack{i\in N_b\\j\in N_b^*}} 
+            &\max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
+    \text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in N, j\in N_{b_i}, i<j 
+            \label{con:reflex}\\
+    x_{ij} + x_{jk} &\leq x_{ik} + 1 
+            &i\in N, j\!,\!k\in N_{b_i},i\neq j\!,\!k ,j\neq k 
+            \label{con:transitiv} \\
+    s_i &= \sum_{\substack{j\in N_{b_i}\\i\neq j}} g_j x_{ji} &i\in N 
+            \label{con:start} \\
+    My_{ij} &\ge (s_j+g_j-s_i) \notag\\
+            &\phantom{=} - (s_i+g_i-s_j) &i\in N, b_i<m, j\in N_{b_i}^* 
+            \label{con:y1} \\
+    My_{ij} &\ge (s_j-1+g_j-s_i) \notag\\
+            &\phantom{=} - (s_i+g_i-s_j+1) &i\in N_m, j\in N_m^*
+            \label{con:y2} \\
+    \tilde{o}_{ij} &\ge s_i+g_i - s_j \notag\\
+                   &\phantom{=} - M(1-y_{ij}) &i\in N, b_i<m, j\in 
+                    N_{b_i}^* \label{con:maxij1} \\
+    \tilde{o}_{ij} &\ge s_i+g_i - s_j+1 \notag\\
+                   &\phantom{=} - M(1-y_{ij}) &i\in N_m, j\in N_m^* 
+                    \label{con:maxij2} \\
+    \tilde{o}_{ij} &\ge s_j+g_j - s_i - My_{ij} &i\in N, b_i<m, j\in 
+                    N_{b_i}^* \label{con:maxji1} \\
+    \tilde{o}_{ij} &\ge s_j-1+g_j \notag\\
+                   &\phantom{=} - s_i - My_{ij} &i\in N_m, j\in N_m^* 
+                    \label{con:maxji2} \\
+    Mz_{ij} &\ge \tilde{o}_{ij} - \min\{g_i,g_j\} &i\in N, j\in N_{b_i}^* 
+                    \label{con:z} \\
+    o_{ij} &\ge \min\{g_i,g_j\} \notag\\
+           &\phantom{=} - M(1-z_{ij}) &i\in N, j\in N_{b_i}^* 
+                    \label{con:overlay1} \\
+    o_{ij} &\ge \tilde{o}_{ij} - Mz_{ij} &i\in N, j\in N_{b_i}^*
+                    \label{con:overlay2} \\
+    0 &\leq o_{ij} \leq B &i\in N, j\in N_{b_i}^* \label{con:range} \\
+    0 &\leq \tilde{o}_{ij} &i\in N, j\in N_{b_i}^* \label{con:range2}
+\end{align}
+%\end{figure}%
+%
+Für je zwei Jobgruppen $i,j\in N_b$, die im selben Bin $b$ liegen, gibt es
+zwei Variablen $x_{ij},x_{ji}$. Es ist $x_{ij}=1$ genau dann, wenn 
+Jobgruppe $i$ vor $j$ auf dem Bin liegt. Dabei muss $i$ nicht notwendiger
+Weise direkt vor $j$ liegen, sondern an beliebiger Position davor.
+Mit (\ref{con:reflex}) wird erreicht, dass immer entweder $i$ vor $j$ liegt
+oder umgekehrt. (\ref{con:transitiv}) stellt die Transitivität dieser Beziehung
+her. Auf Grundlage der $x_{ij}$ und der Größen der Jobgruppen $g_i$ 
+kann in (\ref{con:start}) der Startzeitpunkt jeder Jobgruppe berechnet werden.
+Die Variablen $s_i$ dienen dabei nur der Übersicht und können in den übrigen 
+Constraints durch die Summe aus (\ref{con:start}) ersetzt werden.
+
+Über (\ref{con:y1}) und (\ref{con:y2}) wird den Indikatorvariablen $y_{ij}$ für
+zwei Jobgruppen $i,j$ aus benachbarten Bins folgende
+Bedeutung gegeben: $y_{ij}=1$ genau dann, wenn die Differenz $s_j+g_j-s_i$ zwischen dem
+Endzeitpunkt von $j$ und dem Startzeitpunkt von $i$ größer ist als
+die Differenz $s_i+g_i-s_j$ zwischen dem Endzeitpunkt von $i$ und dem Startzeitpunkt von $j$.
+Dabei behandelt (\ref{con:y2}) den Spezialfall, dass $i$ in Bin $m$ liegt und
+$j$ in Bin $1$, sodass jeweils eine Verschiebung der Start- und Endzeitpunkte
+von $j$ um $1$ erforderlich ist.
+
+Mit Hilfe der $y_{ij}$ bewirken die Constraints (\ref{con:maxij1}) bis
+(\ref{con:maxji2}), dass die Variablen $\tilde{o}_{ij}$ jeweils das Minimum
+der Differenzen aus Start- und Endzeitpunkten annehmen, also
+$\tilde{o}_{ij}=\min\{s_j+g_j-s_i, s_i+g_i-s_j\}$.
+
+Den Indikatorvariablen $z_{ij}$ wird für zwei Jobgruppen in benachbarten Bins
+in (\ref{con:z}) folgende Bedeutung gegeben:
+$z_{ij}=1 \iff \tilde{o}_{ij} > min\{g_i,g_j\}$. Die $z_{ij}$ geben also an, ob die
+durch $\tilde{o}_{ij}$ gegebenen Überschneidungen größer sind als die Längen
+der Jobgruppen. Mit (\ref{con:overlay1}) und (\ref{con:overlay2}) wird den
+Variablen $o_{ij}$ dann die endgültige Länge der Überschneidung der Jobgruppen
+$i$ und $j$ zugewiesen, nämlich 
+$o_{ij} = \min\{\tilde{o}_{ij},g_i,g_j\} = \min\{s_j+g_j-s_i,s_i+g_i-s_j,g_i,g_j\}$.
+Damit kann dann die Zielfunktion (\ref{objfunc}) formuliert werden als Summe
+der Länge der Überschneidungen multipliziert mit den jeweiligen Prozesszeiten
+der Jobs.
+\end{document}

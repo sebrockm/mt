@@ -1,10 +1,12 @@
 #ifndef _DIJKSTRA_IMPROVABLE_HPP_
 #define _DIJKSTRA_IMPROVABLE_HPP_
 
+#include "matching.hpp"
 
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include <boost/heap/fibonacci_heap.hpp>
 #include <iostream>
 
@@ -28,30 +30,29 @@ private:
         }
     };
 
-    vector<int> nodes_a;
-    const vector<int>& nodes_b;
+    unordered_map<int, bool> nodes_in_a;//true->a, false->b
     unordered_map<int, unordered_map<int, float>> adjacency_list;
 
 public:
-    dijkstra_improvable(const vector<int>& nodes_b)
-        :nodes_a(), nodes_b(nodes_b), adjacency_list(3*nodes_b.size())
+    template<class VectorIterator>
+    dijkstra_improvable(VectorIterator b_first, VectorIterator b_last)
+        :nodes_in_a(3*(b_last-b_first)), adjacency_list(3*(b_last-b_first))
     {
-        nodes_a.reserve(nodes_b.size()); 
+        while(b_first != b_last)
+        {
+            nodes_in_a[*b_first++] = false;
+        }
     }
 
     //calculate shortest paths from <node> to all others
-    const unordered_map<int, float>& add(int node, unordered_map<int, float>&& neighbors)
+    const unordered_map<int, float>& add(int node, unordered_map<int, float>&& neighbors, const matching& match, const unordered_map<int, float>& potential)
     {
-        unordered_map<int, float> nodes_distances(3*(nodes_a.size()+nodes_b.size())/2);
+        unordered_map<int, float> nodes_distances(3*nodes_in_a.size()/2);
 
         //initialize new distances
-        for(int n : nodes_b)
+        for(auto& p : nodes_in_a)
         {
-            nodes_distances[n] = numeric_limits<float>::infinity();
-        }
-        for(int n : nodes_a)
-        {
-            nodes_distances[n] = numeric_limits<float>::infinity();
+            nodes_distances[p.first] = numeric_limits<float>::infinity();
         }
         nodes_distances[node] = 0;
 
@@ -60,21 +61,51 @@ public:
         {
             adjacency_list[p.first][node] = p.second;
         }
-        nodes_a.push_back(node);
+        nodes_in_a[node] = true;
 
         
         auto heap = fibonacci_heap<int, compare<node_cmp>>(node_cmp(nodes_distances));
         typedef decltype(heap)::handle_type handle_t;
-        unordered_map<int, handle_t> handles((nodes_a.size() + nodes_b.size())*3/2);
+        unordered_map<int, handle_t> handles(nodes_in_a.size()*3/2);
 
         handles[node] = heap.push(node);
+
+        vector<int> finished_a;
 
         while(!heap.empty())
         {
             int n = heap.top();
             heap.pop();
 
+            if(nodes_in_a[n])
+            {
+                finished_a.push_back(n);
+            }
+
             float n_d = nodes_distances[n];
+            
+            //shortest path to n is calculated
+            if(nodes_in_a[n]) 
+            {
+                auto found = find_if(finished_a.begin(), finished_a.end(),
+                        [&] (int na) -> bool
+                        {
+                            return nodes_distances[na] + potential.at(na) <= n_d;
+                        }
+                );
+
+                if(found != finished_a.end()) //there is a finished node in A with little distance+potential
+                {
+                    break;
+                }
+            }
+            else //n is in B
+            {
+                if(!match.vertices.at(n)) //n is free
+                {
+                    break;
+                }
+            }
 
             for(auto& p : adjacency_list[n]) //all <neighbor,distance> pairs of n
             {

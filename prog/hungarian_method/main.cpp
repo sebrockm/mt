@@ -1,14 +1,58 @@
 #include "dijkstra_improvable.hpp"
 #include "augmenting_path.hpp"
+#include "matching.hpp"
+
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
+
+
+matching hungarian_method(const vector<int>& nodes_a, const vector<int>& nodes_b, const unordered_map<int, unordered_map<int, float>>& adjacency_list)
+{
+    matching match(nodes_a.size());
+    unordered_map<int, float> potential(3*nodes_a.size());
+
+    for(int n : nodes_b)
+    {
+        potential[n] = 0;
+    }
+
+    dijkstra_improvable dijk(nodes_b.begin(), nodes_b.end());
+
+    //main loop
+    for(auto u = nodes_a.begin(); u != nodes_a.end(); ++u)
+    {
+        potential[*u] = 0;
+        for(auto& p : adjacency_list.at(*u))
+        {
+            potential[*u] = max(potential[*u], p.second - potential[p.first]);
+        }
+
+        int z;
+        auto paths = dijk.add(*u, adjacency_list.at(*u), match, potential, z);
+        float delta = paths[z];
+
+        for(auto it = nodes_a.begin(); it != u+1; ++it)
+        {
+            potential[*it] -= max(0.f, delta - paths[*it]);
+        }
+        for(int n : nodes_b)
+        {
+            potential[n] += max(0.f, delta - paths[n]);
+        }
+
+        auto p = find_augmenting_path(adjacency_list, match, *u, z);
+        match.add_path(p.begin(), p.end());
+    }
+
+    return match;
+}
 
 int main()
 {
     vector<int> a = {1,2,3};
     vector<int> b = {4,5,6};
-    dijkstra_improvable dijk(b.begin(), b.end());
 
     unordered_map<int, unordered_map<int, float>> d;
     d[1][4] = d[4][1] = 15;
@@ -17,73 +61,21 @@ int main()
     d[2][4] = d[4][2] = 21;
     d[2][5] = d[5][2] = 10;
     d[2][6] = d[6][2] = 1;
-//    d[3][4] = d[4][3] = 6;
+    d[3][4] = d[4][3] = 6;
     d[3][5] = d[5][3] = 1;
     d[3][6] = d[6][3] = 1;
 
-    /*for(int i = a.size()-1; i >= 0; i--)
+    auto m = hungarian_method(a, b, d);
+
+    float sum = 0;
+    for(auto e : m.edges)
     {
-        int n = a[i];
-        auto w = dijk.add(n, move(d[n]), matching())
-        for(auto p : w)
+        if(e.second)
         {
-            cout << n << "->" << p.first << ": " << p.second << endl;
+            sum += d[e.first.first][e.first.second];
+            cout << e.first.first << "," << e.first.second << endl;
         }
-    }*/
-
-    matching m;
-    auto path = find_augmenting_path(d, m, 1, 6);
-    for(auto p : path)
-        cout << p << ",";
-    cout << endl << endl;
-
-    m.add_path(path.begin(), path.end());
-    for(auto& p : m.vertices)
-    {
-        cout << p.first << ": " << p.second << endl;
     }
+    cout << "sum=" << sum/2 << endl;
 
-    for(auto& p : m.edges)
-    {
-        cout << p.first.first << "," << p.first.second << ": " << p.second << endl;
-    }
-
-    path = find_augmenting_path(d, m, 3, 4);
-    for(auto p : path)
-        cout << p << ",";
-    cout << endl << endl;
-
-    m.add_path(path.begin(), path.end());
-    for(auto& p : m.vertices)
-    {
-        cout << p.first << ": " << p.second << endl;
-    }
-
-    for(auto& p : m.edges)
-    {
-        cout << p.first.first << "," << p.first.second << ": " << p.second << endl;
-    }
-    /*for(int i : a)
-    {
-        for(int j : b)
-        {
-            cout << "================" << i << "," << j << "===============" << endl;
-            auto path = find_augmenting_path(d, m, i, j);
-            for(auto p : path)
-                cout << p << ",";
-            cout << endl << endl;
-
-            m.add_path(path.begin(), path.end());
-
-            for(auto& p : m.vertices)
-            {
-                cout << p.first << ": " << p.second << endl;
-            }
-
-            for(auto& p : m.edges)
-            {
-                cout << p.first.first << "," << p.first.second << ": " << p.second << endl;
-            }
-        }
-    }*/
 }

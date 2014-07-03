@@ -45,7 +45,7 @@ public:
     }
 
     //calculate shortest paths from <node> to all others
-    const unordered_map<int, float>& add(int node, unordered_map<int, float>&& neighbors, const matching& match, const unordered_map<int, float>& potential)
+    const unordered_map<int, float>& add(int node, const unordered_map<int, float>& neighbors, matching& match, const unordered_map<int, float>& potential, int& znode)
     {
         unordered_map<int, float> nodes_distances(3*nodes_in_a.size()/2);
 
@@ -56,9 +56,11 @@ public:
         }
         nodes_distances[node] = 0;
 
-        adjacency_list[node] = move(neighbors);
+        //arc costs are potentials of nodes minus normal arc costs
+        adjacency_list[node] = neighbors;
         for(auto& p : adjacency_list[node])
         {
+            p.second = potential.at(node) + potential.at(p.first) - p.second;
             adjacency_list[p.first][node] = p.second;
         }
         nodes_in_a[node] = true;
@@ -96,13 +98,15 @@ public:
 
                 if(found != finished_a.end()) //there is a finished node in A with little distance+potential
                 {
+                    znode = *found;
                     break;
                 }
             }
             else //n is in B
             {
-                if(!match.vertices.at(n)) //n is free
+                if(!match.vertices[n]) //n is free
                 {
+                    znode = n;
                     break;
                 }
             }

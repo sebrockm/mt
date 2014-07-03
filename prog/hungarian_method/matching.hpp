@@ -15,30 +15,26 @@ public:
     typedef pair<int, int> edge;
 
     unordered_map<edge, bool, boost::hash<edge>> edges;
-    unordered_map<int, bool> vertices;
+    unordered_map<int, bool> vertices; //false means free
 
     matching(int num_vertices = 0)
-        :edges(num_vertices*num_vertices*3/4), vertices(3*num_vertices) {}
+        :edges(num_vertices*num_vertices*3/2), vertices(3*num_vertices) {}
 
-    template <class EdgeIterator>
-    void add_path(EdgeIterator first, EdgeIterator last)
+    template <class VertexIterator>
+    void add_path(VertexIterator first, VertexIterator last)
     {
         //first and last vertex will switch their freeness
-        if(first != last)
+        if(first + 1 < last)
         {
-            vertices[first->first] ^= true;
+            vertices[*first] ^= true;
+            vertices[*(last-1)] ^= true;
 
-            if(first != last - 1)
+            //every edge will switch its matchedness
+            while(first + 1 != last)
             {
-                vertices[(last-1)->second] ^= true;
+                edges[make_pair(*first, *(first+1))] = edges[make_pair(*(first+1), *first)] ^= true;
+                ++first;
             }
-        }
-
-        //every edge will switch its matchedness
-        while(first != last)
-        {
-            edges[*first] ^= true;
-            ++first;
         }
     }
 };

@@ -46,6 +46,7 @@ public:
 
     //calculate shortest paths from <node> to all others
     const unordered_map<int, float>& add(int node, const unordered_map<int, float>& neighbors, matching& match, const unordered_map<int, float>& potential, int& znode)
+    //const unordered_map<int, float> add(int node, const unordered_map<int, unordered_map<int, float>>& neighbors, matching& match, const unordered_map<int, float>& potential, int& znode)
     {
         unordered_map<int, float> nodes_distances(3*nodes_in_a.size()/2);
 
@@ -58,6 +59,7 @@ public:
 
         //arc costs are potentials of nodes minus normal arc costs
         adjacency_list[node] = neighbors;
+        //adjacency_list = neighbors;
         for(auto& p : adjacency_list[node])
         {
             p.second = potential.at(node) + potential.at(p.first) - p.second;
@@ -73,6 +75,8 @@ public:
         handles[node] = heap.push(node);
 
         vector<int> finished_a;
+
+        bool foundz = false;
 
         while(!heap.empty())
         {
@@ -99,6 +103,7 @@ public:
                 if(found != finished_a.end()) //there is a finished node in A with little distance+potential
                 {
                     znode = *found;
+                    foundz = true;
                     break;
                 }
             }
@@ -107,14 +112,20 @@ public:
                 if(!match.vertices[n]) //n is free
                 {
                     znode = n;
+                    foundz = true;
                     break;
                 }
             }
 
             for(auto& p : adjacency_list[n]) //all <neighbor,distance> pairs of n
             {
+                if(nodes_in_a.find(p.first) == nodes_in_a.end())
+                    continue;
+                //float cost = potential.at(n) + potential.at(p.first) - p.second;
                 if(n_d + p.second < nodes_distances[p.first])
+                //if(n_d + cost < nodes_distances[p.first])
                 {
+                    //nodes_distances[p.first] = n_d + cost;
                     nodes_distances[p.first] = n_d + p.second;
                     if(handles.find(p.first) == handles.end()) //not in handles, so not in heap
                     {
@@ -128,6 +139,9 @@ public:
             }
         }
 
+        if(!foundz)
+            cout << "not found z" << endl;
+
         //add new shortest distances as edges
         adjacency_list[node] = move(nodes_distances);
         for(auto& p : adjacency_list[node])
@@ -136,6 +150,7 @@ public:
         }
 
         return adjacency_list[node];
+        //return nodes_distances;
     }
 };
 

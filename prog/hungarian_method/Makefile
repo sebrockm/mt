@@ -5,4 +5,4 @@ debug: dijkstra
 	gdb test
 
 test: dijkstra
-	./test
+	./test test.dat

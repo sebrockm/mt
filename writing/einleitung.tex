@@ -16,11 +16,11 @@ Dabei handelt es sich bei Maschine $M_1$ um das Einlegen des Jobs in die Anlage 
 Durch Rotation der Anlage werden die Stationen mit den auf ihnen befindlichen Jobs zur jeweils nächsten Maschine transportiert.
 Eine Rotation darf immer nur dann stattfinden, wenn alle Maschinen ihren Produktionsschritt an ihrem aktuellen Job
 durchgeführt haben. Auf diese Weise können die Jobs nur \textit{synchron} zur nachfolgenden Maschine gelangen.
-Die Zeit, die zwischen zwei Rotationen vergeht, wird as \textit{Zykluszeit} bezeichnet.
+Die Zeit, die zwischen zwei Rotationen vergeht, wird als \textit{Zykluszeit} bezeichnet.
 
 Die zu produzierenden Jobs sind gegeben durch die Menge $J=\{j_1,\dots,j_n\}$ 
 und die Prozesszeiten von Job $j$ auf Maschine $i$ sind durch $p_{ij}$ gegeben.
-Ziel ist es, einen Produktionsplan $\pi\in J^n$ zu erstellen, der die gesamte Produktionsdauer minimiert.
+Ziel ist es, eine Reihenfolge $\pi\in J^n$ der Jobs zu erstellen, der die gesamte Produktionsdauer minimiert.
 Die Zykluszeiten $c_k$ mit $1\leq k\leq n+m-1$ berechnen sich wie folgt:
 \[ c_k = \max_{i=\max\{1,k-n+1\}}^{\min\{k,m\}} p_{i\pi_{k-i+1}} \]
 Zusätzlich benötigen die Jobs Ressourcen aus einer Menge $R$, um in die Stationen eingelegt werden zu können. Diese Ressourcen können erst nach
@@ -51,10 +51,10 @@ Diese Rüstkosten können
     \item nur vom Nachfolger abhängig sein ($s_{fg} = s_{g}$) oder
     \item konstant sein ($s_{fg} = s > 0$).
 \end{itemize}%
-Dabei wird jeweils für $f=g$ $s_{fg} = 0$ angenommen, dass also keine Rüstkosten innerhalb einer Familie auftreten.
+Dabei wird jeweils für $s_{ff} = 0$ angenommen, dass also keine Rüstkosten innerhalb einer Familie auftreten.
 
 Insgesamt gilt es also, neben dem Schedule $\pi$ auch ein Mapping $f:J\rightarrow R$ zu finden, 
-das jedem Job $j\in J$ eine Ressource $r\in\rho_j$ zuweist und folgenden Ansprüche genügt:
+das jedem Job $j\in J$ eine Ressource $r\in\rho_j$ zuweist und folgenden Ansprüchen genügt:
 \begin{itemize}
     \item $f$ muss zulässig sein in dem Sinne, dass beim Einlegen jedes Jobs $j\in J$ eine Ressource $r\in\rho_j$ verfügbar ist
         (d.h., dass $r$ sich nicht gerade an anderer Stelle in der Anlage befindet).
@@ -63,19 +63,20 @@ das jedem Job $j\in J$ eine Ressource $r\in\rho_j$ zuweist und folgenden Ansprü
 \end{itemize}
 
 \section{Motivation}
-In \cite{...} wurde gezeigt, dass dieses Problem schon $\mathcal{NP}$-schwer ist, wenn alle Ressourcen für alle Jobs geeignet sind.
+In \cite{...} wurde gezeigt, dass dieses Problem schon $\mathcal{NP}$-schwer ist, wenn alle Ressourcen für alle Jobs geeignet sind
+und keine Rüstkosten auftreten.
 Versuche, dieses Problem -- oder auch einige Spezialfälle davon -- mit linearer Programmierung zu lösen, waren nur für sehr kleine Instanzen mit
 $n<30$ erfolgreich, was weit hinter praktischen Anforderungen zurückliegt. Aufgrund der Komlexität des Problems sollen in dieser Arbeit
 zwei Dekompositionsansätze verfolgt werden:
 \begin{enumerate}
-    \item Zunächst wird der Schedule $\pi$ aufgestellt, ohne Ressourcen und Rüstkosten zu betrachten, 
+    \item Zunächst wird eine Reihenfolge $\pi$ aufgestellt, ohne Ressourcen und Rüstkosten zu betrachten, 
         und anschließend wird das Mapping $f$ basierend auf $\pi$ erstellt, ohne $\pi$ noch zu verändern.
     \item Es wird zuerst das Mapping $f$ erstellt, so dass die Ressourcen zulässig zugewiesen sind und die Rüstkosten minimal sind.
         Anschließend werden, ohne $f$ zu verändern, die Jobs so angeordnet, dass die Zykluszeiten möglichst minimal sind, und so $\pi$ erstellt.
 \end{enumerate}%
 Beide Ansätze liefern natürlich im Allgemeinen keine optimalen Lösungen. 
 Außerdem sind selbst die aus den Ansätzen resultierenden Teilprobleme teilweise noch $\mathcal{NP}$-schwer.
-Beispielsweise ist bei Ansatz (1) das Aufstellen von $\pi$ (soweit bekannt) nur in dem Spezialfall $m=2$ 
+Beispielsweise ist bei Ansatz (1) das Berechnen einer optimalen Reihenfolge $\pi$ (soweit bekannt) nur in dem Spezialfall $m=2$ 
 mit dem Algorithmus von Gilmore und Gomory \cite{...} in Polynomialzeit lösbar.
 Bei der anschließenden Zuweisung von Ressourcen ist noch unbekannt, ob ein polynomieller Algorithmus existiert.
 Dies herauszufinden ist eines der Ziele dieser Arbeit.

@@ -1,0 +1,107 @@
+\documentclass{scrreprt}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+\begin{document}
+
+\tableofcontents
+
+\chapter{Einleitung}
+\section{Problembeschreibung}
+\section{Motivation}
+\section{Bisherige Ansätze}
+Hier das ursprüngliche "`allumfassende"' MIP vorstellen und seine schlechte Laufzeit als Motivation für die Dekompositionsansätze nehmen.
+
+\textit{Die Einleitung muss nur noch geschrieben werden. "`Echte"' Arbeit ist nicht mehr erforderlich.}
+
+
+\chapter{1. Dekompositionsansatz}
+\section{Berechnen einer Jobreihenfolge}
+\textit{Dieser Abschnitt sollte in wenigen Tagen geschrieben sein.}
+\subsection{Gilmore Gomory}
+Hier kurz auf den Gilmore Gomory Algorithmus eingehen. Vielleicht mit einem Verweis auf Matthias Kampmeyers Arbeit?
+Den Algorithmus im Detail zu erklären, ist in dieser Arbeit wohl weniger sinnvoll.
+
+\subsection{Lineare Programmierung}
+Das "`einfache"' MIP vorstellen, inklusive Laufzeiten.
+Verweis auf die $\mathcal{NP}$-Schwere.
+
+
+\section{Zuweisen von Ressourcen}
+\subsection{Zulässigkeit der Zuweisung}
+\textit{Dieser Unterabschnitt muss auch nur noch geschrieben werden.}
+
+Zulässigkeit mit Netzflussalgorithmus nachweisen.
+Darauf eingehen, dass bei disjunkten Jobgruppen keine Optimierungsmöglichkeiten bestehen.
+Im Gegensatz dazu s. \ref{subsec:optres}.
+
+
+\subsection{Optimierung der Ressourcenzuweisung}
+\label{subsec:optres}.
+\textit{Soll dieser Abschnitt noch Bestandteil der Arbeit sein? Wenn ja, dann werde ich mich da zwischendurch immer mal wieder dransetzen,
+bis eine Lösung gefunden ist. Ein echter Zeitplan ist hierfür schwierig.}
+
+Bei hierarchischen oder beliebigen Jobgruppen eine optimale Zuweisung mit möglichst wenig Rüstkosten finden.
+Dazu (falls möglich) einen polynomiellen Algorithmus angeben bzw. einen Beseis zur $\mathcal{NP}$-Vollständigkeit.
+
+\section{Unzulässige Reihenfolgen}
+\subsection{Nachbarschaftssuche}
+\textit{Anfang August hiermit anfangen.}
+
+Nachbarschaftenssuchen formulieren, die eine unzulässige Reihenfolgen reparieren, so dass sie dann zulässig ist.
+Dabei soll die Reihenfolge möglichst wenig von ihrer Optimalität einbüßen.
+
+\subsection{Andere Ansätze}
+Platzhalter, falls noch andere Ideen aufkommen.
+
+
+\chapter{2. Dekompositionsansatz}
+\section{Ressourcenzuweisung}
+\textit{Dieser Abschnitt muss auch nur noch ausformuliert werden.}
+
+Generell auf bekannte Laufzeitschranken und Verfahren für die Ressourcenzuweisung kurz eingehen.
+Davon speziell erklären, wie mit Binpacking eine minimale Anzahl an Rüstkosten erreicht werden kann für $s_{fg}=s$.
+
+
+\section{Zulässigkeit der Zuweisung}
+\textit{Bis Mitte Juli sollte die Lösung hier erarbeitet sein.}
+
+Folgende Fragen diskutieren und idealer Weise beweisen:
+Gibt es unzulässige Lösungen beim Binpacking? Wenn ja, wie lassen sie sich reparieren?
+
+
+\section{Anordnung der Jobgruppen}
+\subsection{MIP mit fixierten Bins}
+Vorstellung des MIPs mit fixierten Bins mit $s_{fg}=s$. Vorstellung einiger Laufzeiten. 
+\textit{MIP steht. Evtl müssen noch einige Laufzeiten gemessen werden.}
+
+Außerdem die erweiterte Formulierung auf allgemeine $s_{fg}$ und Diskussion.
+\textit{MIP sollte bis Ende Juli formuliert und Laufzeiten gemessen sein.}
+
+\subsection{MIP mit freien Bins}
+\label{subsec:mipfreibins}
+\textit{Muss nur noch aufgeschrieben werden. Evtl. noch ein paar Laufzeiten messen.}
+
+Vorstellung des MIPs mit freien Bins. 
+Die Laufzeit ist sehr viel schlechter, die primale Lösung ist aber meist schon nach kurzer Zeit besser als beim MIP mit fixierten Bins.
+
+\subsection{Mehrere fixierte Reihenfolgen}
+\textit{Jetzt damit anfangen. Wahrscheinlich bis Mitte August.}
+
+Basierend auf den Erkenntnissen aus \ref{subsec:mipfreibins} das MIP mit fixierten Bins für mehrere Binreihenfolgen laufen lassen.
+Um nicht sämtliche Binreihenfolgen durchprobieren zu müssen,
+ggf. mit bipartitem gewichteten Matching ein lokales Optimum zwischen zwei Bins suchen und daraus eine "`gute"' Binreihenfolge erstellen.
+
+
+\chapter{Messergebnisse und Vergleiche}
+\textit{Anfang September anfangen, soweit Messergebnisse vorliegen.}
+
+Obwohl in den vorherigen Kapiteln schon einige Laufzeiten vorgestellt werden, hier nochmal eine Zusammenfassung und insbesondere ein Vergleich
+zwischen den beiden Dekompositionsansätzen. Sowohl echte Instanzen als auch generierte. 
+Dabei ggf. auf Methoden zur Instanzengenerierung eingehen und diese bewerten?
+
+\end{document}

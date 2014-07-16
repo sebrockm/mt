@@ -12,11 +12,13 @@ struct jobgroup
 {
     vector<double> times;
     unsigned length;
+    unsigned id;
 };
 
 struct bin
 {
     vector<jobgroup> groups;
+    unsigned id;
 };
 
 double calculate_cost(const bin& b1, const bin& b2, bool n = false)
@@ -110,40 +112,39 @@ public:
     {
         if(i == j)
             return 0;
-        if(j < i)
-            swap(i, j);
+        if(j < i && (j != 0 || i+1 != _bins.size()))
+            swap(i, j);//now i is definitely on j's left
+
 
         unsigned bi = (i+_bins.size()-1)%_bins.size();
         unsigned bj = (j+_bins.size()-1)%_bins.size();
         unsigned ni = (i+1)%_bins.size();
         unsigned nj = (j+1)%_bins.size();
 
-        _tmpCosts[bi] = calculate_cost(_bins[bi], _bins[j], i == 0);
-
-        _tmpCosts[i] = calculate_cost(_bins[j], _bins[ni], ni == 0);
-
-        if(bj != i)//otherwise this would be calculated twice
+        if(ni == j)
         {
-            _tmpCosts[bj] = calculate_cost(_bins[bj], _bins[i], j == 0);
-        }
-
-        if(j != bi)
-        {
+            _tmpCosts[bi] = calculate_cost(_bins[bi], _bins[j], i == 0);
+            _tmpCosts[i] = calculate_cost(_bins[j], _bins[i], j == 0);
             _tmpCosts[j] = calculate_cost(_bins[i], _bins[nj], nj == 0);
         }
+        else
+        {
+            _tmpCosts[bi] = calculate_cost(_bins[bi], _bins[j], i == 0);
+            _tmpCosts[i] = calculate_cost(_bins[j], _bins[ni], ni == 0);
+            _tmpCosts[bj] = calculate_cost(_bins[bj], _bins[i], j == 0);
+            _tmpCosts[j] = calculate_cost(_bins[i], _bins[nj], nj == 0);
+        }
+
 
 
         _tmpCost = 0;
         for(unsigned k = 0; k < _costs.size(); ++k)
         {
-            if(k == bi || k == i || k == bj || k == j)
+            if(k != bi && k != i && k != bj && k != j)
             {
-                _tmpCost += _tmpCosts[k];
+                _tmpCosts[k] = _costs[k];
             }
-            else
-            {
-                _tmpCost += _costs[k];
-            }
+            _tmpCost += _tmpCosts[k];
         }
 
         return _tmpCost;

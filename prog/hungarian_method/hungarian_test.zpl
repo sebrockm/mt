@@ -6,7 +6,7 @@ param c[A*B] := read file as "n+" comment "#" skip 1;
 
 var x[A*B] binary;
 
-maximize weight:
+minimize weight:
     sum <i,j> in A*B: c[i,j]*x[i,j];
 
 subto oneA: forall <j> in B do

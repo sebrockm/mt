@@ -1,11 +1,15 @@
 #include "nonfull_schedule.hpp"
+#include "de_nonfull_schedule.hpp"
 
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
+#include <boost/algorithm/string.hpp>
+
 using namespace std;
+using namespace boost::algorithm;
 
 
 typedef typename nonfull_schedule<int>::job job;
@@ -22,10 +26,11 @@ vector<job> read_jobs(const char* file_name)
     vector<job> jobs;
 
     string line;
-    getline(file, line);
-    while(file)
+    while(getline(file, line))
     {
-        if(line.front() == '#')
+        //cout << "read " << line << endl;
+        trim(line);
+        if(line.empty() || line.front() == '#')
             continue;
 
         if(!read_mn)
@@ -33,6 +38,7 @@ vector<job> read_jobs(const char* file_name)
             stringstream(line) >> m >> n;
             jobs.reserve(n);
             read_mn = true;
+            //cout << "m=" << m << " n=" << n << endl;
         }
         else
         {
@@ -47,11 +53,9 @@ vector<job> read_jobs(const char* file_name)
             if(jobs.size() == n)
                 break;
         }        
-
-        getline(file, line);
     }
 
-    cout << jobs.size() << endl;
+    //cout << jobs.size() << endl;
 
     return jobs.size() == n ? jobs : vector<job>();
 }
@@ -83,24 +87,22 @@ int main(int argc, char** argv)
     auto jobs = read_jobs(argv[1]);
     int m = jobs.front().size();
 
-    for(int i = 0; i < m; ++i)
-    {
-        for(int j = 0; j < i; ++j)
-        {
-            cout << " ";
-        }
-        for(auto& j : jobs)
-        {
-            cout << j[i];
-        }
-        cout << endl;
-    }
-    cout << endl;
+    nonfull_schedule<int> sch(m);
+    sch.jobs = jobs;
 
-    auto sch = create_schedule<int>(m, jobs);
+    //cout << sch;
+    cout << "Cmax: " << sch.get_cost() << endl;
 
-    cout << sch << endl;
+    sch.jobs = create_schedule<int>(m, jobs).jobs;
 
+    //cout << sch;
     cout << "Cmax: " << sch.get_cost() << endl;
     
+    jobs = sch.jobs;
+
+    auto de_sch = create_de_schedule(m, jobs);
+
+    //cout << de_sch;
+    cout << "Cmax: " << de_sch.get_cost() << endl;
+
 }

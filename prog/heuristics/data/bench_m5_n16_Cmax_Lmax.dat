@@ -1,0 +1,49 @@
+#Cmax:
+#CPLEX Error  1001: Out of memory.
+#MIP - Error termination, integer feasible:  Objective =  1.5600000000e+02
+#Current MIP best bound =  1.5143750000e+02 (gap = 4.5625, 2.92%)
+#Solution time = 10340.41 sec.  Iterations = 78577184  Nodes = 3154825 (2723382)
+#Deterministic time = 2225885.15 ticks  (215.26 ticks/sec)
+#
+#Lmax:
+#CPLEX Error  1001: Out of memory.
+#MIP - Error termination, no tree:  Objective =  7.4000000000e+01
+#Current MIP best bound =  6.8533162344e+01 (gap = 5.46684, 7.39%)
+#Solution time = 31058.18 sec.  Iterations = 38661954  Nodes = 1069022 (760258)
+#Deterministic time = 10800133.99 ticks  (347.74 ticks/sec)
+
+5 16
+4 5 8 11 4
+4 3 6 4 9
+3 6 10 5 3
+3 2 2 6 7
+9 12 3 5 2
+8 9 3 8 2
+2 1 5 9 1
+4 7 9 2 2
+6 9 1 4 1
+7 2 10 3 7
+8 5 5 10 8
+3 5 2 13 3
+6 8 6 4 5
+9 4 7 3 7
+7 1 2 7 3
+10 9 5 2 6
+
+#duedates
+1 50
+2 55
+3 42
+4 60
+5 52
+6 40
+7 71
+8 68
+9 45
+10 62
+11 73
+12 69
+13 89
+14 61
+15 57
+16 87

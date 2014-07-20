@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iostream>
 #include <ostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -42,9 +43,14 @@ public:
         jobs.push_back(j);
     }
 
-    int evaluate_job(const job& j) const 
+    time_type evaluate_job(const job& j) const 
     {
-        int diff = 0;
+        /*if(jobs.empty())
+        {
+            return j.front();
+        }*/
+
+        time_type diff = 0;
         for(int i = 0; i < m-1; ++i)
         {
             diff += abs(j[m-2-i] - get_last_cycle_time(i));
@@ -67,7 +73,7 @@ public:
 
 
 template <class time_type>
-nonfull_schedule<time_type> create_schedule(unsigned m, vector<typename nonfull_schedule<time_type>::job>& unscheduled)
+nonfull_schedule<time_type> create_schedule(unsigned m, vector<vector<time_type>>& unscheduled)
 {
     typedef typename nonfull_schedule<time_type>::job job;
 
@@ -97,15 +103,15 @@ ostream& operator << (ostream& s, const nonfull_schedule<time_type>& nfs)
     {
         for(int j = 0; j < i; ++j)
         {
-            s << " ";
+            s << "  ";
         }
         for(auto& j : nfs.jobs)
         {
-            s << j[i];
+            s << setw(2) << j[i];
         }
         s << endl;
     }
-    return s;
+    return s << setw(1);
 }
 
 

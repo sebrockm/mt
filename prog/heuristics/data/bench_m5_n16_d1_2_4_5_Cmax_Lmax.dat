@@ -1,0 +1,46 @@
+#Cmax:
+#MIP - Integer optimal solution:  Objective =  1.2200000000e+02
+#Solution time =  619.89 sec.  Iterations = 6536109  Nodes = 291828
+#Deterministic time = 165166.82 ticks  (266.44 ticks/sec)
+#
+#Lmax:
+#MIP - Integer optimal, tolerance (0.0001/1e-06):  Objective =  4.9000000000e+01
+#Current MIP best bound =  4.8995137423e+01 (gap = 0.00486258, 0.01%)
+#Solution time =  916.88 sec.  Iterations = 3253520  Nodes = 153084 (47)
+#Deterministic time = 275409.42 ticks  (300.38 ticks/sec)
+
+5 16
+4 5 0 11 4
+4 3 0 4 9
+3 6 0 5 3
+3 2 0 6 7
+9 12 0 5 2
+8 9 0 8 2
+2 1 0 9 1
+4 7 0 2 2
+6 9 0 4 1
+7 2 0 3 7
+8 5 0 10 8
+3 5 0 13 3
+6 8 0 4 5
+9 4 0 3 7
+7 1 0 7 3
+10 9 0 2 6
+
+#duedates
+1 50
+2 55
+3 42
+4 60
+5 52
+6 40
+7 71
+8 68
+9 45
+10 62
+11 73
+12 69
+13 89
+14 61
+15 57
+16 87

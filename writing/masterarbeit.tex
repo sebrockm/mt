@@ -4,6 +4,7 @@
 \usepackage[ngerman]{babel}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{mathtools}
 
 \parskip 12pt
 
@@ -169,6 +170,47 @@ Jeder noch nicht in $\pi$ enthaltende Job wird pro Iteration mit beiden Enden de
 Die Bewertungsfunktion für das hintere Ende arbeitet analog.
 Es wird der beste Job für das vordere Ende und der beste für das hintere Ende gesucht und der mit der besseren Bewertung wird vorne bzw. hinten eingefügt.
 Die asymptotische Laufzeit liegt hier ebenfalls in $\mathcal{O}(n^2m)$.
+
+\subsubsection{Gilmore-Gomory-Heuristik}
+Diese Heuristik basiert wendet den Algorithmus von Gilmore und Gomory auf beliebige Instanzen an.
+Dazu wird eine Instanz $I$ zunächst auf dominierende Maschinen untersucht.
+Nun können zwei Fälle eintreten:
+\begin{enumerate}
+    \item Unter den dominierenden Maschinen $D$ gibt es zwei, die benachbart sind, also $\exists i\in\{1,\ldots,m\}, M,M'\in D$ mit $M=M_i$ und $M'=M_{i+1}$.
+    \item Es gibt keine benachbarten dominierenden Maschinen.
+\end{enumerate}
+Wenn Fall (2) eintritt, werden alle $m$ Maschinen als dominierend angesehen, da dies für den Algorithmus keine Einschränkung darstellt.
+Nun werden zwei benachbarte Maschinen gewählt.
+O.B.d.A seien dies die Maschinen $M_1$ und $M_2$. Sei 
+\begin{align} 
+    d_{\min} &\coloneqq \min_{\substack{i\in \{M_1,M_2\} \\ j\in J}} p_{ij} \\
+    e_{\max} &\coloneqq \max_{\substack{i\in D\setminus\{M_1,M_2\} \\ j\in J}} p_{ij} \\
+    K &\coloneqq \frac{e_{\max}}{d_{\min}}
+\end{align}
+Nun wird aus der gegebenen Instanz $I$ eine neue Instanz $I'$ erzeugt, die sich nur dadurch von $I$ unterscheidet, dass die Prozesszeiten
+auf allen dominierenden Maschinen außer auf $M_1$ und $M_2$ mit $\frac{1}{K}$ skaliert werden, also
+\begin{align}
+    p'_{ij} \coloneqq \begin{cases} \frac{p_{ij}}{K} &\text{für } i\in D\setminus\{M_1,M_2\} \\ p_{ij} &\text{sonst.} \end{cases}
+\end{align}
+Auf diese Weise sind $M_1$ und $M_2$ in $I'$ die einzigen dominierenden Maschinen und folglich kann $I'$ mit dem Algorithmus von Gilmore und Gomory optimal gelöst werden.
+Die resultierende Reihenfolge $\pi$ wird als heuristische Lösung für die ursprüngliche Instanz $I$ verwendet.
+
+Da die Prozesszeiten der in $I'$ vernachlässigten dominierenden Maschinen sich um den Faktor $K$ von denen in $I$ unterscheiden, 
+können sich die aus $\pi$ ergebenen Zykluszeiten auch maximal um den Faktor $K$ unterscheiden:
+\begin{align}
+    c_k \leq K\cdot c'_k \quad \forall 1\leq k\leq n+m-1
+\end{align}
+Da die optimale Lösung von $I'$ eine untere Schranke für die optimale Lösung von $I$ ist, also $C'_{\max} \leq C_{\max}$, folgt für die Lösung $L_{GG}$ der
+Gilmore-Gomory-Heuristik:
+\begin{align}
+    L_{GG} \leq K\cdot C'_{\max} \leq K\cdot C_{\max}
+\end{align}
+Die Gilmore-Gomory-Heuristik hat also eine relative Gütegarantie von $K$.
+Zusätzlich kann bei der Wahl der zwei benachbarten dominierenden Maschinen der Parameter $K$ optimiert werden, indem nicht beliebige Maschinen gewählt werden,
+sondern solche mit optimalen $d_{\min}$- bzw. $e_{\max}$-Werten.
+
+\subsubsection{Nachbarschaftssuche}
+
 
 \section{Zuweisen von Ressourcen}
 \label{sec:ZuweisungVonRessourcen}

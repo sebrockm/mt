@@ -1,3 +1,5 @@
-Cmax: 602018
-Cmax: 601522
-Cmax: 601522
+initial Cmax: 602018
+nonfull_schedule Cmax: 601522
+de_nonfull_schedule Cmax: 601522
+gg_heuristik Cmax: 601522
+gg Cmax 601522

@@ -1,3 +1,5 @@
-Cmax: 445598
-Cmax: 445228
-Cmax: 445228
+initial Cmax: 445598
+nonfull_schedule Cmax: 445228
+de_nonfull_schedule Cmax: 445228
+gg_heuristik Cmax: 445228
+gg Cmax 445228

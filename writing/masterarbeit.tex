@@ -29,9 +29,9 @@ Die Zeit, die zwischen zwei Rotationen vergeht, wird als \textit{Zykluszeit} bez
 Die zu produzierenden Jobs sind gegeben durch die Menge $J=\{j_1,\ldots,j_n\}$ 
 und die Prozesszeiten von Job $j$ auf Maschine $i$ sind durch $p_{ij}$ gegeben.
 Ziel ist es, eine Reihenfolge $\pi\in J^n$ der Jobs zu erstellen, die die gesamte Produktionsdauer minimiert.
-Die Zykluszeiten $c_k$ mit $1\leq k\leq n+m-1$ berechnen sich wie folgt:
-\[ c_k = \max_{i=\max\{1,k-n+1\}}^{\min\{k,m\}} p_{i\pi_{k-i+1}} \]
-Die Zielfunktion ist also $C_{\max} = \sum_{k=1}^{n+m-1} c_k$. 
+Die Zykluszeiten $c_t$ mit $1\leq t\leq n+m-1$ berechnen sich wie folgt:
+\[ c_t = \max_{i=\max\{1,t-n+1\}}^{\min\{t,m\}} p_{i\pi_{t-i+1}} \]
+Die Zielfunktion ist also $C_{\max} = \sum_{t=1}^{n+m-1} c_t$. 
 Andere Zielfunktionen werden in dieser Masterarbeit nicht betrachtet.
 
 Eine Teilmenge $D \subseteq \{M_1,\ldots,M_m\}$ der Maschinen heißt \textit{dominierend}, wenn 
@@ -130,9 +130,9 @@ und der $y$-Koordinate von $j$ abhängig sind.
 
 Diese Situation liegt beim synchronen Flow-Shop vor, wenn es nur zwei benachbarte dominierende Maschinen gibt. O.B.d.A seien dies $M_1$ und $M_2$.
 Die Berechnung der Zykluszeiten vereinfacht sich dann zu
-$c_k = \max \{p_{2\pi_{k-1}},p_{1\pi_k}\}$ für $2\leq k\leq n$.
-Sie sind also für je zwei Jobs $\pi_{k-1},\pi_{k}$ nur noch von der Prozesszeit des vorderen Jobs auf der zweiten Maschine ($p_{2\pi_{k-1}}$) 
-und der Prozesszeit des hinteren Jobs auf der ersten Maschine ($p_{1\pi_k}$) abhängig.
+$c_t = \max \{p_{2\pi_{t-1}},p_{1\pi_t}\}$ für $2\leq t\leq n$.
+Sie sind also für je zwei Jobs $\pi_{t-1},\pi_{t}$ nur noch von der Prozesszeit des vorderen Jobs auf der zweiten Maschine ($p_{2\pi_{t-1}}$) 
+und der Prozesszeit des hinteren Jobs auf der ersten Maschine ($p_{1\pi_t}$) abhängig.
 
 Mit diesem Spezialfall des Problems beschäftigt sich Matthias Kampmeyer in seiner Masterarbeit genauer.
 Daher wird hier nicht näher auf die Funktionsweise des Algorithmus eingegangen eingegangen.
@@ -140,8 +140,21 @@ Daher wird hier nicht näher auf die Funktionsweise des Algorithmus eingegangen 
 
 \subsection{Lineare Programmierung}
 \label{subsec:LineareProgrammierung}
-Das "`einfache"' MIP vorstellen, inklusive Laufzeiten.
-Verweis auf die $\mathcal{NP}$-Schwere.
+Zum Finden einer optimalen Lösung dieses Teilproblems wurde folgendes Mixed Integer Program (MIP) aufgestellt.
+Dabei gilt für die Binärvariablen $x_{jk} = 1$ genau dann, wenn Job $j$ an Position $k$ in der Reihenfolge $\pi$ steht.
+Es ist außerdem $N=\{1,\ldots,n\}$ und $T=\{1,\ldots,n+m-1\}$.
+
+\begin{align}
+    \text{min} \quad \sum_{t=1}^{n+m-1} &c_t \\
+    \text{s.t.}\quad \sum_{k=1}^n x_{jk} &= 1 & j\in N \\
+                     \sum_{j=1}^n x_{jk} &= 1 & k\in N \\
+    c_t &\geq \sum_{j=1}^n p_{t-k+1,j} \cdot x_{jk} & t\in T k=\max\{1,t-m+1\},\ldots,\min\{n,t\} \\
+    c_t &\geq 0 & t\in T \\
+    x_{jk} &\in \{0,1\} & j,k\in N
+\end{align}
+Dieses MIP liefert für Instanzen mit $n\leq 30$ eine optimale Lösung in unter einer Stunde.
+Bei größeren Instanzen ist dieser Zeitaufwand zur Lösung nicht mehr praktikabel. 
+Das gilt insbesondere für das gegebene Praxisbeispielen mit Instanzgrößen von mehreren Tausend Jobs.
 
 
 \subsection{Heuristische Verfahren}
@@ -156,7 +169,7 @@ Die Bewertungsfunktion betrachtet die letzten $m-1$ Zykluszeiten der noch nicht 
 wobei die Zykluszeiten am Anfang bei einer noch leeren Reihenfolge als $0$ angenommen werden.
 Für jeden Job $j$, der noch nicht in $\pi$ ist, werden diese $m-1$ Zykluszeiten mit den ersten $m-1$ Prozesszeiten von $j$ verglichen.
 Die Idee ist, dass diese möglichst übereinstimmen sollten. Ist eine Prozesszeit sehr viel größer als die aktuelle Zykluszeit,
-zu der sie hinzugefügt werden würde, würde die Zykluszeit entsprechend zunehmen.
+zu der sie hinzugefügt werden würde, würde die Zykluszeit entsprechend ansteigen.
 Ist umgekehrt die Zykluszeit sehr viel größer als die Zugehörige Prozesszeit von $j$, dann würde diese kurze Prozesszeit verschenkt werden.
 Die Berwertungsfunktion berechnet jeweils den Unterschied zwischen Prozesszeit und Zykluszeit und bildet die Summe dieser $m-1$ Werte.
 Diese Summe ist die Bewertung für einen Job $j$. Der Job mit der kleinsten Bewertung wird an $\pi$ angehängt.
@@ -165,14 +178,14 @@ liegt die asymptotische Laufzeit dieser Heuristik in $\mathcal{O}(n^2m)$.
 
 \subsubsection{Double Ended Non-Full-Schedule-Heuristik}
 Diese Heuristik basiert auf der Non-Full-Schedule-Heuristik.
-Der Unterschied besteht darin, dass $\pi$ nicht nur von vorne, sondern gleichzeitig von vorne und hinten aufgebaut wird.
+Der Unterschied besteht darin, dass $\pi$ nicht nur von vorne, sondern gleichzeitig auch von hinten zur Mitte hin aufgebaut wird.
 Jeder noch nicht in $\pi$ enthaltende Job wird pro Iteration mit beiden Enden der bisherigen Reihenfolge verglichen.
 Die Bewertungsfunktion für das hintere Ende arbeitet analog.
 Es wird der beste Job für das vordere Ende und der beste für das hintere Ende gesucht und der mit der besseren Bewertung wird vorne bzw. hinten eingefügt.
 Die asymptotische Laufzeit liegt hier ebenfalls in $\mathcal{O}(n^2m)$.
 
 \subsubsection{Gilmore-Gomory-Heuristik}
-Diese Heuristik basiert wendet den Algorithmus von Gilmore und Gomory auf beliebige Instanzen an.
+Diese Heuristik wendet den Algorithmus von Gilmore und Gomory auf beliebige Instanzen an.
 Dazu wird eine Instanz $I$ zunächst auf dominierende Maschinen untersucht.
 Nun können zwei Fälle eintreten:
 \begin{enumerate}
@@ -180,12 +193,12 @@ Nun können zwei Fälle eintreten:
     \item Es gibt keine benachbarten dominierenden Maschinen.
 \end{enumerate}
 Wenn Fall (2) eintritt, werden alle $m$ Maschinen als dominierend angesehen, da dies für den Algorithmus keine Einschränkung darstellt.
-Nun werden zwei benachbarte Maschinen gewählt.
-O.B.d.A seien dies die Maschinen $M_1$ und $M_2$. Sei 
+Nun werden zwei benachbarte dominierende Maschinen gewählt.
+O.B.d.A seien dies die Maschinen $M_1$ und $M_2$. Seien 
 \begin{align} 
     d_{\min} &\coloneqq \min_{\substack{i\in \{M_1,M_2\} \\ j\in J}} p_{ij} \\
     e_{\max} &\coloneqq \max_{\substack{i\in D\setminus\{M_1,M_2\} \\ j\in J}} p_{ij} \\
-    K &\coloneqq \frac{e_{\max}}{d_{\min}}
+    K &\coloneqq \frac{e_{\max}}{d_{\min}} \text{.}
 \end{align}
 Nun wird aus der gegebenen Instanz $I$ eine neue Instanz $I'$ erzeugt, die sich nur dadurch von $I$ unterscheidet, dass die Prozesszeiten
 auf allen dominierenden Maschinen außer auf $M_1$ und $M_2$ mit $\frac{1}{K}$ skaliert werden, also
@@ -196,9 +209,9 @@ Auf diese Weise sind $M_1$ und $M_2$ in $I'$ die einzigen dominierenden Maschine
 Die resultierende Reihenfolge $\pi$ wird als heuristische Lösung für die ursprüngliche Instanz $I$ verwendet.
 
 Da die Prozesszeiten der in $I'$ vernachlässigten dominierenden Maschinen sich um den Faktor $K$ von denen in $I$ unterscheiden, 
-können sich die aus $\pi$ ergebenen Zykluszeiten auch maximal um den Faktor $K$ unterscheiden:
+können sich die aus $\pi$ ergebenen Zykluszeiten von $I$ und $I'$ auch maximal um den Faktor $K$ unterscheiden:
 \begin{align}
-    c_k \leq K\cdot c'_k \quad \forall 1\leq k\leq n+m-1
+    c_t \leq K\cdot c'_t \quad \forall 1\leq t\leq n+m-1
 \end{align}
 Da die optimale Lösung von $I'$ eine untere Schranke für die optimale Lösung von $I$ ist, also $C'_{\max} \leq C_{\max}$, folgt für die Lösung $L_{GG}$ der
 Gilmore-Gomory-Heuristik:
@@ -209,7 +222,19 @@ Die Gilmore-Gomory-Heuristik hat also eine relative Gütegarantie von $K$.
 Zusätzlich kann bei der Wahl der zwei benachbarten dominierenden Maschinen der Parameter $K$ optimiert werden, indem nicht beliebige Maschinen gewählt werden,
 sondern solche mit optimalen $d_{\min}$- bzw. $e_{\max}$-Werten.
 
+Das finden der geeigneten dominierenden Maschinen kann in $\mathcal{O}(nm)$ durchgeführt werden. 
+Das Anpassen der Prozesszeiten der übrigen dominierenden Maschinen ist nur in der Theorie von Interesse.
+Der Gilmore-Gomory-Algorithmus kann diese einfach ignorieren.
+Die Gesamtlaufzeit beträgt daher $\mathcal{O}(nm + n\log n)$.
+
 \subsubsection{Nachbarschaftssuche}
+Mit einer simplen Nachbarschaftssuche können bereits existierende (nicht optimale) Reihenfolgen verbessert werden.
+Es wird in $\pi$ nach zwei Jobs gesucht, deren Vertauschung den Zielfunktionswert verringert, und anschließend vertauscht.
+Dies geschieht so lange, bis kein solches Jobpaar mehr gefunden wird.
+
+Das Suchen eines solchen Jobpaares kann in $\mathcal{O}(n^2)$ erfolgen.
+Da der Zielfunktionswert sich mit jeder Iteration verringert und er durch die optimale Lösung beschränkt ist,
+terminiert die Suche auf jeden Fall.
 
 
 \section{Zuweisen von Ressourcen}
@@ -223,7 +248,7 @@ Im Gegensatz dazu s. \ref{subsec:optres}.
 
 
 \subsection{Optimierung der Ressourcenzuweisung}
-\label{subsec:optres}.
+\label{subsec:optres}
 \textit{Soll dieser Abschnitt noch Bestandteil der Arbeit sein? Wenn ja, dann werde ich mich da zwischendurch immer mal wieder dransetzen,
 bis eine Lösung gefunden ist. Ein echter Zeitplan ist hierfür schwierig.}
 

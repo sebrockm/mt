@@ -43,17 +43,18 @@ public:
         jobs.push_back(j);
     }
 
-    time_type evaluate_job(const job& j) const 
+    pair<time_type, time_type> evaluate_job(const job& j) const 
     {
         /*if(jobs.empty())
         {
             return j.front();
         }*/
 
-        time_type diff = 0;
+        pair<time_type, time_type> diff = {0, 0};
         for(int i = 0; i < m-1; ++i)
         {
-            diff += abs(j[m-2-i] - get_last_cycle_time(i));
+            diff.first += max(j[m-2-i] - get_last_cycle_time(i), (time_type)0);
+            diff.second += max(get_last_cycle_time(i) - j[m-2-i], (time_type)0);
         }
 
         return diff;
@@ -83,7 +84,11 @@ nonfull_schedule<time_type> create_schedule(unsigned m, vector<vector<time_type>
     {
         auto mini = min_element(unscheduled.begin(), unscheduled.end(), [&schedule](const job& j1, const job& j2)
                 {
-                    return schedule.evaluate_job(j1) < schedule.evaluate_job(j2);
+                    auto p1 = schedule.evaluate_job(j1); 
+                    auto p2 = schedule.evaluate_job(j2);
+                    if(p1.first == p2.first)
+                        return p1.second < p2.second;
+                    return p1.first < p2.first;
                 });
 
         schedule.add_job(*mini);

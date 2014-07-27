@@ -63,33 +63,35 @@ public:
         jobs_back.push_back(j);
     }
 
-    time_type evaluate_job_front(const job& j) const 
+    pair<time_type, time_type> evaluate_job_front(const job& j) const 
     {
         /*if(jobs_front.empty())
         {
             return j.front();
         }*/
 
-        time_type diff = 0;
+        pair<time_type, time_type> diff = {0, 0};
         for(int i = 0; i < m-1; ++i)
         {
-            diff += abs(j[m-2-i] - get_last_cycle_time_front(i));
+            diff.first += max(j[m-2-i] - get_last_cycle_time_front(i), (time_type)0);
+            diff.second += max(get_last_cycle_time_front(i) - j[m-2-i], (time_type)0);
         }
 
         return diff;
     }
 
-    time_type evaluate_job_back(const job& j) const 
+    pair<time_type, time_type> evaluate_job_back(const job& j) const 
     {
         /*if(jobs_back.empty())
         {
             return j.back();
         }*/
 
-        time_type diff = 0;
+        pair<time_type, time_type> diff = {0, 0};
         for(int i = 0; i < m-1; ++i)
         {
-            diff += abs(j[i+1] - get_last_cycle_time_back(i));
+            diff.first += max(j[i+1] - get_last_cycle_time_back(i), (time_type)0);
+            diff.second += max(get_last_cycle_time_back(i) - j[i+1], (time_type)0);
         }
 
         return diff;
@@ -127,12 +129,20 @@ de_nonfull_schedule<time_type> create_de_schedule(unsigned m, vector<vector<time
     {
         auto mini_front = min_element(unscheduled.begin(), unscheduled.end(), [&schedule](const job& j1, const job& j2)
                 {
-                    return schedule.evaluate_job_front(j1) < schedule.evaluate_job_front(j2);
+                    auto p1 = schedule.evaluate_job_front(j1);
+                    auto p2 = schedule.evaluate_job_front(j2);
+                    if(p1.first == p2.first)
+                        return p1.second < p2.second;
+                    return p1.first < p2.first;
                 });
 
         auto mini_back = min_element(unscheduled.begin(), unscheduled.end(), [&schedule](const job& j1, const job& j2)
                 {
-                    return schedule.evaluate_job_back(j1) < schedule.evaluate_job_back(j2);
+                    auto p1 = schedule.evaluate_job_back(j1);
+                    auto p2 = schedule.evaluate_job_back(j2);
+                    if(p1.first == p2.first)
+                        return p1.second < p2.second;
+                    return p1.first < p2.first;
                 });
 
         if(schedule.evaluate_job_front(*mini_front) < schedule.evaluate_job_back(*mini_back))

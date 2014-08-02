@@ -96,7 +96,7 @@ Beispielsweise ist bei Ansatz (1) das Berechnen einer optimalen Reihenfolge $\pi
 dass es genau zwei benachbarte dominierende Maschinen gibt,
 mit dem Algorithmus von Gilmore und Gomory \cite{...} in Polynomialzeit lösbar.
 Bei der anschließenden Zuweisung von Ressourcen ist noch unbekannt, ob ein polynomieller Algorithmus existiert.
-Dies herauszufinden ist eines der Ziele dieser Arbeit.
+%Dies herauszufinden ist eines der Ziele dieser Arbeit.
 
 Da die Rüstkosten $s_{fg}$ in dem gegebenen Praxisfall deutlich größer sind als die Prozesszeiten $p_{ij}$ der Jobs auf den Maschinen,
 ist davon auszugehen, dass Ansatz (2) für diesen Praxisfall die besseren Lösungen erzielen wird.
@@ -104,19 +104,49 @@ Nichtsdestotrotz ist auch der erste Ansatz interessant, da er in anderen Praxisb
 
 
 \section{Bisherige Ansätze}
-Hier das ursprüngliche "`allumfassende"' MIP vorstellen und seine schlechte Laufzeit als Motivation für die Dekompositionsansätze nehmen.
+\label{sec:bisherigeAnsaetze}
+Als weitere Motivation für die Dekompositionsansätze dient folgendes Mixed Integer Linear Program (MIP):
+\begin{align}
+    \text{min} \quad \sum_{t=1}^{n+m-1} &c_t + \sum_{j=1}^n \sum_{h=1}^n s_{jh} y_{jh} \label{allmip:obj}\\
+    \text{s.t.}\quad \sum_{k=1}^n x_{jk} &= 1 & j\in N \label{allmip:1}\\
+                     \sum_{j=1}^n x_{jk} &= 1 & k\in N \label{allmip:2}\\
+    c_t &\geq \sum_{j=1}^n p_{t-k+1,j} \cdot x_{jk} & t\in T, k=\max\{1,t-m+1\},\ldots,\min\{n,t\} \label{allmip:3}\\
+    y_{jh} + 1 &\geq x_{j,k-m} + x_{hk} & j,h\in N, k=m+1,\ldots,n \label{allmip:4}\\
+    c_t &\geq 0 & t\in T \\
+    x_{jk} &\in \{0,1\} & j,k\in N \\
+    y_{jh} &\in \{0,1\} & j,h\in N
+\end{align}
+$N$ ist die Indexmenge der Jobs, also $N=\{1,\ldots,n\}$ und $T=\{1,\ldots,n+m-1\}$ ist die Indexmenge der Zykluszeiten.
+Die Binärvariablen $x_{jk}$ geben an, an welcher Position $k$
+sich Job $j$ befindet. Es gilt $x_{jk}=1$ genau dann, wenn $j$ an
+Position $k$ ist. Die Nebenbedingungen \ref{allmip:1} und \ref{allmip:2}
+stellen sicher, dass sich jeder Job an genau einer Position befindet und 
+dass sich an jeder Position genau ein Job befindet.
+In Nebenbedingung \ref{allmip:3} werden die Zykluszeiten bestimmt.
+Den Binärvariablen $y_{jh}$ wird in Nebenbedingung \ref{allmip:4} folgende
+Bedeutung gegeben: $y_{jh}=1$, wenn Job $j$ genau $m$ Positionen
+vor Job $h$ in $\pi$ liegt.
+In der Zielfunktion \ref{allmip:obj} wird dann die Summe aus allen
+Zykluszeiten gebildet und die Summe aller Rüstkosten $s_{jh}$, die beim
+Übergang von Job $j$ zu $h$ auftreten.
 
+Obwohl in diesem MIP nicht die Verfügbarkeit von Ressourcen beachtet werden,
+benötigt es schon bei $n=20$ mehrere Stunden zum Finden der optimalen Lösung.
+Es ist also für Instanzen mit mehreren Tausend Jobs nicht geeignet.
+Aufgrund dieser Tatsache ist eine heuristische Herangehensweise an 
+synchrone Flow-Shop-Probleme mit Ressourcen und Rüstkosten eine notwendige Alternative.
 
 
 \chapter{Der erste Dekompositionsansatz}
 Beim ersten Dekompositionsansatz wird zunächst eine (möglichst optimale) Jobreihenfolge $\pi$ bestimmt.
-Dabei werden Ressourcen und Rüstkosten außer Acht gelassen. Anschließend wird das Mapping $f$ aufgestellt,
+Dabei werden Ressourcen und Rüstkosten außer Acht gelassen. 
+Es wird also zunächst ausschließlich $C_{\max}$ optimiert. Anschließend wird ein Mapping $f$ aufgestellt,
 so dass Ressourcen nur dann eingeplant werden, wenn sie auch zur Verfügung stehen, und darüber hinaus
 möglichst selten ausgetauscht werden müssen, so dass geringe Rüstkosten auftreten.
 
 In Abschnitt \ref{sec:BerechnenEinerJobreihenfolge} werden einige exakte und heuristische Verfahren für die
 Berechnung von $\pi$ vorgestellt, was im Allgemeinen $\mathcal{NP}$-schwer ist.
-Anschließend werden in Abschnitt \ref{sec:ZuweisungVonRessourcen} Verfahren vorgestellt, die die ein möglichst gutes Mapping $f$ erzeugen.
+Anschließend werden in Abschnitt \ref{sec:ZuweisungVonRessourcen} Verfahren vorgestellt, die ein möglichst gutes Mapping $f$ erzeugen.
 Dabei wird speziell darauf eingegangen, ob mit der gegebenen Reihenfolge $\pi$ und den gegebenen Ressourcen
 überhaupt eine zulässige Lösung möglich ist, und darauf, wie dann ggf. die Zulässigkeit durch nachträgliche Änderungen an $\pi$
 erzeugt werden kann.
@@ -124,26 +154,26 @@ erzeugt werden kann.
 \section{Berechnen einer Jobreihenfolge}
 \label{sec:BerechnenEinerJobreihenfolge}
 \subsection{Gilmore Gomory}
-Der Algorithmus von Gilmore und Gomory \cite{...} löst in $\mathcal{O}(n\log n)$ einen speziellen Fall des Travelling-Salesman-Problems (TSP),
-bei dem alle Knoten zwei Koordinaten $x,y$ haben und die Kantenkosten $c_{ij}$ zwischen je zwei Knoten $i$ und $j$ nur von der $x$-Koordinate von $i$
-und der $y$-Koordinate von $j$ abhängig sind.
+Der Algorithmus von Gilmore und Gomory \cite{...} löst in $\mathcal{O}(n\log n)$ einen speziellen Fall des gerichteten Travelling-Salesman-Problems (TSP),
+bei dem alle Knoten zwei Parameter $x,y$ haben und die Kantenkosten $c_{ij}$ zwischen je zwei Knoten $i$ und $j$ nur vom $x$-Wert von $i$
+und vom $y$-Wert von $j$ abhängig sind.
 
-Diese Situation liegt beim synchronen Flow-Shop vor, wenn es nur zwei benachbarte dominierende Maschinen gibt. O.B.d.A seien dies $M_1$ und $M_2$.
-Die Berechnung der Zykluszeiten vereinfacht sich dann zu
+Diese Situation liegt beim synchronen Flow-Shop vor, wenn es nur zwei benachbarte dominierende Maschinen gibt.
+O.B.d.A seien dies $M_1$ und $M_2$.
+Jobs können durch Knoten repräsentiert werden und die beiden Prozesszeiten auf den dominierenden Maschinen liefern die Parameter $x$ und $y$. 
+Der Abstand zwischen zwei Knoten entspricht dann der Zykluszeit, die die entsprechenden Jobs verursachen, wenn sie nebeneinander liegen.
+Die Berechnung der Zykluszeiten vereinfacht sich hier zu
 $c_t = \max \{p_{2\pi_{t-1}},p_{1\pi_t}\}$ für $2\leq t\leq n$.
 Sie sind also für je zwei Jobs $\pi_{t-1},\pi_{t}$ nur noch von der Prozesszeit des vorderen Jobs auf der zweiten Maschine ($p_{2\pi_{t-1}}$) 
 und der Prozesszeit des hinteren Jobs auf der ersten Maschine ($p_{1\pi_t}$) abhängig.
 
-Mit diesem Spezialfall des Problems beschäftigt sich Matthias Kampmeyer in seiner Masterarbeit genauer.
-Daher wird hier nicht näher auf die Funktionsweise des Algorithmus eingegangen eingegangen.
+Auf die Funktionsweise des Algorithmus soll in dieser Arbeit nicht näher eingegangen werden.
 
 
 \subsection{Lineare Programmierung}
 \label{subsec:LineareProgrammierung}
-Zum Finden einer optimalen Lösung dieses Teilproblems wurde folgendes Mixed Integer Program (MIP) aufgestellt.
-Dabei gilt für die Binärvariablen $x_{jk} = 1$ genau dann, wenn Job $j$ an Position $k$ in der Reihenfolge $\pi$ steht.
-Es ist außerdem $N=\{1,\ldots,n\}$ und $T=\{1,\ldots,n+m-1\}$.
-
+Zum Finden einer optimalen Lösung dieses Teilproblems wurde folgendes (MIP) aufgestellt.
+Es ist identisch mit dem MIP in Abschnitt \ref{sec:bisherigeAnsaetze} bis auf die Nichtberücksichtigung der Rüstkosten.
 \begin{align}
     \text{min} \quad \sum_{t=1}^{n+m-1} &c_t \\
     \text{s.t.}\quad \sum_{k=1}^n x_{jk} &= 1 & j\in N \\
@@ -153,13 +183,13 @@ Es ist außerdem $N=\{1,\ldots,n\}$ und $T=\{1,\ldots,n+m-1\}$.
     x_{jk} &\in \{0,1\} & j,k\in N
 \end{align}
 Dieses MIP liefert für Instanzen mit $n\leq 30$ eine optimale Lösung in unter einer Stunde.
-Bei größeren Instanzen ist dieser Zeitaufwand zur Lösung nicht mehr praktikabel. 
-Das gilt insbesondere für das gegebene Praxisbeispielen mit Instanzgrößen von mehreren Tausend Jobs.
+Diese Laufzeiten sind zwar schon deutlich besser als die Variante mit Rüstkosten in Abschnitt \ref{sec:bisherigeAnsaetze},
+bei größeren Instanzen ist dieser Zeitaufwand allerdings immer noch nicht praktikabel. 
 
 
 \subsection{Heuristische Verfahren}
-Aufgrund der $\mathcal{NP}$-Schwere des Problems und der schlechten Laufzeit des MIPs aus Abschnitt \ref{subsec:LineareProgrammierung}
-bei Instanzen realer Größe werden hier einige heuristische Ansätze zur Lösung des Problems vorgestellt.
+Aufgrund der $\mathcal{NP}$-Schwere der Optimierung von $C_{\max}$ und der schlechten Laufzeit des MIPs aus Abschnitt \ref{subsec:LineareProgrammierung}
+bei Instanzen realer Größe werden hier einige heuristische Ansätze zur Berechnung von $C_{\max}$ vorgestellt.
 
 \subsubsection{Non-Full-Schedule-Heuristik}
 Diese Heuristik ist eine konstruktive Greedy-Heuristik, die Schritt für Schritt einen Job an $\pi$ anhängt, beginnend mit einer leeren Reihenfolge.
@@ -169,10 +199,13 @@ Die Bewertungsfunktion betrachtet die letzten $m-1$ Zykluszeiten der noch nicht 
 wobei die Zykluszeiten am Anfang bei einer noch leeren Reihenfolge als $0$ angenommen werden.
 Für jeden Job $j$, der noch nicht in $\pi$ ist, werden diese $m-1$ Zykluszeiten mit den ersten $m-1$ Prozesszeiten von $j$ verglichen.
 Die Idee ist, dass diese möglichst übereinstimmen sollten. Ist eine Prozesszeit sehr viel größer als die aktuelle Zykluszeit,
-zu der sie hinzugefügt werden würde, würde die Zykluszeit entsprechend ansteigen.
-Ist umgekehrt die Zykluszeit sehr viel größer als die Zugehörige Prozesszeit von $j$, dann würde diese kurze Prozesszeit verschenkt werden.
-Die Berwertungsfunktion berechnet jeweils den Unterschied zwischen Prozesszeit und Zykluszeit und bildet die Summe dieser $m-1$ Werte.
+zu der sie hinzugefügt werden würde, würde die Zykluszeit entsprechend um einen Wert $c_+$ ansteigen.
+Ist umgekehrt die Zykluszeit sehr viel größer als die zugehörige Prozesszeit von $j$, dann würde diese kurze Prozesszeit verschenkt werden.
+Die Differenz aus Zykluszeit und Prozesszeit wird mit $c_-$ bezeichnet.
+Die Berwertungsfunktion berechnet für jeden Job die Summe aus den $m-1$ $c_+$-Werten.
 Diese Summe ist die Bewertung für einen Job $j$. Der Job mit der kleinsten Bewertung wird an $\pi$ angehängt.
+Falls mehrere Jobs eine optimale Bewertung haben, wird für diese Jobs als zweites Kriterium die Summe der $c_-$-Werte betrachtet.
+Der Job, bei dem diese Summe am kleinsten ist, verschenkt am wenigsten Zeit und wird ausgewählt.
 Da in jeder Iteration alle Verbleibenden Jobs betrachtet werden und für jeden dieser Jobs $m-1$ Zeiten Verglichen werden,
 liegt die asymptotische Laufzeit dieser Heuristik in $\mathcal{O}(n^2m)$.
 
@@ -227,14 +260,26 @@ Das Anpassen der Prozesszeiten der übrigen dominierenden Maschinen ist nur in d
 Der Gilmore-Gomory-Algorithmus kann diese einfach ignorieren.
 Die Gesamtlaufzeit beträgt daher $\mathcal{O}(nm + n\log n)$.
 
+Im Rahmen dieser Heuristik soll der Begriff der \textit{Semidominanz} eingeführt werden.
+Die Semidominanz ist ein Maß dafür, wie weit eine Teilmenge von Maschinen davon entfernt ist, dominierend zu sein.
+Eine Semidominanz von $0$ bedeutet, die Maschinen sind dominierend.
+Für eine Teilmenge von Maschinen $D\subseteq\{M_1,\ldots,M_m\}$ sei 
+\[d_{\min} = \min_{\substack{i:M_i\in D \\ j\in\{1,\ldots,n\}}} p_{ij}\] 
+die kleinste ihrer Prozesszeiten, analog zur obigen Definition von $d_{\min}$.
+Die Semidominanz ist dann definiert als
+\[\mathcal{D}_{D} \coloneqq \sum_{i: M_i\not\in D} \sum_{j=1}^n \max\{0,p_{ij}-d_{\min}\} \text{.}\]
+Unabhängig von der relativen Gütegarantie $K$ liefert diese Heuristik auch eine absolute Gütegarantie von $\mathcal{D}_{\{M_1,M_2\}}$, 
+wenn $M_1$ und $M_2$ als benachbarte Maschinen ausgewählt werden.
+
 \subsubsection{Nachbarschaftssuche}
 Mit einer simplen Nachbarschaftssuche können bereits existierende (nicht optimale) Reihenfolgen verbessert werden.
-Es wird in $\pi$ nach zwei Jobs gesucht, deren Vertauschung den Zielfunktionswert verringert, und anschließend vertauscht.
-Dies geschieht so lange, bis kein solches Jobpaar mehr gefunden wird.
-
-Das Suchen eines solchen Jobpaares kann in $\mathcal{O}(n^2)$ erfolgen.
-Da der Zielfunktionswert sich mit jeder Iteration verringert und er durch die optimale Lösung beschränkt ist,
-terminiert die Suche auf jeden Fall.
+Mögliche Nachbarschaftsoperatoren sind
+\begin{itemize}
+    \item $\mathit{xch}_{ij}$: vertauscht die Jobs an den Positionen $i$ und $j$ miteinander,
+    \item $\mathit{shift}_{ij}$: "`shiftet"' den Job an Position $i$ nach Position $j$. 
+        Alle Jobs zwischen $i$ und $j$ rücken um eins nach links (falls $i<j$) bzw. nach rechts (falls $i>j$).
+\end{itemize}
+Auf Grundlage dieser Nachbarschfaften lassen sich Iterative Improvement, eine Tabu-Suche oder Simulated Annealing implementieren.
 
 
 \section{Zuweisen von Ressourcen}

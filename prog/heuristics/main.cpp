@@ -1,6 +1,7 @@
 #include "nonfull_schedule.hpp"
 #include "de_nonfull_schedule.hpp"
 #include "gg_heuristik.hpp"
+#include "simulated_annealing.hpp"
 
 #include <vector>
 #include <iostream>
@@ -95,6 +96,10 @@ int main(int argc, char** argv)
     //cout << sch;
     cout << "initial Cmax: " << sch.get_cost() << endl;
 
+    sch.jobs = simulated_annealing(sch.jobs, sch.get_cost());
+    cout << "simulated annealing Cmax: " << sch.get_cost() << endl;
+
+
     sch.jobs = create_schedule<int>(m, jobs).jobs;
 
     //cout << sch;
@@ -107,8 +112,10 @@ int main(int argc, char** argv)
     //cout << de_sch;
     cout << "de_nonfull_schedule Cmax: " << de_sch.get_cost() << endl;
 
+
     auto doms = find_best_dom(sch.jobs);
     sch.jobs = gg_heuristik(sch.jobs, doms.first, doms.second);
 
     cout << "gg_heuristik Cmax: " << sch.get_cost() << endl;
+
 }

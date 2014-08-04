@@ -188,6 +188,7 @@ bei größeren Instanzen ist dieser Zeitaufwand allerdings immer noch nicht prak
 
 
 \subsection{Heuristische Verfahren}
+\label{subsec:HeuristischeVerfahren}
 Aufgrund der $\mathcal{NP}$-Schwere der Optimierung von $C_{\max}$ und der schlechten Laufzeit des MIPs aus Abschnitt \ref{subsec:LineareProgrammierung}
 bei Instanzen realer Größe werden hier einige heuristische Ansätze zur Berechnung von $C_{\max}$ vorgestellt.
 
@@ -279,28 +280,74 @@ Mögliche Nachbarschaftsoperatoren sind
     \item $\mathit{shift}_{ij}$: "`shiftet"' den Job an Position $i$ nach Position $j$. 
         Alle Jobs zwischen $i$ und $j$ rücken um eins nach links (falls $i<j$) bzw. nach rechts (falls $i>j$).
 \end{itemize}
-Auf Grundlage dieser Nachbarschfaften lassen sich Iterative Improvement, eine Tabu-Suche oder Simulated Annealing implementieren.
+Auf Grundlage dieser Nachbarschfaften lassen sich z.B. Iterative Improvement, eine Tabu-Suche oder Simulated Annealing implementieren.
 
 
-\section{Zuweisen von Ressourcen}
+\subsection{Vergleich der Heuristiken}
+
+
+
+\section{Zuweisung von Ressourcen}
 \label{sec:ZuweisungVonRessourcen}
-\subsection{Zulässigkeit der Zuweisung}
-\textit{Dieser Unterabschnitt muss auch nur noch geschrieben werden.}
+In diesem Abschnitt geht es darum, den Jobs in der Reihenfolge $\pi$, die in Abschnitt \ref{sec:BerechnenEinerJobreihenfolge} aufgestellt wurde,
+Ressourcen zuzuweisen. An diese Zuweisung werden zwei Anforderungen gestellt:
+\begin{enumerate}
+    \item Die Zuweisung muss zulässig sein. Das heißt, ist eine Ressource einem Job zugewiesen, darf sie den nachfolgenden $m-1$ Jobs nicht mehr zugewiesen werden.
+        Das Problem der Zulässigkeit einer Zuweisung wird im ersten Unterabschnitt \ref{subsec:ZulaessigkeitDerZuweisung} betrachtet.
+    \item Die Zuweisung soll möglichst optimal sein. Wenn zwei Jobs, die im Abstand von $m$ in $\pi$ liegen, die selbe Ressource benutzen können,
+        werden Rüstkosten eingespart, da die Ressource nicht ausgetauscht werden muss.
+        Dieses Problem wird in Unterabschnitt \ref{subsec:OptimierungDerRessourcenzuweisung} diskutiert.
+\end{enumerate}
+Es ist natürlich möglich, dass bei gegebenem $\pi$ keine zulässige Zuweisung von Ressourcen möglich ist.
+In diesem Fall muss $\pi$ nachträglich geändert werden, worauf in Unterabschnitt \ref{UnzulaessigeReihenfolgen} eingegangen wird.
 
-Zulässigkeit mit Netzflussalgorithmus nachweisen.
-Darauf eingehen, dass bei disjunkten Jobgruppen keine Optimierungsmöglichkeiten bestehen.
-Im Gegensatz dazu s. \ref{subsec:optres}.
+\subsection{Zulässigkeit der Zuweisung}
+\label{subsec:ZulaessigkeitDerZuweisung}
+Abhängig davon, welche Ressourcen für welche Jobs geeignet sind, kann das Zulässigkeitsproblem unterschiedlich schwer zu lösen sein.
+Folgende Situationen werden betrachtet:
+\begin{itemize}
+    \item Alle Ressourcen sind für alle Jobs geeignet (trivial, es müssen $m$ Ressourcen vorhanden sein).
+    \item Die Ressourcenmengen sind disjunkt ($\rho_i\cap\rho_j \neq \emptyset \enspace \Rightarrow \enspace \rho_i = \rho_j$).
+    \item Die Ressourcen sind für hierarchische Jobgruppen geeignet 
+        ($\iota_q\cap\iota_r \neq \emptyset \enspace \Rightarrow \enspace \iota_q\subseteq\iota_r$ oder $\iota_r\subseteq\iota_q$).
+    \item Die $\rho_i$ sind beliebige Teilmengen von $R$.
+\end{itemize}
+
+\subsubsection{Zulässigkeit bei disjunkten Ressourcenmengen}
+In dieser Situation können die Jobs in Gruppen unterteilt werden, so dass zu jeder Jobgruppe eine für sie exklusive Menge an zulässigen Ressourcen zur Verfügung steht.
+Es reicht also aus, statt der Ressourcenmengen $\rho_i$ nur deren Größen $|\rho_i|$ zu betrachten.
+Mit einem Greedy-Algorithmus kann eine gegebene Reihenfolge $\pi$ dann auf Zulässigkeit überprüft werden:
+Der Algorithmus durchläuft $\pi$ von vorne nach hinten.
+Jede Jobgruppe erhält einen Counter, der mitzählt, wie viele Ressourcen momentan für sie zur Verfügung stehen.
+Diese Counter werden zu Beginn mit $|\rho_i|$ initialisiert.
+An jeder Position in $\pi$ wird der der Counter der zugehörigen Jobgruppe dekrementiert.
+Nach $m$ Schritten wird dieser Counter wieder inkrementiert.
+Sollte ein Counter einmal negativ werden, gibt es keine zulässige Ressourcenzuteilung.
+
+\subsubsection{Zulässigkeit bei hierarchischen Jobgruppen}
+%Diese Situation kann mit einem ähnlichen Greedy-Algorithmus gelöst werden, wie bei disjunkten Ressourcenmengen.
+%Die Ressourcen, die für eine Jobgruppe geeignet sind, können hier allerdings nicht als identisch angesehen werden,
+%so dass es genügen würde, wieder nur die Anzahl der Ressourcen zu betrachten.
+%Die Ressourcen unterscheiden sich dahingehend voneinander, dass sie für unterschiedlich viele andere Jobs ebenfalls geeignet sind.
+%Der Greedy-Algorithmus muss so abgeändert werden, dass er jedem Job in $\pi$ immer die "`speziellste"' aktuell für diesen Job verfügbare Ressource zuweist.
+%Soll einem Job $j$ eine Ressource zugeteilt werden, muss unter allen geeigneten Ressourcen $r\in\rho_j$, 
+%wobei $r$ nicht schon einem anderen Job zugewiesen sein darf, diejenige mit minimalem $|\iota_r|$ ausgesucht werden.
+%
+%Dieser abgewandelte Greedy-Algorithmus ist korrekt, denn immer, wenn die Situation auftritt, dass für einen Job keine Ressource verfügbar ist,
+%liegt das daran, dass alle potentiell geeigneten Ressourcen
 
 
 \subsection{Optimierung der Ressourcenzuweisung}
-\label{subsec:optres}
+\label{subsec:OptimierungDerRessourcenzuweisung}
 \textit{Soll dieser Abschnitt noch Bestandteil der Arbeit sein? Wenn ja, dann werde ich mich da zwischendurch immer mal wieder dransetzen,
 bis eine Lösung gefunden ist. Ein echter Zeitplan ist hierfür schwierig.}
 
 Bei hierarchischen oder beliebigen Jobgruppen eine optimale Zuweisung mit möglichst wenig Rüstkosten finden.
-Dazu (falls möglich) einen polynomiellen Algorithmus angeben bzw. einen Beseis zur $\mathcal{NP}$-Vollständigkeit.
+Dazu (falls möglich) einen polynomiellen Algorithmus angeben bzw. einen Beweis zur $\mathcal{NP}$-Vollständigkeit.
 
 \section{Unzulässige Reihenfolgen}
+\label{UnzulaessigeReihenfolgen}
+Für den Fall, dass für eine gegebene Reihenfolge $\pi$ keine Ressourcenzuweisung möglich ist, muss $\pi$ nachträglich verändert werden.
 \subsection{Nachbarschaftssuche}
 \textit{Anfang August hiermit anfangen.}
 
@@ -309,6 +356,10 @@ Dabei soll die Reihenfolge möglichst wenig von ihrer Optimalität einbüßen.
 
 \subsection{Andere Ansätze}
 Platzhalter, falls noch andere Ideen aufkommen.
+
+
+
+
 
 
 \chapter{2. Dekompositionsansatz}

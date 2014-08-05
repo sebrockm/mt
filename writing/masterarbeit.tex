@@ -261,7 +261,7 @@ Das Anpassen der Prozesszeiten der übrigen dominierenden Maschinen ist nur in d
 Der Gilmore-Gomory-Algorithmus kann diese einfach ignorieren.
 Die Gesamtlaufzeit beträgt daher $\mathcal{O}(nm + n\log n)$.
 
-Im Rahmen dieser Heuristik soll der Begriff der \textit{Semidominanz} eingeführt werden.
+Für die weitere Analyse dieser Heuristik ist der Begriff der \textit{Semidominanz} sinnvoll.
 Die Semidominanz ist ein Maß dafür, wie weit eine Teilmenge von Maschinen davon entfernt ist, dominierend zu sein.
 Eine Semidominanz von $0$ bedeutet, die Maschinen sind dominierend.
 Für eine Teilmenge von Maschinen $D\subseteq\{M_1,\ldots,M_m\}$ sei 
@@ -314,8 +314,10 @@ Folgende Situationen werden betrachtet:
 \end{itemize}
 
 \subsubsection{Zulässigkeit bei disjunkten Ressourcenmengen}
-In dieser Situation können die Jobs in Gruppen unterteilt werden, so dass zu jeder Jobgruppe eine für sie exklusive Menge an zulässigen Ressourcen zur Verfügung steht.
-Es reicht also aus, statt der Ressourcenmengen $\rho_i$ nur deren Größen $|\rho_i|$ zu betrachten.
+Bei disjunkten Ressourcenmengen können die Jobs in Gruppen unterteilt werden, 
+so dass zu jeder Jobgruppe eine für sie exklusive Menge an zulässigen Ressourcen zur Verfügung steht.
+Für die Zulässigkeit reicht es aus, statt der Ressourcenmengen $\rho_i$ nur deren Größen $|\rho_i|$ zu betrachten
+(bei der Optimierung der Zuteilung ist diese Vereinfachung nicht sinnvoll).
 Mit einem Greedy-Algorithmus kann eine gegebene Reihenfolge $\pi$ dann auf Zulässigkeit überprüft werden:
 Der Algorithmus durchläuft $\pi$ von vorne nach hinten.
 Jede Jobgruppe erhält einen Counter, der mitzählt, wie viele Ressourcen momentan für sie zur Verfügung stehen.
@@ -336,6 +338,37 @@ Sollte ein Counter einmal negativ werden, gibt es keine zulässige Ressourcenzut
 %Dieser abgewandelte Greedy-Algorithmus ist korrekt, denn immer, wenn die Situation auftritt, dass für einen Job keine Ressource verfügbar ist,
 %liegt das daran, dass alle potentiell geeigneten Ressourcen
 
+\subsubsection{Zulässigkeit bei beliebigen Ressourcenteilmengen}
+In dem Fall, dass die $\rho_i$ beliebige Teilmengen von $R$ sind, ist nicht bekannt, ob es sich um ein $\mathcal{NP}$-vollständiges Problem handelt
+oder ob es einen polynomiellen Algorithmus gibt.
+
+Es besteht allerdings die Vermutung, dass es nicht exponentiell in $n$ ist. Ein Indiz für diese Vermutung liefert folgendes MIP:
+\begin{align}
+    \text{max} \quad &0 \label{zulmip:obj} \\
+    \text{s.t.}\quad \sum_{r\in\rho_i} x_{ir} &= 1 & i\in N \label{zulmip:1} \\
+    x_{ir} + x_{jr} &\leq 1 & i\in N, j=i+1,\ldots,i+m-1 \, ,r\in\rho_i\cap\rho_j \label{zulmip:2} \\
+    x_{ir} &\in \{0,1\} & i\in N, r\in\rho_i
+\end{align}
+Die Binärvariablen $x_{ir}$ geben hier an, ob dem Job $i$ die Ressource $r$ zugeteilt wird.
+In diesem Fall ist $x_{ir}=1$ und sonst $x_{ir}=0$.
+Die erste Nebenbedingung \ref{zulmip:1} bewirkt, dass jedem Job genau eine Ressource zugewiesen wird.
+Durch die zweite Nebenbedingung \ref{zulmip:2} kann jede Ressource jeweils nur einmal an $m$ aufeinander folgende Jobs vergeben werden.
+Eine Zielfunktion ist nicht notwendig, da die Zulässigkeit bereits durch die Nebenbedingungen entschieden wird.
+Mit diesem MIP können selbst sehr große Instanzen mit $n\approx 100000$ (allerdings mit $m\leq 8$) in weniger als einer Sekunde gelöst werden.
+
+Nebenbedingung \ref{zulmip:2} verhindert immer nur für Paare von Jobs, deren Abstand kleiner als $m$ ist, dass ihnen die selbe Ressource zugewiesen wird.
+Das ist für die Korrektheit des MIPs zwar ausreichend, durch zusätzliche Nebenbedingungen, die dasselbe für Tripel, Quadrupel, bis hin zu $m$-Tupeln verhindern,
+können aber einige fraktionale Lösungen der Relaxation "`abgeschnitten"' werden.
+Für ein $k$-Tupel sieht diese zusätzliche Nebenbedingung so aus:
+\begin{align}
+    \sum_{l=1}^k x_{i_lr} \leq 1 \quad i_l\in N, i_1<i_2<\ldots<i_k<i_1+m, r\in\bigcap_{l=1}^k \rho_{i_l}
+\end{align}
+Für $k=2$ ist diese Nebenbedingung identisch mit \ref{zulmip:2}.
+Wird sie für $k=3,\ldots,m$ zu obigem MIP hinzugefügt, so war bei allen bislang getesteten Instanzen die Relaxation bereits ganzzahlig.
+Ein Beweis, dass dies tatsächlich bei allen Instanzen der Fall ist, ist noch nicht gelungen.
+Gelingt er, ist bewiesen, dass es in polynomieller Zeit möglich ist, zu überprüfen, ob es für eine gegebene Jobreihenfolge $\pi$ und 
+gegebene (beliebige) Ressourcenteilmengen $\rho_i$ möglich ist, allen Jobs eine Ressource zuzuweisen.
+
 
 \subsection{Optimierung der Ressourcenzuweisung}
 \label{subsec:OptimierungDerRessourcenzuweisung}
@@ -351,7 +384,7 @@ Für den Fall, dass für eine gegebene Reihenfolge $\pi$ keine Ressourcenzuweisu
 \subsection{Nachbarschaftssuche}
 \textit{Anfang August hiermit anfangen.}
 
-Nachbarschaftenssuchen formulieren, die eine unzulässige Reihenfolgen reparieren, so dass sie dann zulässig ist.
+Nachbarschaftenssuchen formulieren, die eine unzulässige Reihenfolge reparieren, so dass sie dann zulässig ist.
 Dabei soll die Reihenfolge möglichst wenig von ihrer Optimalität einbüßen.
 
 \subsection{Andere Ansätze}

@@ -7,6 +7,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <chrono>
+#include <unistd.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -63,6 +65,77 @@ vector<job> read_jobs(const char* file_name)
 }
 
 
+pair<double, double> do_cplex(const char* file_name)
+{
+    stringstream ss;
+    ss << "zimpl ../synmvCmax.zpl -v0 -D file=" << file_name;    
+    int tmp = system(ss.str().c_str());
+
+    ss.str("");
+    ss << "cplex -c \"re synmvCmax.lp\" \"set timelimit 1800\" \"o\" \"dis sol obj\" \"dis sol bestb\" > " << file_name << ".tmp";
+    tmp += system(ss.str().c_str());
+
+    ss.str("");
+    ss << file_name << ".tmp";
+    ifstream output(ss.str());
+
+    string line[4];
+    while(getline(output, line[3]))
+    {
+        line[0] = line[1];
+        line[1] = line[2];
+        line[2] = line[3];
+    }
+
+    output.close();
+    tmp += system(("rm " + ss.str()).c_str());
+
+    if(tmp > 0)
+        exit(tmp);
+
+    string optimal = "CPLEX> MIP - Integer optimal solution:  Objective =";
+    string tolerance = "CPLEX> MIP - Integer optimal, tolerance (0.0001/1e-06):  Objective =";
+    string aborted = "CPLEX> MIP - Aborted, integer feasible:  Objective =";
+    string exceeded= "CPLEX> MIP - Time limit exceeded, integer feasible:  Objective =";
+    string bound = "CPLEX> Current MIP best bound =";
+    pair<double, double> res(0,0);
+
+    int gappos = line[1].find("(gap");
+    
+    if(line[1].find(bound) == 0)
+    {
+        res.first = stod(line[1].substr(bound.size(), gappos - bound.size()));
+    }
+    else
+    {
+        cerr << "second last line: " << line[1] << endl;
+    }
+
+    if(line[0].find(optimal) == 0)
+    {
+        res.second = stod(line[0].substr(optimal.size()));
+    }
+    else if(line[0].find(aborted) == 0)
+    {
+        res.second = stod(line[0].substr(aborted.size()));
+    }
+    else if(line[0].find(exceeded) == 0)
+    {
+        res.second = stod(line[0].substr(exceeded.size()));
+    }
+    else if(line[0].find(tolerance) == 0)
+    {
+        res.second = stod(line[0].substr(tolerance.size()));
+    }
+    else
+    {
+        cerr << "last line: " << line[0] << endl;
+    }
+
+    return res;
+}
+
+
 int main(int argc, char** argv)
 {
     /*
@@ -86,36 +159,58 @@ int main(int argc, char** argv)
         return 1;
     }
     //*/
-
+    
     auto jobs = read_jobs(argv[1]);
     int m = jobs.front().size();
+
+
+    cout << jobs.size() << "\t\t";
+
+    //cplex
+    auto t1 = chrono::high_resolution_clock::now();
+    auto p = jobs.size() <= 1500 ? do_cplex(argv[1]) : make_pair(0., 0.);
+    auto t2 = chrono::high_resolution_clock::now();
+
+    cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
 
     nonfull_schedule<int> sch(m);
     sch.jobs = jobs;
 
     //cout << sch;
-    cout << "initial Cmax: " << sch.get_cost() << endl;
+    //cout << "initial Cmax: " << sch.get_cost() << endl;
 
+    //SA
+    t1 = chrono::high_resolution_clock::now();
     sch.jobs = simulated_annealing(sch.jobs, sch.get_cost());
-    cout << "simulated annealing Cmax: " << sch.get_cost() << endl;
+    t2 = chrono::high_resolution_clock::now();
+
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
 
 
+    //nfs
+    t1 = chrono::high_resolution_clock::now();
     sch.jobs = create_schedule<int>(m, jobs).jobs;
+    t2 = chrono::high_resolution_clock::now();
 
-    //cout << sch;
-    cout << "nonfull_schedule Cmax: " << sch.get_cost() << endl;
-    
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+
+
     jobs = sch.jobs;
 
+    //denfs
+    t1 = chrono::high_resolution_clock::now();
     auto de_sch = create_de_schedule(m, jobs);
+    t2 = chrono::high_resolution_clock::now();
 
-    //cout << de_sch;
-    cout << "de_nonfull_schedule Cmax: " << de_sch.get_cost() << endl;
+    cout << de_sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
 
 
-    auto doms = find_best_dom(sch.jobs);
-    sch.jobs = gg_heuristik(sch.jobs, doms.first, doms.second);
+    //gg
+    t1 = chrono::high_resolution_clock::now();
+    sch.jobs = gg_heuristik(sch.jobs, 0, 0);
+    t2 = chrono::high_resolution_clock::now();
 
-    cout << "gg_heuristik Cmax: " << sch.get_cost() << endl;
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
 
+    cout << endl;
 }

@@ -58,7 +58,7 @@ vector<job> gg_heuristik(const vector<job>& jobs, int dom1, int dom2)
     dom1 = 3;
     dom2 = 4;
     auto pi = tsp_gg(jobs, dom1, dom2);
-    cerr << "dom1 " << dom1 << " dom2 " << dom2 << endl;
+    //cerr << "dom1 " << dom1 << " dom2 " << dom2 << endl;
 
     vector<job> sch(jobs.size());
     for(unsigned i = 0; i < sch.size(); ++i)

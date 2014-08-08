@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 \usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{mathtools}
 
@@ -15,23 +16,63 @@
 \chapter{Einleitung}
 \section{Problembeschreibung}
 Bei synchronen Flow-Shop-Problemen handelt es sich um Produktions\-planungs\-probleme,
-bei denen die zu produzierenden Güter (Jobs) auf einer zyklisch angeordneten Produktionsanlage
+bei denen die zu produzierenden Güter (Jobs) z.B. auf einer zyklisch angeordneten Produktionsanlage
 produziert werden. Die Produktionsanlage be\-steht aus $m$ Stationen, die sich mit der Anlage drehen.
 Außen, um die Anlage herum, befinden sich $m$ fortlaufend nummerierte fixierte Maschinen $M_1,\ldots,M_m$, die die einzelnen Produktionsschritte durchführen.
 Dabei handelt es sich bei Maschine $M_1$ um das Einlegen des Jobs in die Anlage und bei Maschine $M_m$ um die Entnahme des fertigen Produkts.
 Durch Rotation der Anlage werden die Stationen mit den auf ihnen befindlichen Jobs zur jeweils nächsten Maschine transportiert.
 Die Reihenfolge, in der alle Jobs die Maschinen durchlaufen müssen ist also fest vorgegeben.
+In Abbildung \ref{abb:Anlage} ist eine solche zyklische Anlage dargestellt.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{graphics/anlage.pdf}
+    \end{center}
+    \caption{
+        \label{abb:Anlage}
+        Kreisförmige Anlage mit $m=8$ Maschinen.
+    }
+\end{figure}
 Eine Rotation darf immer nur dann stattfinden, wenn alle Maschinen ihren Produktionsschritt an ihrem aktuellen Job
 durchgeführt haben. Auf diese Weise können die Jobs, im Gegensatz zum klassischen (asynchronen) Flow-Shop, 
-immer nur \textit{synchron} zur nachfolgenden Maschine gelangen,
+immer nur \textit{synchron} zur nachfolgenden Maschine gelangen.
 Die Zeit, die zwischen zwei Rotationen vergeht, wird als \textit{Zykluszeit} bezeichnet.
 
 Die zu produzierenden Jobs sind gegeben durch die Menge $J=\{j_1,\ldots,j_n\}$ 
-und die Prozesszeiten von Job $j$ auf Maschine $i$ sind durch $p_{ij}$ gegeben.
-Ziel ist es, eine Reihenfolge $\pi\in J^n$ der Jobs zu erstellen, die die gesamte Produktionsdauer minimiert.
+und die Prozesszeiten von Job $j$ auf Maschine $M_i$ sind durch $p_{ij}$ gegeben.
+Eine Beispielinstanz mit $n=5$ und $m=3$ ist in Tabelle \ref{abb:Bsp} zu sehen.
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{c|ccc}
+            & $M_1$ & $M_2$ & $M_3$ \\ \hline
+            $j_1$ & 4 & 6 & 5 \\
+            $j_2$ & 1 & 5 & 6 \\
+            $j_3$ & 2 & 5 & 4 \\
+            $j_4$ & 5 & 2 & 4 \\
+            $j_5$ & 4 & 5 & 4
+        \end{tabular}
+    \end{center}
+    \caption{
+        \label{abb:Bsp}
+        Beispielinstanz mit 5 Jobs und 3 Maschinen. Die Werte in der Tabelle sind die Prozesszeiten $p_{ij}$.
+    }
+\end{figure}
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{l p{0.8cm} | p{1.2cm} | p{1cm} | p{1.2cm} | p{0.8cm} | p{1cm} | p{0.8cm}}
+            & $t=1$ & $t=2$ & $t=3$ & $t=4$ & $t=5$ & $t=6$ & $t=7$ \\
+            $M_1$ & $j_1$ & $j_2$ & $j_3$ & $j_4$ & $j_5$ & & \\
+            $M_2$ & & $j_1$ & $j_2$ & $j_3$ & $j_4$ & $j_5$ & \\
+            $M_3$ & & & $j_1$ & $j_2$ & $j_3$ & $j_4$ & $j_5$ 
+        \end{tabular}
+    \end{center}
+\end{figure}
+Ziel ist es, eine Permutation $\pi$ der Jobs zu erstellen, die die gesamte Produktionsdauer minimiert.
+Diese Zielfunktion wird mit $C_{\max}$ bezeichnet.
+Die Beispielinstanz \ref{abb:Bsp} ist in Abbildung \ref{abb:gantt} als Gantt-Diagramm aufgetragen.
+Oben sind die Jobs in der initialen Reihenfolge und unten in einer bezüglich $C_{\max}$ optimalen Reihenfolge.
 Die Zykluszeiten $c_t$ mit $1\leq t\leq n+m-1$ berechnen sich wie folgt:
 \[ c_t = \max_{i=\max\{1,t-n+1\}}^{\min\{t,m\}} p_{i\pi_{t-i+1}} \]
-Die Zielfunktion ist also $C_{\max} = \sum_{t=1}^{n+m-1} c_t$. 
+Die Zielfunktion lässt sich also durch $C_{\max} = \sum_{t=1}^{n+m-1} c_t$ berechnen.
 Andere Zielfunktionen werden in dieser Masterarbeit nicht betrachtet.
 
 Eine Teilmenge $D \subseteq \{M_1,\ldots,M_m\}$ der Maschinen heißt \textit{dominierend}, wenn 
@@ -321,7 +362,7 @@ Mit einem Greedy-Algorithmus kann eine gegebene Reihenfolge $\pi$ dann auf Zulä
 Der Algorithmus durchläuft $\pi$ von vorne nach hinten.
 Jede Jobgruppe erhält einen Counter, der mitzählt, wie viele Ressourcen momentan für sie zur Verfügung stehen.
 Diese Counter werden zu Beginn mit $|\rho_i|$ initialisiert.
-An jeder Position in $\pi$ wird der der Counter der zugehörigen Jobgruppe dekrementiert.
+An jeder Position in $\pi$ wird der Counter der zugehörigen Jobgruppe dekrementiert.
 Nach $m$ Schritten wird dieser Counter wieder inkrementiert.
 Sollte ein Counter einmal negativ werden, gibt es keine zulässige Ressourcenzuteilung.
 
@@ -334,14 +375,26 @@ Sollte ein Counter einmal negativ werden, gibt es keine zulässige Ressourcenzut
 %Soll einem Job $j$ eine Ressource zugeteilt werden, muss unter allen geeigneten Ressourcen $r\in\rho_j$, 
 %wobei $r$ nicht schon einem anderen Job zugewiesen sein darf, diejenige mit minimalem $|\iota_r|$ ausgesucht werden.
 %
-%Dieser abgewandelte Greedy-Algorithmus ist korrekt, denn immer, wenn die Situation auftritt, dass für einen Job keine Ressource verfügbar ist,
-%liegt das daran, dass alle potentiell geeigneten Ressourcen
+%Dieser abgewandelte Greedy-Algorithmus ist korrekt, denn immer, wenn die Situation auftritt, dass für einen Job $j$ keine Ressource verfügbar ist,
+%liegt das daran, dass alle potentiell geeigneten Ressourcen $\rho_j$ bereits an einen der $m-1$ direkten Vorgänger von $j$ vergeben worden sind.
+%Sei $f$ das unvollständige Mapping, das der Algorithmus bis zu diesem Punkt aufgestellt hat.
+%Sei $F\subseteq N$ die Menge der Vorgänger von $j$, denen eine Ressource $r\in\rho_j$ zugeteilt wurde.
+%Angenommen, es existiert ein zulässiges Mapping $f'$, obwohl der Algorithmus $j$ keine Ressource zuweisen kann.
+%Dann muss es einen Job $i\in F$ geben mit $f'(i)\not\in\rho_j$.
+%Wegen der hierarchischen Eigenschaft muss entweder $\iota_{f'(i)}\subset\iota_{f(i)}$ sein oder $\iota_{f(i)}\subseteq\iota_{f'(i)}$.
+%Da $f(i)\not\in\rho_j$ ist (und somit auch $j\not\in\iota_{f'(i)}$),
+%muss hier $\iota_{f'(i)}\subset\iota_{f(i)}$ sein, denn sonst wäre $j\in\iota_{f(i)}\subseteq\iota_{f'(i)}$.
+%Das wiederum bedeutet, dass auch der Algorithmus dem Job $i$ die speziellere Ressource $f'(i)$ zugewiesen hätte.
+%Da er das aber nicht getan hat, muss er sie stattdessen einem der $m-1$ direkten Vorgänger von $i$ zugewiesen haben.
+%Sei $h$ dieser Vorgänger von $i$.
+%Es ist also $f(h)=f'(i)$ und somit $f'(h)\neq f'(i)$.
+
 
 \subsubsection{Zulässigkeit bei beliebigen Ressourcenteilmengen}
-In dem Fall, dass die $\rho_i$ beliebige Teilmengen von $R$ sind, ist nicht bekannt, ob es sich um ein $\mathcal{NP}$-vollständiges Problem handelt
-oder ob es einen polynomiellen Algorithmus gibt.
+Es ist nicht bekannt, ob das Problem, zu entscheiden, ob es bei gegebenem $\pi$ ein zulässiges Mapping $f$ gibt, 
+$\mathcal{NP}$-vollständiges ist oder ob es einen polynomiellen Algorithmus gibt.
 
-Es besteht allerdings die Vermutung, dass es nicht exponentiell in $n$ ist. Ein Indiz für diese Vermutung liefert folgendes MIP:
+Es besteht allerdings die Vermutung, dass zumindest einen polynomiellen Algorithmus in $n$ gibt. Ein Indiz für diese Vermutung liefert folgendes MIP:
 \begin{align}
     \text{max} \quad &0 \label{zulmip:obj} \\
     \text{s.t.}\quad \sum_{r\in\rho_i} x_{ir} &= 1 & i\in N \label{zulmip:1} \\
@@ -352,20 +405,20 @@ Die Binärvariablen $x_{ir}$ geben hier an, ob dem Job $i$ die Ressource $r$ zug
 In diesem Fall ist $x_{ir}=1$ und sonst $x_{ir}=0$.
 Die erste Nebenbedingung \ref{zulmip:1} bewirkt, dass jedem Job genau eine Ressource zugewiesen wird.
 Durch die zweite Nebenbedingung \ref{zulmip:2} kann jede Ressource jeweils nur einmal an $m$ aufeinander folgende Jobs vergeben werden.
-Eine Zielfunktion ist nicht notwendig, da die Zulässigkeit bereits durch die Nebenbedingungen entschieden wird.
+Eine Zielfunktion ist nicht notwendig, da die Zulässigkeit nur durch die Nebenbedingungen entschieden wird.
 Mit diesem MIP können selbst sehr große Instanzen mit $n\approx 100000$ (allerdings mit $m\leq 8$) in weniger als einer Sekunde gelöst werden.
 
 Nebenbedingung \ref{zulmip:2} verhindert immer nur für Paare von Jobs, deren Abstand kleiner als $m$ ist, dass ihnen die selbe Ressource zugewiesen wird.
 Das ist für die Korrektheit des MIPs zwar ausreichend, durch zusätzliche Nebenbedingungen, die dasselbe für Tripel, Quadrupel, bis hin zu $m$-Tupeln verhindern,
 können aber einige fraktionale Lösungen der Relaxation "`abgeschnitten"' werden.
-Für ein $k$-Tupel sieht diese zusätzliche Nebenbedingung so aus:
+Für ein $k$-Tupel von Jobs, die alle in einem Abschnitt von $\pi$ der Länge $m$ stehen, sieht diese zusätzliche Nebenbedingung so aus:
 \begin{align}
     \sum_{l=1}^k x_{i_lr} \leq 1 \quad i_l\in N, i_1<i_2<\ldots<i_k<i_1+m, r\in\bigcap_{l=1}^k \rho_{i_l}
 \end{align}
 Für $k=2$ ist diese Nebenbedingung identisch mit \ref{zulmip:2}.
 Wird sie für $k=3,\ldots,m$ zu obigem MIP hinzugefügt, so war bei allen bislang getesteten Instanzen die Relaxation bereits ganzzahlig.
 Ein Beweis, dass dies tatsächlich bei allen Instanzen der Fall ist, ist noch nicht gelungen.
-Gelingt er, ist bewiesen, dass es in polynomieller Zeit möglich ist, zu überprüfen, ob es für eine gegebene Jobreihenfolge $\pi$ und 
+Gelingt er, ist bewiesen, dass es in polynomieller Zeit möglich ist, zu entscheiden, ob es für eine gegebene Jobreihenfolge $\pi$ und 
 gegebene (beliebige) Ressourcenteilmengen $\rho_i$ möglich ist, allen Jobs eine Ressource zuzuweisen.
 
 
@@ -379,8 +432,10 @@ Dazu (falls möglich) einen polynomiellen Algorithmus angeben bzw. einen Beweis 
 
 \section{Unzulässige Reihenfolgen}
 \label{UnzulaessigeReihenfolgen}
-Für den Fall, dass für eine gegebene Reihenfolge $\pi$ keine Ressourcenzuweisung möglich ist, muss $\pi$ nachträglich verändert werden.
+Für den Fall, dass für eine gegebene Reihenfolge $\pi$ kein zulässiges Mapping $f$ erstellt werden kann, muss $\pi$ nachträglich verändert werden.
+
 \subsection{Nachbarschaftssuche}
+
 \textit{Anfang August hiermit anfangen.}
 
 Nachbarschaftenssuchen formulieren, die eine unzulässige Reihenfolge reparieren, so dass sie dann zulässig ist.

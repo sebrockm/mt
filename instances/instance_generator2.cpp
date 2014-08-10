@@ -15,19 +15,19 @@ void print_usage(const char* prog)
     exit(EXIT_FAILURE);
 }
 
+default_random_engine generator = default_random_engine(time(0));
 
 struct opt_set
 {
     struct machine
     {
-        default_random_engine generator;
         bool is_normal;
         int tmin, tmax;
         normal_distribution<double> distr_norm;
         uniform_int_distribution<int> distr_uni;
 
         machine()
-            :generator(time(0)), is_normal(false), tmin(0), tmax(numeric_limits<int>::max()), distr_norm(), distr_uni() {}
+            :is_normal(false), tmin(0), tmax(numeric_limits<int>::max()), distr_norm(), distr_uni() {}
 
         int distr()
         {
@@ -98,8 +98,8 @@ public:
                         if(i >= argc)
                             print_usage(argv[0]);
                         
-                        double mu = stoi(argv[i-1]);
-                        double sigma = stoi(argv[i]);
+                        double mu = stod(argv[i-1]);
+                        double sigma = stod(argv[i]);
                         
                         machines.back().is_normal = true;
                         machines.back().distr_norm = normal_distribution<double>(mu, sigma); 

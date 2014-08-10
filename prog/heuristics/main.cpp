@@ -160,18 +160,22 @@ int main(int argc, char** argv)
     }
     //*/
     
+    cerr << "start reading " << argv[1] << endl;
     auto jobs = read_jobs(argv[1]);
     int m = jobs.front().size();
+    cerr << "read " << argv[1] << endl;
 
 
     cout << jobs.size() << "\t\t";
 
     //cplex
     auto t1 = chrono::high_resolution_clock::now();
-    auto p = jobs.size() <= 1500 ? do_cplex(argv[1]) : make_pair(0., 0.);
+    //auto p = jobs.size() <= 1500 ? do_cplex(argv[1]) : make_pair(0., 0.);
     auto t2 = chrono::high_resolution_clock::now();
 
-    cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    //cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    if(jobs.size() <= 1500)
+        cerr << "done cplex" << endl;
 
     nonfull_schedule<int> sch(m);
     sch.jobs = jobs;
@@ -183,8 +187,9 @@ int main(int argc, char** argv)
     t1 = chrono::high_resolution_clock::now();
     sch.jobs = simulated_annealing(sch.jobs, sch.get_cost());
     t2 = chrono::high_resolution_clock::now();
-
+    
     cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cerr << "done SA" << endl;
 
 
     //nfs
@@ -193,6 +198,7 @@ int main(int argc, char** argv)
     t2 = chrono::high_resolution_clock::now();
 
     cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cerr << "done nfs" << endl;
 
 
     jobs = sch.jobs;
@@ -203,6 +209,7 @@ int main(int argc, char** argv)
     t2 = chrono::high_resolution_clock::now();
 
     cout << de_sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cerr << "done denfs" << endl;
 
 
     //gg
@@ -211,6 +218,7 @@ int main(int argc, char** argv)
     t2 = chrono::high_resolution_clock::now();
 
     cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cerr << "done gg" << endl;
 
     cout << endl;
 }

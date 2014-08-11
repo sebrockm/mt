@@ -7,6 +7,8 @@
 \usepackage{amssymb}
 \usepackage{mathtools}
 
+
+
 \parskip 12pt
 
 \begin{document}
@@ -135,7 +137,7 @@ formulieren, wobei die Variablen $y_{fg}$ angeben, wie oft die Rüstkosten $s_{f
     }
 \end{figure}
 In Abbildung \ref{abb:BspRes} ist eine mögliche Rüstkostentabelle für das Beispiel aus \ref{abb:Bsp} gegeben.
-Die initiale Reihenfolge und eine optimale sind in Abbildung \ref{ganttres} als Gantt-Diagramm dargestellt.
+Die initiale Reihenfolge und eine optimale sind in Abbildung \ref{abb:ganttres} als Gantt-Diagramm dargestellt.
 \begin{figure}
     \begin{center}
         \includegraphics[width=\textwidth]{graphics/bspresinit.pdf}
@@ -378,13 +380,165 @@ Mögliche Nachbarschaftsoperatoren sind
     \item $\mathit{shift}_{ij}$: "`shiftet"' den Job an Position $i$ nach Position $j$. 
         Alle Jobs zwischen $i$ und $j$ rücken um eins nach links (falls $i<j$) bzw. nach rechts (falls $i>j$).
 \end{itemize}
-Auf Grundlage dieser Nachbarschfaften lassen sich außerdem z.B. Iterative Improvement, eine Tabu-Suche oder Simulated Annealing implementieren.
+Auf Grundlage dieser Nachbarschaften lassen sich außerdem z.B. Iterative Improvement, eine Tabu-Suche oder Simulated Annealing implementieren.
 
-Im Rahmen dieser Arbeit wurde ein Simulated Annealing Algorithmus auf Grundlage der $\mathit{xch}_{ij}$-Nachbarschfaft implementiert.
+Im Rahmen dieser Arbeit wurde ein Simulated Annealing Algorithmus auf Grundlage der $\mathit{xch}_{ij}$-Nachbarschaft implementiert.
+Es wird min einer zufälligen initialen Reihenfolge $\pi$ begonnen.
+Pro Iteration werden zufällige $i$ und $j$ bestimmt, mit denen eine benachbarte Lösung $\pi' = \mathit{xch}_{ij}(\pi)$ erzeugt wird.
+Ist $\pi'$ besser als die aktuelle Lösung $\pi$, d.h. $c(\pi')\geq c(\pi)$, wird $\pi'$ als neue Lösung übernommen.
+Ist $\pi'$ schlechter als $\pi$, wird $\pi'$ nur mit einer bestimmten Wahrscheinlichkeit übernommen.
+Diese Wahrscheinlichkeit beträgt $e^{\frac{c(\pi')-c(\pi)}{t_k}}$, wobei $(t_k)_k$ eine Nullfolge ist 
+und $k$ die Anzahl der bisher durchgeführten Iterationen angibt.
+Die Folge $(t_k)_k$ wird auch als "`Temperatur"' bezeichnet, die im Laufe des Verfahrens abnimmt.
+Es wurde mit unterschiedlichen Temperaturen experimentiert.
+Es wurden 
+\begin{itemize}
+    \item $t_k = \alpha t_{k-1}$ für unterschiedliche $\alpha\in]0,1[$ und 
+    \item $t_k = \frac{c}{k}$, 
+    \item $t_k = \frac{c}{\log k}$ und 
+    \item $t_k = c \frac{|\cos\frac{k}{30}|}{k}$
+\end{itemize}
+jeweils für unterschiedliche $c\in\mathbb{R}_+$ getestet. Die besten Resultate lieferte $t_k = 50\frac{|\cos\frac{k}{30}|}{k}$.
+Durch den Cosinus schwankt die Temperatur, so dass abwechselnd verschlechternde Lösungen erlaubt bzw. nicht erlaubt werden.
+Das Verfahren terminiert, sobald in 1000 aufeinander folgenden Iterationen keine neue beste Lösung gefunden werden konnte.
+
+Dieser Simulated Annealing Algorithmus lieferte in Tests meist etwas bessere Ergebnisse als die übrigen Heuristiken.
+Die Heuristiken werden im nachfolgenden Unterabschnitt \ref{subsec:VergleichDerHeuristiken} evaluiert.
 
 
 \subsection{Vergleich der Heuristiken}
 \label{subsec:VergleichDerHeuristiken}
+In diesem Abschnitt werden die Rechenergebnisse der Heuristiken aus Unterabschnitt \ref{subsec:HeuristischeVerfahren} vorgestellt und miteinander verglichen.
+Es wurden drei Testreihen mit zufälligen Instanzen erzeugt, jeweils mit $m=8$ und $n=50,100,150,\ldots,5000$.
+Getestet wurde auf einem PC mit Intel(R) Xeon(R) CPU E3-1230 v3, 8 Kerne @ 3.30GHz, und 16GB RAM unter Ubuntu 13.10.
+Die MIPs wurden mit ZIMPL \cite{Koch2004} und CPLEX v12.6 gelöst.
+Die übrigen Heuristiken wurden in C++ implementiert und mit dem GCC v4.8.1 mit -O2-Optimierung compiliert.
+
+In der ersten Testreihe sind die Maschinen $M_3,M_4,M_5$ dominierend.
+Ihre Prozesszeiten wurden gleichverteilt aus dem Intervall $[10,100]$ gewählt.
+Die Prozesszeiten der übrigen Maschinen wurden aus dem Intervall $[0,9]$ gleichverteilt gewählt.
+In Abbildung \ref{abb:3dom} sind die Resultate aufgetragen.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/3dom/plot.pdf}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/3dom/plotrel.pdf}
+    \end{center}
+    \caption{
+        \label{abb:3dom}
+        Absolute (oben) und relative (unten) Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken
+        bei drei dominierenden Maschinen (gleichverteilte Prozesszeiten).
+    }
+\end{figure}
+Aufgetragen sind jeweils die absoluten Differenzen $C_{\max,h}-C_{\max,nfs}$ der übrigen Heuristiken ($h$) zur Non-Full-Schedule-Heuristik ($nfs$).
+CPLEX LB und UB bezeichnen die untere und obere Schranke, die CPLEX nach 30 Minuten errechnet hat.
+Dabei ist die obere Schranke der Zielfunktionswert einer tatsächlich errechneten Lösung und kann daher als Heuristik verwendet werden.
+Zu sehen ist, dass die Lösungen des MIPs bei sehr kleinen Instanzen ($n<300$) nach einer halben Stunde Rechenzeit vergleichbar mit den Lösungen der übrigen Heuristiken sind.
+Allerdings benutzt CPLEX alle 8 Prozessorkerne parallel, während die übrigen Heuristiken nicht parallel implementiert sind.
+Außerdem liegen die Rechenzeiten der übrigen Heuristiken weit unter einer halben Stunde (s. Abbildung \ref{abb:3domtime}).
+Aus diesen Gründen wurde das MIP auch nur bis zu Instanzgrößen von $n=1500$ berechnet.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/3dom/plottime.pdf}
+    \end{center}
+    \caption{
+        \label{abb:3domtime}
+        Laufzeiten der drei Heuristiken bei drei dominierenden Maschinen (gleichverteilte Prozesszeiten).
+    }
+\end{figure}
+
+Außerdem ist zu erkennen, dass die Double Ended Non-Full-Schedule-Heuristik fast identische Resultate liefert im Vergleich zur Non-Full-Schedule-Heuristik
+und dass die Gilmore-Gomory-Heuristik hier relativ schlechte Resultate liefert und mit Simulated Annealing die besten Lösungen erzeugt werden.
+Der Plot der relativen Abweichungen zeigt außerdem, dass diese Abweichungen offenbar nahezu konstant sind zwischen den Heuristiken (nicht beim MIP) 
+und nicht von der Instanzgröße abhängen.
+Einzig die relative Abweichung des Simulated Annealings scheint mit zunehmender Instanzgröße leicht abzunehmen.
+
+In Abbildung \ref{abb:3domtime} sind die Zeiten aufgetragen, die die Heuristiken benötigten, um die in Abbildung \ref{abb:3dom} dargestellten Resultate zu berechnen.
+Deutlich zu erkennen ist der quadratische Anstieg der beiden Non-Full-Schedule-Heuristiken, wobei die Double Ended Variante etwas langsamer ist,
+da pro Iteration immer zwei Jobs statt nur einem gesucht werden.
+Außerdem treten in der Kurve der Double Ended Non-Full-Schedule-Heuristik teilweise kleine Ausreißer nach oben auf.
+Eine plausible Begründung hierfür konnte nicht gefunden werden.
+Die Kurve des Simulated Annealings ist, wie zu erwarten war, sehr chaotisch, was leicht durch die nicht deterministische Funktionsweise des Algorithmus erklärt werden kann.
+Am schnellsten ist die Gilmore-Gomory-Heuristik, die dafür aber auch vergleichsweise schlechte Resultate liefert.
+
+Die zweite Testreihe unterscheidet sich nur dadurch von der ersten, dass die Prozesszeiten der dominierenden Maschinen nicht gleichverteilt aus dem Intervall
+$[10,100]$ ausgewählt wurden, sondern normalverteilt mit einem Erwartungswert von $\mu=50$ und einer Standardabweichung von $\sigma=20$.
+Die Resultate sind analog zur ersten Testreihe in Abbildung \ref{abb:3domnorm} dargestellt und die Laufzeiten dazu in Abbildung \ref{abb:3domnormtime}.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/3dom_norm/plot.pdf}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/3dom_norm/plotrel.pdf}
+    \end{center}
+    \caption{
+        \label{abb:3domnorm}
+        Absolute (oben) und relative (unten) Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken
+        bei drei dominierenden Maschinen (normalverteilte Prozesszeiten).
+    }
+\end{figure}
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/3dom_norm/plottime.pdf}
+    \end{center}
+    \caption{
+        \label{abb:3domnormtime}
+        Laufzeiten der drei Heuristiken bei drei dominierenden Maschinen (normalverteilte Prozesszeiten).
+    }
+\end{figure}
+
+Die Laufzeiten der zweiten Testreihe unterscheiden nur marginal von denen der ersten, was zu erwarten war, 
+da die Laufzeiten der Heuristiken nicht von den Prozesszeiten abhängig sind.
+Die Kurven in Abbildung \ref{abb:3domnorm} unterscheiden sich im Verlauf kaum von denen in Abbildung \ref{abb:3dom}.
+Allerdings sind diese Kurven im Vergleich zur ersten Testreihe in etwa um den Faktor $2$ gestaucht.
+Die Resultate der Heuristiken unterscheiden sich hier also weniger.
+Das muss daran liegen, dass die Prozesszeiten (da sie normalverteilt sind) weniger unterschiedlich sind.
+Die beiden Non-Full-Schedule-Heuristiken ziehen daraus einen Vorteil, da sie nach eben diesem Prinzip vorgehen, möglichst ähnliche Prozesszeiten zu finden.
+Auch die Gilmore-Gomory-Heuristik profitiert davon, da beim (theoretischen) Wiederhochskalieren der Prozesszeiten der dritten dominierenden Maschine 
+nur vergleichsweise wenige Zykluszeiten mit vergrößert werden müssen.
+Und auch CPLEX kommt bei diesen Daten offenbar ebenfalls schneller zu besseren Schranken.
+
+Die dritte und letzte Testreihe wurde mit einem identischen Verfahren wie die zweite Testreihe generiert.
+Allerdings wurde der Erwartungswert der Prozesszeiten auf Maschine $M_3$ auf $\mu=30$ festgesetzt, also um $20$ weniger gegenüber $M_4$ und $M_5$.
+Ziel sollte es sein, dass $M_4$ und $M_5$ nicht dominierend sind, sondern nur eine geringe Semidominanz haben, 
+so dass die Vorzüge der Gilmore-Gomory-Heuristik zum Tragen kommen.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/2quasidom/plot.pdf}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/2quasidom/plotrel.pdf}
+    \end{center}
+    \caption{
+        \label{abb:2quasidom}
+        Absolute (oben) und relative (unten) Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken
+        bei zwei semidominierenden Maschinen (normalverteilte Prozesszeiten).
+    }
+\end{figure}
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/2quasidom/plottime.pdf}
+    \end{center}
+    \caption{
+        \label{abb:2quasidomtime}
+        Laufzeiten der drei Heuristiken bei zwei semidominierenden Maschinen (normalverteilte Prozesszeiten).
+    }
+\end{figure}
+
+Und tatsächlich bestätigen die Rechenergebnisse diese Vermutung, wie in Abbildung \ref{abb:2quasidom} zu sehen ist.
+Fast alle Heuristiken liefern bessere Ergebnisse als sie es bei den ersten beiden Testreihen tun (in der gleichen Zeit, s. Abbildung \ref{abb:2quasidomtime}).
+Simulated Annealing ist hier allerdings nicht mehr die beste Heuristik.
+Die besten Resultate liefern hier die Gilmore-Gomory-Heuristik, die die größte Verbesserung gegenüber den anderen Testreihen erfährt, 
+und die Non-Full-Schedule-Heuristik. Die Resultate von beiden sind nahezu identisch.
+Die Double Ended Non-Full-Schedule-Heuristik ist hier bei allen Instanzen schlechter als die Non-Full-Schedule-Heuristik, wenn auch nur um weniger als $1\%$
+bzw. bis zu $3\%$ bei sehr kleinen Instanzen.
+Bemerkenswert ist außerdem, dass die untere Schranke, die von CPLEX für Instanzen mit $n\leq 1500$ berechnet wurde,
+oft bis an die Ergebnisse der Gilmore-Gomory- und der Non-Full-Schedule-Heuristik heranreicht.
+Das bedeutet, dass die Resultate dieser beiden Heuristiken nahezu optimal sind.
+Andererseits sind die oberen Schranken von CPLEX vergleichsweise weit von den Resultaten der Heuristiken entfernt.
+Als Ausblick könnten diese Heuristiken daher in CPLEX integriert werden, um die oberen Schranken zu verbessern.
+
 
 
 \section{Zuweisung von Ressourcen}
@@ -451,10 +605,11 @@ Sollte ein Counter einmal negativ werden, gibt es keine zulässige Ressourcenzut
 
 
 \subsubsection{Zulässigkeit bei beliebigen Ressourcenteilmengen}
-Es ist nicht bekannt, ob das Problem, zu entscheiden, ob es bei gegebenem $\pi$ ein zulässiges Mapping $f$ gibt, 
-$\mathcal{NP}$-vollständiges ist oder ob es einen polynomiellen Algorithmus gibt.
+\label{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen}
+Es ist nicht bekannt, ob das Problem, zu entscheiden, ob es bei gegebenem $\pi$ und beliebigen Ressourcenmengen ein zulässiges Mapping $f$ gibt, 
+$\mathcal{NP}$-vollständig ist oder ob es einen polynomiellen Algorithmus gibt.
 
-Es besteht allerdings die Vermutung, dass zumindest einen polynomiellen Algorithmus in $n$ gibt. Ein Indiz für diese Vermutung liefert folgendes MIP:
+Es besteht allerdings die Vermutung, dass es zumindest bei konstantem $m$ einen polynomiellen Algorithmus in $n$ gibt. Ein Indiz für diese Vermutung liefert folgendes MIP:
 \begin{align}
     \text{max} \quad &0 \label{zulmip:obj} \\
     \text{s.t.}\quad \sum_{r\in\rho_i} x_{ir} &= 1 & i\in N \label{zulmip:1} \\
@@ -484,11 +639,28 @@ gegebene (beliebige) Ressourcenteilmengen $\rho_i$ möglich ist, allen Jobs eine
 
 \subsection{Optimierung der Ressourcenzuweisung}
 \label{subsec:OptimierungDerRessourcenzuweisung}
-\textit{Soll dieser Abschnitt noch Bestandteil der Arbeit sein? Wenn ja, dann werde ich mich da zwischendurch immer mal wieder dransetzen,
-bis eine Lösung gefunden ist. Ein echter Zeitplan ist hierfür schwierig.}
+Da unbekannt ist, ob das Finden \textit{irgendeiner} Ressourcenzuweisung $\mathcal{NP}$-schwer ist,
+ist es natürlich ebenfalls unbekannt, ob das Finden einer \textit{optimalen} Ressourcenzuweisung $\mathcal{NP}$-schwer ist.
 
-Bei hierarchischen oder beliebigen Jobgruppen eine optimale Zuweisung mit möglichst wenig Rüstkosten finden.
-Dazu (falls möglich) einen polynomiellen Algorithmus angeben bzw. einen Beweis zur $\mathcal{NP}$-Vollständigkeit.
+Eine Ausnahme bildet der Fall von disjunkten Ressourcenteilmengen $\rho_i$.
+Immer, wenn zwei Jobs aus einer Familie im Abstand $m$ aufeinander folgen, kann ihnen dieselbe Ressource zugewiesen werden.
+Wenn zwei Jobs im Abstand $m$ nicht zur selben Familie gehören, gibt es auch keine Möglichkeit, Rüstkosten zu vermeiden oder zu verringern.
+
+Für den allgemeinen Fall lässt sich das MIP aus Unterabschnitt \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen} erweitern:
+\begin{align}
+    \text{max} \quad \sum_{i=m}^n\sum_{r\in\rho_i\cap\rho_{i-m}} &y_{ir} \label{optmip:obj} \\
+    \text{s.t.}\quad \sum_{r\in\rho_i} x_{ir} &= 1 & i\in N \label{optmip:1} \\
+    x_{ir} + x_{jr} &\leq 1 & i\in N, j=i+1,\ldots,i+m-1 \, ,r\in\rho_i\cap\rho_j \label{optmip:2} \\
+    y_{ir} &\leq x_{ir} & i=m,\ldots,n \, ,r\in\rho_i\cap\rho_{i-m} \label{optmip:3}\\
+    y_{ir} &\leq x_{i-m,r} & i=m,\ldots,n \, ,r\in\rho_i\cap\rho_{i-m} \label{optmip:4}\\
+    x_{ir} &\in \{0,1\} & i\in N, r\in\rho_i \\
+    y_{ir} &\in \{0,1\} & i=m,\ldots,n \, ,r\in\rho_i\cap\rho_{i-m}
+\end{align}
+Für die Binärvariablen $y_{ir}$ gilt $y_{ir}=1$ genau dann, wenn den Jobs an den Positionen $i$ und $i-m$ die selbe Ressource $r$ zugeteilt ist.
+Diese Eigenschaft wird durch die Nebenbedingungen \ref{optmip:3} und \ref{optmip:4} erzwungen.
+In der Zielfunktion \ref{optmip:obj} wird daher die Anzahl der $y$-Variablen, die auf $1$ gesetzt sind, maximiert, da so die wenigsten Rüstkosten auftreten.
+Dieses MIP liefert genau wie jenes aus \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen} in weniger als einer Sekunde auch für sehr große Instanzen eine Lösung.
+Dieser Umstand lässt vermuten, dass auch das Optimierungsproblem der Ressourcenzuteilung in polynomieller Zeit lösbar ist.
 
 \section{Unzulässige Reihenfolgen}
 \label{UnzulaessigeReihenfolgen}
@@ -498,7 +670,7 @@ Für den Fall, dass für eine gegebene Reihenfolge $\pi$ kein zulässiges Mappin
 
 \textit{Anfang August hiermit anfangen.}
 
-Nachbarschaftenssuchen formulieren, die eine unzulässige Reihenfolge reparieren, so dass sie dann zulässig ist.
+Nachbarschaftssuchen formulieren, die eine unzulässige Reihenfolge reparieren, so dass sie dann zulässig ist.
 Dabei soll die Reihenfolge möglichst wenig von ihrer Optimalität einbüßen.
 
 \subsection{Andere Ansätze}
@@ -509,8 +681,22 @@ Platzhalter, falls noch andere Ideen aufkommen.
 
 
 
-\chapter{2. Dekompositionsansatz}
+\chapter{Der zweite Dekompositionsansatz}
+In diesem Kapitel wird der zweite Dekompositionsansatz vorgestellt.
+Hierbei wird erst jedem Job eine Ressource zugewiesen, also ein Mapping $f$ erzeugt,
+und anschließend werden die Jobs in eine Reihenfolge $\pi$ gebracht.
+Neben der reinen Ressourcenzuteilung wird im ersten Schritt auch teilweise schon festgelegt, welche Jobs in der späteren Reihenfolge einen Abstand von $m$ haben sollen.
+So wird sichergestellt, dass die durch das Mapping $f$ vorgeschriebenen Ressourcenzuteilungen auch dazu führen, dass Rüstkosten eingespart werden.
+
+In Abschnitt \ref{sec:Ressourcenzuweisung} wird erklärt, wie ein optimales Mapping $f$ mit möglichst wenigen Rüstkosten mit einem Binpacking-Ansatz erstellt werden kann.
+Im nächsten Abschnitt \ref{sec:ZulaessigkeitDerZuweisung} wird diskutiert, ob das in Abschnitt \ref{sec:Ressourcenzuweisung} beschriebene Verfahren
+auch unzulässige Mappings erzeugen kann bzw. wie diese Situation verhindert oder behoben werden kann.
+Anschließend wird in Abschnitt \ref{sed:AnordnungDerJobgruppen} beschrieben, wie basierend auf dem gegebenen Mapping $f$ eine Reihenfolge $\pi$ erstellt wird,
+so dass die Summe der Zykluszeiten ($C_{\max}$) minimal ist.
+
+
 \section{Ressourcenzuweisung}
+\label{sec:Ressourcenzuweisung}
 \textit{Dieser Abschnitt muss auch nur noch ausformuliert werden.}
 
 Generell auf bekannte Laufzeitschranken und Verfahren für die Ressourcenzuweisung kurz eingehen.
@@ -518,6 +704,7 @@ Davon speziell erklären, wie mit Binpacking eine minimale Anzahl an Rüstkosten
 
 
 \section{Zulässigkeit der Zuweisung}
+\label{sec:ZulaessigkeitDerZuweisung}
 \textit{Bis Mitte Juli sollte die Lösung hier erarbeitet sein.}
 
 Folgende Fragen diskutieren und idealer Weise beweisen:
@@ -525,6 +712,7 @@ Gibt es unzulässige Lösungen beim Binpacking? Wenn ja, wie lassen sie sich rep
 
 
 \section{Anordnung der Jobgruppen}
+\label{sec:AnordnungDerJobgruppen}
 \subsection{MIP mit fixierten Bins}
 Vorstellung des MIPs mit fixierten Bins mit $s_{fg}=s$. Vorstellung einiger Laufzeiten. 
 \textit{MIP steht. Evtl müssen noch einige Laufzeiten gemessen werden.}
@@ -547,11 +735,18 @@ Um nicht sämtliche Binreihenfolgen durchprobieren zu müssen,
 ggf. mit bipartitem gewichteten Matching ein lokales Optimum zwischen zwei Bins suchen und daraus eine "`gute"' Binreihenfolge erstellen.
 
 
-\chapter{Messergebnisse und Vergleiche}
+\chapter{Rechenergebnisse und Vergleiche}
 \textit{Anfang September anfangen, soweit Messergebnisse vorliegen.}
 
 Obwohl in den vorherigen Kapiteln schon einige Laufzeiten vorgestellt werden, hier nochmal eine Zusammenfassung und insbesondere ein Vergleich
 zwischen den beiden Dekompositionsansätzen. Sowohl echte Instanzen als auch generierte. 
 Dabei ggf. auf Methoden zur Instanzengenerierung eingehen und diese bewerten?
+
+
+
+\newpage
+\bibliographystyle{alphadin}
+\bibliography{quellen}
+
 
 \end{document}

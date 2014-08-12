@@ -1,0 +1,303 @@
+
+Welcome to IBM(R) ILOG(R) CPLEX(R) Interactive Optimizer 12.6.0.0
+  with Simplex, Mixed Integer & Barrier Optimizers
+5725-A06 5725-A29 5724-Y48 5724-Y49 5724-Y54 5724-Y55 5655-Y21
+Copyright IBM Corp. 1988, 2013.  All Rights Reserved.
+
+Type 'help' for a list of available commands.
+Type 'help' followed by a command name for more
+information on commands.
+
+CPLEX> Problem 'fine_planning_binfix.lp' read.
+Read time = 0.01 sec. (0.09 ticks)
+CPLEX> Priority order 'fine_planning_binfix.ord' read.
+CPLEX> New value for time limit in seconds: 600
+CPLEX> Tried aggregator 2 times.
+MIP Presolve eliminated 54 rows and 0 columns.
+MIP Presolve modified 2380 coefficients.
+Aggregator did 37 substitutions.
+Reduced MIP has 686 rows, 300 columns, and 3114 nonzeros.
+Reduced MIP has 241 binaries, 0 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.01 sec. (4.51 ticks)
+Found incumbent of value 1618.820000 after 0.01 sec. (5.54 ticks)
+Probing time = 0.00 sec. (0.84 ticks)
+Tried aggregator 1 time.
+MIP Presolve eliminated 8 rows and 4 columns.
+Reduced MIP has 678 rows, 296 columns, and 3086 nonzeros.
+Reduced MIP has 237 binaries, 59 generals, 0 SOSs, and 0 indicators.
+Presolve time = 0.00 sec. (2.26 ticks)
+Probing time = 0.00 sec. (0.79 ticks)
+Clique table members: 870.
+MIP emphasis: balance optimality and feasibility.
+MIP search method: dynamic search.
+Parallel mode: deterministic, using up to 8 threads.
+Root relaxation solution time = 0.00 sec. (4.02 ticks)
+
+        Nodes                                         Cuts/
+   Node  Left     Objective  IInf  Best Integer    Best Bound    ItCnt     Gap
+
+*     0+    0                         1618.8200       73.9800      181   95.43%
+*     0+    0                         1561.3100       73.9800      181   95.26%
+      0     0       89.3857   123     1561.3100       89.3857      181   94.27%
+      0     0      370.8299   156     1561.3100     Cuts: 269      480   76.25%
+      0     0      458.9288   161     1561.3100     Cuts: 269      710   70.61%
+      0     0      467.9402   172     1561.3100     Cuts: 269      857   70.03%
+      0     0      470.3898   186     1561.3100     Cuts: 150     1053   69.87%
+*     0+    0                         1535.8100      470.3898     1189   69.37%
+      0     0      475.4777   185     1535.8100      Cuts: 64     1189   69.04%
+      0     0      483.6108   191     1535.8100     Cuts: 174     1332   68.51%
+      0     0      492.0239   196     1535.8100     Cuts: 125     1400   67.96%
+      0     0      495.0948   203     1535.8100     Cuts: 102     1460   67.76%
+      0     0      499.2664   217     1535.8100      Cuts: 68     1532   67.49%
+      0     0      506.2007   219     1535.8100      Cuts: 65     1597   67.04%
+      0     0      507.3359   218     1535.8100      Cuts: 62     1623   66.97%
+      0     0      512.4748   215     1535.8100      Cuts: 37     1661   66.63%
+      0     0      513.4752   222     1535.8100     Cuts: 100     1709   66.57%
+      0     0      513.9360   218     1535.8100      Cuts: 50     1766   66.54%
+      0     0      514.4103   217     1535.8100      Cuts: 49     1858   66.51%
+      0     0      515.4226   235     1535.8100     Cuts: 154     1952   66.44%
+      0     0      517.8080   225     1535.8100      Cuts: 50     1993   66.28%
+*     0+    0                         1535.0000      517.8080     2040   66.27%
+      0     0      518.7506   223     1535.0000      Cuts: 91     2040   61.31%
+      0     0      519.0813   208     1535.0000      Cuts: 28     2072   61.31%
+      0     2      519.0813   208     1535.0000      703.1238     2072   54.19%
+Elapsed time = 0.41 sec. (249.72 ticks, tree = 0.01 MB, solutions = 4)
+   1973  1374     1011.5416    98     1535.0000      843.1478    48081   45.07%
+*  3650+ 1601                         1534.3900      920.2045    81456   40.03%
+   3650  1602      676.4191   245     1534.3900      920.2045    82807   40.03%
+   4560  1404     1159.7201    61     1534.3900      958.1962   111943   37.55%
+   6126  1526     1365.0467    16     1534.3900     1052.9014   158287   31.38%
+   7936  2368     1357.7188    24     1534.3900     1121.5738   205306   26.90%
+   9652  3104     1308.1954    59     1534.3900     1156.4120   251625   24.63%
+  11012  3615     1252.8125    70     1534.3900     1181.8674   297387   22.97%
+  12379  4091     1377.9136    56     1534.3900     1204.8594   342801   21.48%
+  13717  4530     1231.7375    68     1534.3900     1218.2210   387061   20.61%
+  19263  5828     1415.9167    39     1534.3900     1250.0612   562899   18.53%
+Elapsed time = 6.16 sec. (4003.50 ticks, tree = 2.59 MB, solutions = 5)
+  25102  6771        cutoff           1534.3900     1270.1644   739348   17.22%
+  31086  7396     1405.2875    29     1534.3900     1290.0373   914427   15.93%
+  37308  7712     1414.4214    31     1534.3900     1305.3123  1087190   14.93%
+  43516  7798        cutoff           1534.3900     1323.9649  1252643   13.71%
+  49850  7318     1474.1328    31     1534.3900     1348.4663  1419992   12.12%
+  57084  5572     1505.6571    28     1534.3900     1391.9191  1604076    9.29%
+  67415   542        cutoff           1534.3900     1493.0433  1775110    2.69%
+
+GUB cover cuts applied:  16
+Clique cuts applied:  29
+Cover cuts applied:  294
+Implied bound cuts applied:  5
+Flow cuts applied:  47
+Mixed integer rounding cuts applied:  100
+Zero-half cuts applied:  82
+Lift and project cuts applied:  10
+Gomory fractional cuts applied:  16
+
+Root node processing (before b&c):
+  Real time             =    0.40 sec. (249.21 ticks)
+Parallel b&c, 8 threads:
+  Real time             =   16.69 sec. (10472.18 ticks)
+  Sync time (average)   =    1.45 sec.
+  Wait time (average)   =    0.00 sec.
+                          ------------
+Total (root+branch&cut) =   17.10 sec. (10721.39 ticks)
+
+Solution pool: 5 solutions saved.
+
+MIP - Integer optimal, tolerance (0.0001/1e-06):  Objective =  1.5343900000e+03
+Current MIP best bound =  1.5343149030e+03 (gap = 0.075097, 0.00%)
+Solution time =   17.10 sec.  Iterations = 1777669  Nodes = 68079 (5)
+Deterministic time = 10721.39 ticks  (626.98 ticks/sec)
+
+CPLEX> Incumbent solution
+Variable Name           Solution Value
+overlay#1#7                  32.000000
+overlay#2#13                 12.000000
+overlay#2#19                  2.000000
+overlay#3#19                 57.000000
+overlay#4#6                  66.000000
+overlay#4#8                  12.000000
+overlay#5#1                  32.000000
+overlay#5#6                  34.000000
+overlay#6#7                  23.000000
+overlay#6#12                 77.000000
+overlay#7#3                  56.000000
+overlay#8#12                 11.000000
+overlay#9#4                  52.000000
+overlay#10#14                75.000000
+overlay#11#14                14.000000
+overlay#11#18                16.000000
+overlay#11#22                 3.000000
+overlay#12#2                 14.000000
+overlay#12#3                  1.000000
+overlay#12#20                73.000000
+overlay#13#10                75.000000
+overlay#13#11                10.000000
+overlay#14#9                 52.000000
+overlay#14#15                37.000000
+overlay#15#4                 26.000000
+overlay#15#5                 20.000000
+overlay#16#5                 34.000000
+overlay#17#5                 12.000000
+overlay#18#15                 6.000000
+overlay#18#16                34.000000
+overlay#18#17                12.000000
+overlay#19#11                23.000000
+overlay#19#21                36.000000
+overlay#20#13                73.000000
+overlay#21#18                36.000000
+overlay#22#15                 3.000000
+before#1#6                    1.000000
+before#1#8                    1.000000
+before#3#2                    1.000000
+before#2#20                   1.000000
+before#3#20                   1.000000
+before#5#4                    1.000000
+before#6#8                    1.000000
+before#7#12                   1.000000
+before#15#9                   1.000000
+before#16#9                   1.000000
+before#17#9                   1.000000
+before#11#10                  1.000000
+before#21#10                  1.000000
+before#21#11                  1.000000
+before#19#13                  1.000000
+before#18#14                  1.000000
+before#22#14                  1.000000
+before#16#15                  1.000000
+before#17#15                  1.000000
+before#16#17                  1.000000
+before#18#22                  1.000000
+y#1#4                         1.000000
+y#1#5                         1.000000
+y#2#13                        1.000000
+y#3#7                         1.000000
+y#3#12                        1.000000
+y#3#13                        1.000000
+y#3#19                        1.000000
+y#4#8                         1.000000
+y#4#9                         1.000000
+y#5#1                         1.000000
+y#5#6                         1.000000
+y#5#8                         1.000000
+y#5#9                         1.000000
+y#5#15                        1.000000
+y#5#16                        1.000000
+y#5#17                        1.000000
+y#6#4                         1.000000
+y#7#2                         1.000000
+y#7#3                         1.000000
+y#7#20                        1.000000
+y#11#13                       1.000000
+y#11#14                       1.000000
+y#11#22                       1.000000
+y#12#2                        1.000000
+y#12#20                       1.000000
+y#13#10                       1.000000
+y#13#20                       1.000000
+y#14#9                        1.000000
+y#14#10                       1.000000
+y#15#4                        1.000000
+y#15#14                       1.000000
+y#15#22                       1.000000
+y#16#4                        1.000000
+y#16#5                        1.000000
+y#16#14                       1.000000
+y#16#18                       1.000000
+y#16#22                       1.000000
+y#17#4                        1.000000
+y#17#14                       1.000000
+y#17#22                       1.000000
+y#18#9                        1.000000
+y#18#10                       1.000000
+y#18#11                       1.000000
+y#18#15                       1.000000
+y#18#16                       1.000000
+y#18#17                       1.000000
+y#18#21                       1.000000
+y#19#2                        1.000000
+y#19#3                        1.000000
+y#19#10                       1.000000
+y#19#11                       1.000000
+y#19#20                       1.000000
+y#19#21                       1.000000
+y#21#13                       1.000000
+y#21#14                       1.000000
+y#21#18                       1.000000
+y#21#19                       1.000000
+y#21#22                       1.000000
+y#22#9                        1.000000
+y#22#10                       1.000000
+y#1#12                        1.000000
+y#6#12                        1.000000
+y#7#1                         1.000000
+y#7#6                         1.000000
+y#7#8                         1.000000
+y#12#8                        1.000000
+z#2#7                         1.000000
+z#2#19                        1.000000
+z#3#7                         1.000000
+z#4#1                         1.000000
+z#4#6                         1.000000
+z#4#8                         1.000000
+z#4#9                         1.000000
+z#4#15                        1.000000
+z#4#16                        1.000000
+z#4#17                        1.000000
+z#5#1                         1.000000
+z#5#16                        1.000000
+z#5#17                        1.000000
+z#6#5                         1.000000
+z#8#4                         1.000000
+z#8#5                         1.000000
+z#9#4                         1.000000
+z#9#5                         1.000000
+z#9#14                        1.000000
+z#9#18                        1.000000
+z#9#22                        1.000000
+z#10#13                       1.000000
+z#10#14                       1.000000
+z#10#18                       1.000000
+z#10#19                       1.000000
+z#10#22                       1.000000
+z#11#18                       1.000000
+z#11#19                       1.000000
+z#11#22                       1.000000
+z#12#2                        1.000000
+z#12#3                        1.000000
+z#12#20                       1.000000
+z#13#2                        1.000000
+z#13#3                        1.000000
+z#13#10                       1.000000
+z#13#11                       1.000000
+z#13#20                       1.000000
+z#13#21                       1.000000
+z#14#9                        1.000000
+z#14#10                       1.000000
+z#14#11                       1.000000
+z#14#15                       1.000000
+z#14#16                       1.000000
+z#14#17                       1.000000
+z#14#21                       1.000000
+z#15#5                        1.000000
+z#15#18                       1.000000
+z#15#22                       1.000000
+z#18#16                       1.000000
+z#18#17                       1.000000
+z#18#21                       1.000000
+z#19#3                        1.000000
+z#19#21                       1.000000
+z#20#7                        1.000000
+z#20#12                       1.000000
+z#20#13                       1.000000
+z#20#19                       1.000000
+z#22#16                       1.000000
+z#22#17                       1.000000
+z#22#21                       1.000000
+z#6#7                         1.000000
+z#8#7                         1.000000
+z#8#12                        1.000000
+z#7#1                         1.000000
+z#12#1                        1.000000
+z#12#6                        1.000000
+All other variables matching '*' are 0.
+CPLEX> 

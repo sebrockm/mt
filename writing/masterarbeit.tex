@@ -691,31 +691,126 @@ So wird sichergestellt, dass die durch das Mapping $f$ vorgeschriebenen Ressourc
 In Abschnitt \ref{sec:Ressourcenzuweisung} wird erklärt, wie ein optimales Mapping $f$ mit möglichst wenigen Rüstkosten mit einem Binpacking-Ansatz erstellt werden kann.
 Im nächsten Abschnitt \ref{sec:ZulaessigkeitDerZuweisung} wird diskutiert, ob das in Abschnitt \ref{sec:Ressourcenzuweisung} beschriebene Verfahren
 auch unzulässige Mappings erzeugen kann bzw. wie diese Situation verhindert oder behoben werden kann.
-Anschließend wird in Abschnitt \ref{sed:AnordnungDerJobgruppen} beschrieben, wie basierend auf dem gegebenen Mapping $f$ eine Reihenfolge $\pi$ erstellt wird,
+Anschließend wird in Abschnitt \ref{sec:AnordnungDerJobgruppen} beschrieben, wie basierend auf dem gegebenen Mapping $f$ eine Reihenfolge $\pi$ erstellt wird,
 so dass die Summe der Zykluszeiten ($C_{\max}$) minimal ist.
 
 
 \section{Ressourcenzuweisung}
 \label{sec:Ressourcenzuweisung}
-\textit{Dieser Abschnitt muss auch nur noch ausformuliert werden.}
+In diesem Abschnitt wird die Konstruktion des Mappings $f$ erläutert.
+Je nachdem, ob die Rüstkosten von beiden, Vorgänger- und Nachfolgerjobgruppe, nur vom Nachfolger oder von keinem von beiden abhängt, also konstant ist,
+sind unterschiedliche Verfahren bekannt.
+Im ersten Unterabschnitt \ref{subsec:BekannteLaufzeitschrankenUndVerfahren} werden zunächst bekannte Laufzeitschranken und die zugehörigen Verfahren 
+für die einzelnen Fälle kurz aufgezählt.
+Anschließend wird in Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} auf den Spezialfall $s_{fg}=s$, der mit einem Binpackingansatz gelöst werden kann,
+eingegangen.
 
-Generell auf bekannte Laufzeitschranken und Verfahren für die Ressourcenzuweisung kurz eingehen.
-Davon speziell erklären, wie mit Binpacking eine minimale Anzahl an Rüstkosten erreicht werden kann für $s_{fg}=s$.
+In realen Anwendungsfällen ist es in häufig nicht der Fall, dass bei $n$ zu produzierenden Jobs alle $n$ Jobs unterschiedlich sind,
+d.h. unterschiedliche Prozesszeiten und Ressourcen haben.
+Stattdessen bietet ein Produzent eine gewisse Anzahl unterschiedlicher Güter an und ein Käufer gibt mehrere identische Güter auf einmal in Auftrag.
+Im Folgenden ist daher von \textit{Jobgruppen} die Rede, wobei eine Jobgruppe $g$ aus $n_g\in\mathbb{N}$ identischen Jobs besteht.
+$n_g$ istalso die Größe einer Jobgruppe $g$.
+Die Anzahl der Jobgruppen wird mit $\tilde{n}$ bezeichnet.
+Für dei Gesamtanzahl an Jobs gilt dann $n = \sum_{g=1}^{\tilde{n}} n_g$.
+
+\subsection{Bekannte Laufzeitschranken und Verfahren}
+\label{subsec:BekannteLaufzeitschrankenUndVerfahren}
+
+\subsection{Ressourcenzuweisung mit Binpacking}
+\label{subsec:RessourcenzuweisungMitBinpacking}
+Bei $\tilde{n}$ gegebenen Jobgruppen, wobei alle Jobs aus einer Gruppe die gleichen Ressourcen verwenden können,
+ist es naheliegend, die Jobs einer Gruppe immer im Abstand von $m$ in die Anlage einzulegen.
+Auf diese Weise muss die Ressource in der entsprechenden Station so lange nicht ausgetauscht werden,
+bis alle Jobs aus einer Jobgruppe fertiggestellt worden sind.
+Erst danach, wenn Jobs aus einer anderen Gruppe eingelegt werden, muss einmalig die Ressource gewechselt werden,
+so dass nur dann Rüstkosten auftreten.
+Dabei soll zunächst nur der Spezialfall $s_{fg}=s$ betrachtet werden.
+
+O.B.d.A. sei $n$ ein Vielfaches von $m$, denn andernfalls kann eine weitere "`Dummy"'-Jobgruppe $g_d$ konstruiert werden,
+deren Jobs die Prozesszeiten $0$ haben und die genau so groß ist, dass $n+n_{g_d}$ ein Vielfaches von $m$ ist.
+Bei $\tilde{n}$ gegebenen Jobgruppen mit den Größen $n_g, \, g=1,\ldots,\tilde{n}$ ist das Ziel,
+die Jobgruppen in $m$ gleichgroße Teilmengen zu unterteilen.
+Dieses Problem lässt sich als Binpacking-Instanz betrachten, wobei entschieden werden muss, ob $\tilde{n}$ Items 
+mit den Größen $n_g, \, g=1,\ldots,\tilde{n}$ in $m$ Bins der Größe $\frac{n}{m}$ untergebracht werden können.
+Für den Fall, dass es möglich ist, müssen noch die Bins den Stationen der Anlage zugeordnet werden und die Reihenfolge
+der Jobgruppen in jedem Bin muss so bestimmt werden, dass die Zykluszeiten minimiert werden.
+Dies wird in Abschnitt \ref{sec:AnordnungDerJobgruppen} beschrieben.
+Falls dies nicht möglich ist, bedeutet das, dass mindestens eine der Jobgruppen aufgeteilt werden muss auf zwei Bins,
+so dass ein weiteres Mal Rüstkosten auftreten.
+Um herauszufinden, welche Jobgruppe geteilt werden muss und wie groß die beiden Hälften sein müssen,
+wird eine weitere Binpacking-Instanz gelöst, die bis auf eine Änderung identisch zur vorherigen ist:
+Es gibt nicht mehr $m$ Bins, sondern nur noch $m-1$ und einer dieser Bins hat die Größe $2\frac{n}{m}$ (alle anderen haben weiterhin die Größe $\frac{n}{m}$).
+Wenn hier eine Aufteilung möglich ist, kann der Bin mit doppelter Größe wieder halbiert werden,
+wobei dann eine der Jobgruppen in ihm auch geteilt werden muss wie in Abbildung \ref{abb:binhalb} veranschaulicht.
+Sollte auch hier keine Lösung möglich sein, muss eine weitere Jobgruppe geteilt werden.
+Dazu wird wiederum eine neue Binpacking-Instanz erzeugt.
+Abbildung \ref{abb:binpart} zeigt, wie die Bingrößen in den weiteren Instanzen aussehen.
+Es handelt sich dabei um die \textit{ungeordnete Zahlenpartition} von $m$.
+Spätestens bei der Binpacking-Instanz, die nur noch einen Bin enthält mit der Größe $n$, gibt es eine Lösung,
+bei der dann $m$ Jobgruppen aufgeteilt werden müssen, so dass $m$ weitere Ressourcenwechsel und damit Rüstkosten auftreten.
+
+Das Binpacking-Problem ist zwar $\mathcal{NP}$-vollständig, da aber sowohl die Anzahl der Bins $m$ 
+als auch die Anzahl der Items bzw. Jobgruppen $\tilde{n}$ meist relativ klein sind (meist deutlich kleiner als die Anzahl Jobs $n$),
+lässt sich das Problem, die Jobgruppen den Bins zuzuordnen und ggf. geeignete Jobgruppen zu finden, die aufgeteilt werden müssen, 
+trotzdem in hinnehmbarer Zeit mit folgendem MIP lösen: 
+\begin{align}
+    \text{max} \quad &0 \\
+    \text{s.t.}\quad \sum_{j=1}^{m'} x_{gj} &= 1 &g=1,\ldots,\tilde{n}\\
+    \sum_{g=1}^{\tilde{n}} n_g x_{gj} &= B_j &j=1,\ldots,m' \\
+    x_{gj} &\in \{0,1\} &g=1,\ldots,\tilde{n}, \, j=1,\ldots,m'
+\end{align}
+Für die Binärvariablen $x_{gj}$ gilt: $x_{gj}=1$ genau dann, wenn Jobgruppe $g$ in Bin $j$ ist.
+Die erste Nebenbedingung fordert, dass jede Jobgruppe in genau einem Bin ist 
+und die Zweite Nebenbedingung verlangt, dass jeder Bin exakt gefüllt ist.
+Dabei sind $B_j$ die Größen der Bins, die zusammen mit der Anzahl der Bins $m'$ mit jedem Aufruf einer Zahlenpartition von $m$ entsprechen.
+In Abbildung \ref{abb:binzeit} sind die Laufzeiten dieses MIPs aufgetragen.
+Dabei wurde das MIP in ZIMPL formuliert und mit CPLEX gelöst.
+Die Partitionen von $m$ wurden der Reihenfolge nach (vgl. Abbildung \ref{binpart}) mit kleiner werdendem $m'$ durchlaufen,
+bis eine zulässige Aufteilung gefunden wurde.
 
 
-\section{Zulässigkeit der Zuweisung}
-\label{sec:ZulaessigkeitDerZuweisung}
-\textit{Bis Mitte Juli sollte die Lösung hier erarbeitet sein.}
+\subsection{Zulässigkeit der Zuweisung}
+\label{subsec:ZulaessigkeitDerZuweisung}
+In Unterabschnitt \ref{subsec:RessourcenZuweisungMitBinpacking} wurde erläutert, wie Jobs bzw. Jobgruppen so angeordnet werden können,
+dass möglichst selten eine Ressource gewechselt werden muss, was Rüstkosten verursacht.
+Es wurde allerdings davon ausgegangen, dass immer genug Ressourcen vorhanden sind,
+d.h. es wurde nur optimiert, ohne zu beachten, ob diese Zuweisung von Ressourcen überhaupt zulässig ist.
+Die drei Fälle, wie die Ressourcen verteilt sein können (disjunkt, hierarchisch, beliebig) sollen hier deshalb diskutiert werden.
 
-Folgende Fragen diskutieren und idealer Weise beweisen:
-Gibt es unzulässige Lösungen beim Binpacking? Wenn ja, wie lassen sie sich reparieren?
+\subsubsection{Zulässigkeit bei disjunkten Ressourcenmengen}
+O.B.d.A. kann davon ausgegangen werden, dass es für jede Jobgruppe mindestens eine zulässige Ressource gibt.
+Andernfalls könnten diese Jobs niemals produziert werden.
+Eine Jobgruppe, die nicht geteilt wird, benötigt auch nie mehr als eine Ressource.
+Es muss also nur der Fall betrachtet werden, dass es für eine Jobgruppe, die geteilt wird, nur eine Ressource gibt.
+Sei $g$ diese Gruppe.
+
+Falls $n_g > \frac{n}{m}$, muss $g$ in jedem Fall geteilt werden.
+Bei jeder möglichen Konstellation der Anzahl und Größen der Teilgruppen von $g$ gibt es immer mindestens einen Zeitpunkt,
+an dem zwei Jobs von $g$ gleichzeitig in der Anlage sind, was nicht möglich ist, da es nur eine Ressource gibt.
+Dieser Fall ist also definitiv nicht zulässig, unabhängig von der Art der Zuteilung der Ressourcen.
+
+Falls andererseits $n_g \leq \frac{n}{m}$, ist es immer möglich, die beiden Teilgruppen, die aus $g$ hervorgehen,
+so in den Bins anzuordnen, dass niemals zwei Jobs aus $g$ zur gleichen Zeit in der Anlage sind (vgl. Abbildung \ref{abb:blabla}).
+Dies muss allerdings als zusätzliche Bedingung an die nachfolgenden Verfahren, die $C_{\max}$ minimieren (s. Abschnitt \ref{sec:AnordnungDerJobgruppen}),
+übergeben werden, da es dort sonst vorkommen kann, dass die beiden Teilgruppen von $g$ dort "`nebeneinander"' angeordnet werden,
+so dass mindestens zwei Jobs aus $g$ zur gleichen Zeit in der Anlage wären.
+
+\subsubsection{Zulässigkeit bei hierarchischen Ressourcenmengen}
+
+
+\subsubsection{Zulässigkeit bei beliebigen Ressourcenmengen}
 
 
 \section{Anordnung der Jobgruppen}
 \label{sec:AnordnungDerJobgruppen}
+In diesem Abschnitt werden Verfahren zur Anordnung der Jobgruppen in den Bins einerseits und
+zum Anordnen der Bins untereinander andererseits vorgestellt.
+Ziel ist es dabei, $C_{\max}$ zu minimieren, ohne die Jobgruppen zu teilen und somit die bereits minimierten Rüstkosten zu verändern.
+
+
+
 \subsection{MIP mit fixierten Bins}
-Vorstellung des MIPs mit fixierten Bins mit $s_{fg}=s$. Vorstellung einiger Laufzeiten. 
-\textit{MIP steht. Evtl müssen noch einige Laufzeiten gemessen werden.}
+
 
 Außerdem die erweiterte Formulierung auf allgemeine $s_{fg}$ und Diskussion.
 \textit{MIP sollte bis Ende Juli formuliert und Laufzeiten gemessen sein.}
@@ -728,7 +823,7 @@ Vorstellung des MIPs mit freien Bins.
 Die Laufzeit ist sehr viel schlechter, die primale Lösung ist aber meist schon nach kurzer Zeit besser als beim MIP mit fixierten Bins.
 
 \subsection{Mehrere fixierte Reihenfolgen}
-\textit{Jetzt damit anfangen. Wahrscheinlich bis Mitte August.}
+\textit{Jetzt damit anfangen. Wahrscheinlich bis Ende August.}
 
 Basierend auf den Erkenntnissen aus \ref{subsec:mipfreibins} das MIP mit fixierten Bins für mehrere Binreihenfolgen laufen lassen.
 Um nicht sämtliche Binreihenfolgen durchprobieren zu müssen,

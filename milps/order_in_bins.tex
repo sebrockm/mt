@@ -43,41 +43,22 @@ Variablen\\
 %
 %\begin{figure}[ht]
 \begin{align}
-    \text{min}\quad \sum_{b\in M}\sum_{\substack{i\in N_b\\j\in N_b^*}} 
-            &\max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
-    \text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in N, j\in N_{b_i}, i<j 
+    \text{min}\quad &\sum_{b\in M}\sum_{\substack{i\in N_b\\j\in N_b^*}} 
+            \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
+    \text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in N, j\in N_{b_i} 
             \label{con:reflex}\\
-    x_{ij} + x_{jk} &\leq x_{ik} + 1 
-            &i\in N, j\!,\!k\in N_{b_i},i\neq j\!,\!k ,j\neq k 
+    x_{ij} + x_{jk} &\leq x_{ik} + 1 &i\in N,\,\, j,k\in N_{b_i} 
             \label{con:transitiv} \\
     s_i &= \sum_{\substack{j\in N_{b_i}\\i\neq j}} g_j x_{ji} &i\in N 
             \label{con:start} \\
-    My_{ij} &\ge (s_j+g_j-s_i) \notag\\
-            &\phantom{=} - (s_i+g_i-s_j) &i\in N, b_i<m, j\in N_{b_i}^* 
-            \label{con:y1} \\
-    My_{ij} &\ge (s_j-1+g_j-s_i) \notag\\
-            &\phantom{=} - (s_i+g_i-s_j+1) &i\in N_m, j\in N_m^*
-            \label{con:y2} \\
-    \tilde{o}_{ij} &\ge s_i+g_i - s_j \notag\\
-                   &\phantom{=} - M(1-y_{ij}) &i\in N, b_i<m, j\in 
-                    N_{b_i}^* \label{con:maxij1} \\
-    \tilde{o}_{ij} &\ge s_i+g_i - s_j+1 \notag\\
-                   &\phantom{=} - M(1-y_{ij}) &i\in N_m, j\in N_m^* 
-                    \label{con:maxij2} \\
-    \tilde{o}_{ij} &\ge s_j+g_j - s_i - My_{ij} &i\in N, b_i<m, j\in 
-                    N_{b_i}^* \label{con:maxji1} \\
-    \tilde{o}_{ij} &\ge s_j-1+g_j \notag\\
-                   &\phantom{=} - s_i - My_{ij} &i\in N_m, j\in N_m^* 
-                    \label{con:maxji2} \\
-    Mz_{ij} &\ge \tilde{o}_{ij} - \min\{g_i,g_j\} &i\in N, j\in N_{b_i}^* 
-                    \label{con:z} \\
-    o_{ij} &\ge \min\{g_i,g_j\} \notag\\
-           &\phantom{=} - M(1-z_{ij}) &i\in N, j\in N_{b_i}^* 
-                    \label{con:overlay1} \\
-    o_{ij} &\ge \tilde{o}_{ij} - Mz_{ij} &i\in N, j\in N_{b_i}^*
-                    \label{con:overlay2} \\
-    0 &\leq o_{ij} \leq B &i\in N, j\in N_{b_i}^* \label{con:range} \\
-    0 &\leq \tilde{o}_{ij} &i\in N, j\in N_{b_i}^* \label{con:range2}
+    My_{ij} &\geq s_j - s_i + \sigma_{ij}+ \epsilon &i\in N, j\in N^*_{b_i} \\
+    M(1-y_{ij}) &\geq s_i - s_j - \sigma_{ij} &i\in N, j\in N^*_{b_i} \\
+    Mz_{ij} &\geq s_i + g_i - s_j - g_j - \sigma_{ij} + \epsilon &i\in N, j\in N^*_{b_i} \\
+    M(1-z_{ij}) &\geq s_j + g_j- s_i - g_i + \sigma_{ij} + \epsilon &i\in N, j\in N^*_{b_i} \\
+    o_{ij} &\geq s_i + g_i - s_j - \sigma_{ij} - M(1-y_{ij}+z_{ij}) &i\in N, j\in N^*_{b_i} \\
+    o_{ij} &\geq s_j + g_j - s_i + \sigma_{ij} - M(1-y_{ji}+z_{ji}) &i\in N, j\in N^*_{b_i} \\
+    o_{ij} &\geq g_j - M(2-y_{ij}-z_{ij}) &i\in N, j\in N^*_{b_i} \\
+    o_{ij} &\geq g_i - M(2-y_{ji}-z_{ji}) &i\in N, j\in N^*_{b_i} 
 \end{align}
 %\end{figure}%
 %

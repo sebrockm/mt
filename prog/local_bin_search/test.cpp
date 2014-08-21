@@ -1,4 +1,5 @@
 #include "local_bin_search.hpp"
+#include "simulated_annealing.hpp"
 
 #include <vector>
 #include <iostream>
@@ -28,13 +29,13 @@ vector<bin> read_bins(const char* group_file, const char* bin_file)
 
     int n;
     group_stream >> n;
-    cout << "read n:" << n << endl;
+    cerr << "read n:" << n << endl;
 
     vector<jobgroup> groups(n);
     for(int i = 0; i < n; ++i)
     {
         group_stream >> groups[i].length;
-        cout << "read length " << i+1 << ":" << groups[i].length << endl;
+        cerr << "read length " << i+1 << ":" << groups[i].length << endl;
         groups[i].id = i+1;
     }
 
@@ -42,7 +43,7 @@ vector<bin> read_bins(const char* group_file, const char* bin_file)
     for(int i = 0; i < n; ++i)
     {
         group_stream >> dummy;
-        cout << "skipped " << dummy << endl;
+        cerr << "skipped " << dummy << endl;
     }
 
     for(int i = 0; i < n; ++i)
@@ -51,9 +52,9 @@ vector<bin> read_bins(const char* group_file, const char* bin_file)
         for(int j = 0; j < 2; ++j)
         {
             group_stream >> groups[i].times[j];
-            cout << "read time " << i+1 << " " << j+1 << ":" << groups[i].times[j] << " ";
+            cerr << "read time " << i+1 << " " << j+1 << ":" << groups[i].times[j] << " ";
         }
-        cout << endl;
+        cerr << endl;
     }
 
 
@@ -67,7 +68,7 @@ vector<bin> read_bins(const char* group_file, const char* bin_file)
             cerr << "id of group " << i+1 << " equals " << id << endl;
             throw 1;
         }
-        cout << "read group " << id << " is in bin " << b << endl;
+        cerr << "read group " << id << " is in bin " << b << endl;
         bins[b-1].groups.push_back(move(groups[i]));
     }
 
@@ -130,79 +131,13 @@ int main(int argc, char** argv)
     }
 
     string bin_file = argc == 3 ? argv[2] : string(argv[1])+".bins.dat";
-    cout << "read groups from " << argv[1] << " and bins from " << bin_file << endl;
+    cerr << "read groups from " << argv[1] << " and bins from " << bin_file << endl;
 
     bins = read_bins(argv[1], bin_file.c_str());
 
-    local_bin_search lbs(bins);
+    double cost;
+    cerr << "begin SA" << endl;
+    bins = simulated_annealing(bins, cost);
 
-
-
-    bool groupchange = false;
-    bool binchange = false;
-    do
-    {
-        do
-        {
-            groupchange = false;
-            for(unsigned bin = 0; bin < bins.size(); ++bin)
-            {
-                for(unsigned i = 0; i < bins[bin].groups.size(); ++i)
-                {
-                    for(unsigned j = i+1; j < bins[bin].groups.size(); ++j)
-                    {
-                        double gain = lbs.calculate_group_exchange(bin, i, j);
-                        if(gain < lbs.get_cost())
-                        {
-                            lbs.exchange_groups(bin, i, j);
-                            groupchange = true;
-                            cout << "improved to " 
-                                << lbs.get_cost() << " by exchanging " 
-                                << i << " and " << j << " in bin " << bin << endl;
-                        }
-                    }
-                }
-            }
-        }while(groupchange);
-
-        do
-        {
-            binchange = false;
-            for(unsigned i = 0; i < bins.size(); ++i)
-            {
-                for(unsigned j = i+1; j < bins.size(); ++j)
-                {
-                    double gain = lbs.calculate_bin_exchange(i, j);
-                    if(gain < lbs.get_cost())
-                    {
-                        lbs.exchange_bins(i, j);
-                        binchange = true;
-                        cout << "improved to " 
-                            << lbs.get_cost() << " by exchanging bins " 
-                            << i << " and " << j << endl;
-                    }
-                }
-            }
-        }while(binchange);
-    }while(groupchange || binchange);
-
-    
-
-    cout << "cost " << lbs.get_cost() << endl;
-    for(auto& bin : bins)
-    {
-        cout << bin.id << ": ";
-        for(auto& g : bin.groups)
-        {
-            cout << g.id << ",";
-        }
-        cout << endl;
-    }
-
-    double cost = 0;
-    for(unsigned i = 0; i < bins.size(); ++i)
-    {
-        cost += calculate_cost(bins[i], bins[(i+1)%bins.size()], i+1 == bins.size());
-    }
-    cout << "real cost " << cost << endl;
+    cout << cost << endl;
 }

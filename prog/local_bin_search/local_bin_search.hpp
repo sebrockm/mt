@@ -77,7 +77,7 @@ double calculate_cost(const bin& b1, const bin& b2, bool n = false)
     }
 
     return sum;
-};
+}
 
 
 class local_bin_search
@@ -88,12 +88,12 @@ private:
     vector<double> _costs;
     double _cost;
 
-    mutable vector<double> _tmpCosts;
-    mutable double _tmpCost;
+    vector<double> _tmpCosts;
+    double _tmpCost;
 
 public:
     local_bin_search(vector<bin>& bins)
-        :_bins(bins), _costs(bins.size()), _tmpCosts(bins.size())
+        :_bins(bins), _costs(bins.size()), _cost(0), _tmpCosts(bins.size()), _tmpCost(0)
     {
         for(unsigned i = 0; i < _bins.size(); ++i)
         {
@@ -108,7 +108,7 @@ public:
         return _cost;
     }
 
-    double calculate_bin_exchange(unsigned i, unsigned j) const
+    double calculate_bin_exchange(unsigned i, unsigned j)
     {
         if(i == j)
             return 0;
@@ -147,7 +147,7 @@ public:
             _tmpCost += _tmpCosts[k];
         }
 
-        return _tmpCost;
+        return _tmpCost - _cost;
     }
 
     void exchange_bins(unsigned i, unsigned j)
@@ -157,7 +157,7 @@ public:
         _cost = _tmpCost;
     }
 
-    double calculate_group_exchange(unsigned bin, unsigned i, unsigned j) const
+    double calculate_group_exchange(unsigned bin, unsigned i, unsigned j) 
     {
         if(i == j)
             return 0;
@@ -181,7 +181,7 @@ public:
             _tmpCost += _tmpCosts[k];
         }
 
-        return _tmpCost;
+        return _tmpCost - _cost;
     }
 
     void exchange_groups(unsigned bin, unsigned i, unsigned j)

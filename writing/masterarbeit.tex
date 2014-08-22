@@ -724,14 +724,14 @@ Auf diese Weise muss die Ressource in der entsprechenden Station so lange nicht 
 bis alle Jobs aus einer Jobgruppe fertiggestellt worden sind.
 Erst danach, wenn Jobs aus einer anderen Gruppe eingelegt werden, muss einmalig die Ressource gewechselt werden,
 so dass nur dann Rüstkosten auftreten.
-Dabei soll zunächst nur der Spezialfall $s_{fg}=s$ betrachtet werden.
+Dabei soll zunächst nur der Spezialfall mit disjunkten Ressourcenmengen und konstanten Rüstkosten ($s_{fg}=s$) betrachtet werden.
 
 O.B.d.A. sei $n$ ein Vielfaches von $m$, denn andernfalls kann eine weitere "`Dummy"'-Jobgruppe $g_d$ konstruiert werden,
 deren Jobs die Prozesszeiten $0$ haben und die genau so groß ist, dass $n+n_{g_d}$ ein Vielfaches von $m$ ist.
 Bei $\tilde{n}$ gegebenen Jobgruppen mit den Größen $n_g, \, g=1,\ldots,\tilde{n}$ ist das Ziel,
 die Jobgruppen in $m$ gleichgroße Teilmengen zu unterteilen.
 Dieses Problem lässt sich als Binpacking-Instanz betrachten, wobei entschieden werden muss, ob $\tilde{n}$ Items 
-mit den Größen $n_g, \, g=1,\ldots,\tilde{n}$ in $m$ Bins der Größe $\frac{n}{m}$ untergebracht werden können.
+mit den Größen $n_1,\ldots,n_{\tilde{n}}$ in $m$ Bins der Größe $\frac{n}{m}$ untergebracht werden können.
 Für den Fall, dass es möglich ist, müssen noch die Bins den Stationen der Anlage zugeordnet werden und die Reihenfolge
 der Jobgruppen in jedem Bin muss so bestimmt werden, dass die Zykluszeiten minimiert werden.
 Dies wird in Abschnitt \ref{sec:AnordnungDerJobgruppen} beschrieben.
@@ -771,7 +771,7 @@ bis eine zulässige Aufteilung gefunden wurde.
 
 \subsection{Zulässigkeit der Zuweisung}
 \label{subsec:ZulaessigkeitDerZuweisung}
-In Unterabschnitt \ref{subsec:RessourcenZuweisungMitBinpacking} wurde erläutert, wie Jobs bzw. Jobgruppen so angeordnet werden können,
+In Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} wurde erläutert, wie Jobs bzw. Jobgruppen so angeordnet werden können,
 dass möglichst selten eine Ressource gewechselt werden muss, was Rüstkosten verursacht.
 Es wurde allerdings davon ausgegangen, dass immer genug Ressourcen vorhanden sind,
 d.h. es wurde nur optimiert, ohne zu beachten, ob diese Zuweisung von Ressourcen überhaupt zulässig ist.
@@ -780,20 +780,42 @@ Die drei Fälle, wie die Ressourcen verteilt sein können (disjunkt, hierarchisc
 \subsubsection{Zulässigkeit bei disjunkten Ressourcenmengen}
 O.B.d.A. kann davon ausgegangen werden, dass es für jede Jobgruppe mindestens eine zulässige Ressource gibt.
 Andernfalls könnten diese Jobs niemals produziert werden.
-Eine Jobgruppe, die nicht geteilt wird, benötigt auch nie mehr als eine Ressource.
-Es muss also nur der Fall betrachtet werden, dass es für eine Jobgruppe, die geteilt wird, nur eine Ressource gibt.
-Sei $g$ diese Gruppe.
+Außerdem kann mit dem oben beschriebenen Verfahren eine Jobgruppe $g$ nur dann mehr als einmal geteilt werden, wenn $n_g > \frac{n}{m}$ ist.
+Bei einer $k$-fachen Teilung von $g$ gilt für die resultierenden Teilgruppen $n_{g_1},n_{g_k}\leq\frac{n}{m}$ und $n_{g_i}=\frac{n}{m}$ für $i=2,\ldots,k$.
+Allen Teilgruppen mit $g_i=\frac{n}{m}$ kann eine Ressource fest zugeteilt werden, da sich Jobs dieser Teilgruppen durchgehend auf einer Station befinden.
+Sie können daher als eigenständige Jobgruppen mit genau einer zulässigen Ressource aufgefasst werden.
+Für $g_1$ und $g_k$ stehen dann entsprechend weniger Ressourcen zur Verfügung.
+Daher kann o.B.d.A. davon ausgegangen werden, dass jede Jobgruppe höchstens einmal aufgeteilt werden kann.
+Eine Jobgruppe, die nicht geteilt wird, benötigt nur eine Ressource.
+Es muss also nur der Fall betrachtet werden, dass es für eine Jobgruppe $g$, die geteilt wird, nur eine Ressource gibt.
+Denn dann dürfen sich zu keinem Zeitpunkt Jobs aus den beiden Teilgruppen $g_1$ und $g_2$ gleichzeitig in der Anlage befinden.
 
-Falls $n_g > \frac{n}{m}$, muss $g$ in jedem Fall geteilt werden.
-Bei jeder möglichen Konstellation der Anzahl und Größen der Teilgruppen von $g$ gibt es immer mindestens einen Zeitpunkt,
-an dem zwei Jobs von $g$ gleichzeitig in der Anlage sind, was nicht möglich ist, da es nur eine Ressource gibt.
-Dieser Fall ist also definitiv nicht zulässig, unabhängig von der Art der Zuteilung der Ressourcen.
+Falls $n_g \leq \frac{n}{m}$ ist, ist es immer möglich, die beiden Teilgruppen, die aus $g$ hervorgehen,
+so in den Bins anzuordnen, dass niemals zwei Jobs aus $g$ zur gleichen Zeit in der Anlage sind, indem beispielsweise
+$g_1$ an den Anfang ihres Bins gelegt wird und $g_2$ ans Ende von ihrem Bin (vgl. Abbildung \ref{abb:blabla}).
+Diese Bedingung, dass $g_1$ und $g_2$ sich nicht überlappen dürfen, muss allerdings in den nachfolgenden Verfahren, 
+die $C_{\max}$ minimieren (s. Abschnitt \ref{sec:AnordnungDerJobgruppen}), beachtet werden.
+Falls mehrere Jobgruppen mit $n_g\leq\frac{n}{m}$ geteilt werden (es können höchstens $m$ sein), können in jedem Bin höchstens zwei resultierende 
+Teilgruppen vorkommen, so dass es immer möglich ist, eine von beiden an den Anfang und die andere an das Ende das Bins zu legen (vgl. Abbildung \ref{abb:bla}).
 
-Falls andererseits $n_g \leq \frac{n}{m}$, ist es immer möglich, die beiden Teilgruppen, die aus $g$ hervorgehen,
-so in den Bins anzuordnen, dass niemals zwei Jobs aus $g$ zur gleichen Zeit in der Anlage sind (vgl. Abbildung \ref{abb:blabla}).
-Dies muss allerdings als zusätzliche Bedingung an die nachfolgenden Verfahren, die $C_{\max}$ minimieren (s. Abschnitt \ref{sec:AnordnungDerJobgruppen}),
-übergeben werden, da es dort sonst vorkommen kann, dass die beiden Teilgruppen von $g$ dort "`nebeneinander"' angeordnet werden,
-so dass mindestens zwei Jobs aus $g$ zur gleichen Zeit in der Anlage wären.
+Falls eine Jobgruppe $g$ mit $n_g > \frac{n}{m}$ geteilt wird,
+gibt es keine Möglichkeit, $g$ so aufzuteilen, 
+dass sich in jedem Zyklus höchstens ein Job aus $g$ in der Anlage befindet.
+da nur $\frac{n}{m}$ Zyklen gemacht werden. 
+Da $g$ zu groß ist für einen Bin, muss $g$ aber zwangsweise geteilt werden, so dass bei nur einer geeigneten Ressource definitiv keine zulässige Lösung existiert
+(dieser Umstand kann bereits im Voraus geprüft werden, so dass dieser Fall hier o.B.d.A. nicht auftritt).
+Von dieser Regel gibt es allerdings eine Ausnahme:
+Falls $n_g = \frac{n}{m}+1$ ist, kann $g_1$ in ihrem Bin an vorderster Stelle eingeplant werden und $g_2$ in ihrem Bin an hinterster Stelle.
+Wenn dann der Bin von $g_1$ Station $1$ und der von $g_2$ Station $m$ zugeordnet wird, ist trotzdem in jedem Zyklus nur ein Job aus $g$ in der Anlage 
+wie in Abbildung \ref{abb:blabalbal} dargestellt.
+Von dieser Ausnahme kann allerdings höchstens einmal Gebrauch gemacht werden.
+
+Das Probleme, dass eine Jobgruppe mit nur einer Ressource geteilt wird, kann vermieden werden, indem beim Binpacking, 
+sobald die Notwendigkeit der Teilung einer Jobgruppe festgestellt wurde,
+nicht eine beliebige Jobgruppe ausgewählt wird, sondern eine, für die es mindestens zwei Ressourcen gibt.
+Wenn solch eine Jobgruppe nicht zur Auswahl steht, kann trotzdem eine mit $n_g\leq\frac{n}{m}$ ausgewählt werden, was dann zusätzliche Bedingungen für die
+nachfolgenden Verfahren verursacht. Wenn auch solch eine Jobgruppe nicht existiert, muss eine neue Binpacking-Instanz mit der nächsten Zahlenpartition von $m$ gelöst werden.
+Erst, wenn alle Partitionen getestet wurden, steht fest, dass keine zulässige Ressourcenzuteilung existiert.
 
 \subsubsection{Zulässigkeit bei hierarchischen Ressourcenmengen}
 

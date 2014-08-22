@@ -6,7 +6,7 @@
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage{mathtools}
-
+\usepackage{graphicx}
 
 
 \parskip 12pt
@@ -827,18 +827,52 @@ Erst, wenn alle Partitionen getestet wurden, steht fest, dass keine zulässige R
 \label{sec:AnordnungDerJobgruppen}
 In diesem Abschnitt werden Verfahren zur Anordnung der Jobgruppen in den Bins einerseits und
 zum Anordnen der Bins untereinander andererseits vorgestellt.
-Ziel ist es dabei, $C_{\max}$ zu minimieren, ohne die Jobgruppen zu teilen und somit die bereits minimierten Rüstkosten zu verändern.
-
+Aus den vorangegangenen Verfahren (vgl. Abschnitt \ref{sec:Ressourcenzuweisung}) ist bekannt, zu welchen Bins die Jobgruppen gehören.
+Geteilte Jobgruppen werden hier als eingenständige Gruppen betrachtet.
+Auch eventuelle zusätzliche Restriktionen, dass die Teile einer geteilten Jobgruppe sich nicht überschneiden dürfen, sind bekannt.
+Ziel ist es, $C_{\max}$ zu minimieren, ohne die Jobgruppen zu teilen und somit die bereits minimierten Rüstkosten zu verändern.
 
 
 \subsection{MIP mit fixierten Bins}
+\label{subsec:MIPMitFixiertenBins}
+Hier wird zunächst ein MIP vorgestellt, dass lediglich die Jobgruppen in den Bins anordnet.
+Die Bins sind dabei bereits fest den Stationen zugeordnet (der erste Bin zur ersten Station usw.).
+Dieses MIP ist allerdings nur anwendbar bei zwei dominierenden Maschinen, die nicht notwendiger Weise benachbart sein müssen.
+Ein MIP, das auch die Bins untereinander anordnet, d.h. den Stationen zuordnet, wird in Unterabschnitt \ref{MIPMitFreienBins} vorgestellt.
 
+Mit $\tilde{N}=\{1,\ldots,\tilde{n}\}$ wird die Menge der Jobgruppen bezeichnet.
+$B=\{1,\ldots,m\}$ ist die Menge der Bins und für $b\in B$ ist $\tilde{N_b}\subset \tilde{N}$ die Teilmenge der Jobgruppen in Bin $b$.
+Für $i\in\tilde{N}$ gibt $b_i\in B$ den Bin an, in dem sich $i$ befindet.
+$\tilde{N_b}^*\in \tilde{N}$ bezeichnet die Menge der Jobgruppen im `"Nachbarbin'" von $b$.
+Der Nachbarbin von $b$ ist derjenige, dessen Jobs auf der ersten dominierenden Maschine sind, während die Jobs von $b$ gerade auf der zweiten dominierenden Maschine sind.
+Wenn die beiden dominierenden Maschinen beispielsweise einen Abstand von $2$ haben, dann ist der Nachbarbin eines Bins auch um zwei Bins weiter rechts (modulo $m$).
+$p_{1i}$ und $p_{2i}$ sind die Prozesszeiten auf den beiden dominierenden Maschinen.
+Der Parameter $\sigma_{ij}$ hat für je zwei Jobgruppen $i\in\tilde{N},j\in\tilde{N}^*_{b_i}$ den Wert $1$, wenn $b_j<b_i$, und $0$ sonst.
+$\sigma_{ij}$ gibt also an, ob bei der Berechnung der Überlappung der Jobgruppen $i$ und $j$ eine Verschiebung um $1$ stattfinden muss (vgl. Abbildung \ref{abb:bla}).
+\begin{align}
+    \text{min}\quad &\sum_{b\in B}\sum_{\substack{i\in \tilde{N_b}\\j\in \tilde{N}_b^*}} 
+            \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
+			\text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in \tilde{N}, j\in \tilde{N}_{b_i} 
+            \label{con:reflex}\\
+			x_{ij} + x_{jk} &\leq x_{ik} + 1 &i\in \tilde{N},\,\, j,k\in \tilde{N}_{b_i}
+            \label{con:transitiv} \\
+			s_i &= \sum_{\substack{j\in \tilde{N}_{b_i}\\i\neq j}} g_j x_{ji} &i\in \tilde{N} 
+            \label{con:start} \\
+			My_{ij} &\geq s_j - s_i + \sigma_{ij}+ \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
+		    M(1-y_{ij}) &\geq s_i - s_j - \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
+		    Mz_{ij} &\geq s_i + g_i - s_j - g_j - \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
+		    M(1-z_{ij}) &\geq s_j + g_j- s_i - g_i + \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
+		    o_{ij} &\geq s_i + g_i - s_j - \sigma_{ij} - M(1-y_{ij}+z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
+		    o_{ij} &\geq s_j + g_j - s_i + \sigma_{ij} - M(1-y_{ji}+z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
+		    o_{ij} &\geq g_j - M(2-y_{ij}-z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
+		    o_{ij} &\geq g_i - M(2-y_{ji}-z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} 
+\end{align}
 
 Außerdem die erweiterte Formulierung auf allgemeine $s_{fg}$ und Diskussion.
 \textit{MIP sollte bis Ende Juli formuliert und Laufzeiten gemessen sein.}
 
 \subsection{MIP mit freien Bins}
-\label{subsec:mipfreibins}
+\label{subsec:MIPMitFreienBins}
 \textit{Muss nur noch aufgeschrieben werden. Evtl. noch ein paar Laufzeiten messen.}
 
 Vorstellung des MIPs mit freien Bins. 

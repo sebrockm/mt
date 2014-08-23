@@ -890,6 +890,10 @@ Die Zielfunktion (\ref{objfunc}) multipliziert die Überlappung mit der jeweilig
 
 \subsection{MIP mit freien Bins}
 \label{subsec:MIPMitFreienBins}
+Das folgende MIP erweitert das MIP aus Unterabschnitt \ref{subsec:MIPMitFixiertenBins} um die Fähingkeit, die Bins untereinander zu Vertauschen,
+was dem Zuweisen der Bins an die Stationen entspricht.
+Für die Berechnung der Überschneidungen zwischen den Jobgruppen sind daher weitere Variablen notwendig, die als Indikator dafür dienen,
+Bins der Jobgruppen auf benachbarten Stationen liegen.
 \begin{align}
     \text{min}\quad &\sum_{\substack{i,j\in\tilde{N}\\b_i\neq b_j}} 
             \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
@@ -899,33 +903,62 @@ Die Zielfunktion (\ref{objfunc}) multipliziert die Überlappung mit der jeweilig
             \label{con:transitiv} \\
     s_i &= \sum_{\substack{j\in\tilde{N}_{b_i}\\i\neq j}} g_j x_{ji} &i\in\tilde{N} 
             \label{con:start} \\
-    \sum_{b\in B}\beta_{bd} &= 1 &d\in B \\
-    \sum_{d\in B}\beta_{bd} &= 1 &b\in B \\
-    \beta_{bd} + \beta_{cd^*} &\leq \nu_{bcd} &b,c,d\in B \\
-    \nu_{bcd} &\leq \beta_{bd} &b,c,d\in B \\
-    \nu_{bcd} &\leq \beta_{bd^*} &b,c,d\in B \\
+	\sum_{b\in B}\beta_{bd} &= 1 &d\in B \label{con:binpos} \\
+	\sum_{d\in B}\beta_{bd} &= 1 &b\in B \label{con:binpos2} \\
+	\beta_{bd} + \beta_{cd^*} &\leq \nu_{bcd} &b,c,d\in B \label{con:nu} \\
+	\nu_{bcd} &\leq \beta_{bd} &b,c,d\in B \label{con:nurev} \\
+    \nu_{bcd} &\leq \beta_{bd^*} &b,c,d\in B \label{con:nurev2} \\
     My_{ij} &\geq s_j - s_i - \nu_{b_ib_jm} + \epsilon &i,j\in\tilde{N} \\
     M(1-y_{ij}) &\geq s_i + \nu_{b_ib_jm} - s_j &i,j\in\tilde{N} \\
     Mz_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j - n_j + \epsilon &i,j\in\tilde{N} \\
     M(1-z_{ij}) &\geq s_j + n_j - s_i - n_i - \nu_{b_ib_jm} &i,j\in\tilde{N} \\
-    w_{ij} &= \sum_{d\in B} \nu_{b_ib_jd} &i,j\in\tilde{N} \\
+	w_{ij} &= \sum_{d\in B} \nu_{b_ib_jd} &i,j\in\tilde{N} \label{con:w} \\
     o_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j \notag \\
-           &\phantom{\geq} - M(2-y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+		   &\phantom{\geq} - M(2-y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \label{con:o1} \\
     o_{ij} &\geq s_j + n_j - s_i - \nu_{b_ib_jm} \notag \\
            &\phantom{\geq} - M(2+y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
     o_{ij} &\geq n_j - M(3-y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
-    o_{ij} &\geq n_i - M(1+y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+	o_{ij} &\geq n_i - M(1+y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \label{con:o4} \\
     o_{ij} &\geq 0 &i,j\in\tilde{N} \\
+	\beta_{bd} &\in \{0,1\} &b,d\in B \\
+	\nu_{bcd} &\in \{0,1\} &b,c,d\in B, b\neq c \\
     x_{ij} &\in \{0,1\} &i\in\tilde{N},j\in\tilde{N}_{b_i} \\
     y_{ij},z_{ij},w_{ij} &\in \{0,1\} &i,j\in\tilde{N}
 \end{align}
+Die Positionen der Bins werden durch die Variablen $\beta_{bd}$ beschrieben.
+Es ist $\beta_{bd}=1$ genau dann, wenn Bin $b$ der Station $d$ zugewiesen wird.
+Die Nebenbedingungen (\ref{con:binpos}) und (\ref{con:binpos2}) gewährleisten, dass jeder der $m$ Bins genau einer der $m$ Stationen zugewiesen wird.
+Über die Nebenbedingungen (\ref{con:nu}), (\ref{con:nurev}) und (\ref{con:nurev2}) wird erzwungen, dass die Binärvariablen
+$\nu_{bcd}$ genau dann auf $1$ gesetzt werden, wenn Bin $b$ Station $d$ zugewiesen ist und zugleich Bin $c$ der Nachbarstation $d^*$.
+Die $\nu_{bcd}$ ersetzen in den weiteren Nebenbedingungen die $\sigma_{ij}$ aus dem MIP in Abschnitt \ref{subsec:MIPMitFixiertenBins}.
+Wenn $\nu_{b_ib_jm}=1$ ist, dann ist der Bin von Jobgruppe $i$ der letzten Station $m$ zugewiesen und der Bin von Jobgruppe $j$ ist auf der Nachbarstation von $m$,
+so dass die Überschneidung von $i$ und $j$ um $1$ versetzt berechnet werden muss.
+Dies funktioniert allerdings nur, wenn die beiden dominierenden Maschinen direkt benachbart sind.
+Denn dann muss die Versetzung um $1$ nur zwischen den Stationen $m$ und $1$ stattfinden, was anhand der $\nu_{b_ib_jm}$ identifiziert werden kann.
+Wenn noch eine Maschine zwischen den dominierenden Maschinen liegt, dann muss die Versetzung um $1$ sowohl zwischen den Stationen $m$ und $2$ als auch zwischen
+$m-1$ und $1$ stattfinden. Mit den $\nu_{bcd}$ können zwar beide dieser Situationen erkannt werden, aber 
+es bräuchte weitere Binärvariblen, die eine Oder-Verknüpfung zwischen $\nu_{b_ib_j(m-1)}$ und $\nu_{b_ib_jm}$ darstellen, 
+damit diese in den Berechnungen der Überlappungen eingesetz werden können.
+Außerdem spielen bei der Berechnung der Überschneidungen $o_{ij}$ jetzt auch die Variablen $w_{ij}$ eine Rolle.
+Nur, wenn $w_{ij}=1$ ist, wird die Überschneidung von $i$ und $j$ in den Nebenbedingungen (\ref{con:o1}) bis (\ref{con:o4}) berechnet.
+In Nebenbedingung (\ref{con:w}) wird $w_{ij}=1$ gesetzt, wenn $i$ und $j$ in benachbarten Bins sind.
+Genau wie $s_{ij}$ dienen auch die $w_{ij}$ nur der Übersicht und können überall durch die Summe in (\ref{con:w}) ersetzt werden.
+
+Das Lösen dieses MIPs mit CPLEX dauert sehr viel länger als beim MIP mit fixierten Bins.
+Allerdings ist die obere Schranke, also die aktuell beste gefundene Lösung, meist schon nach wenigen Minuten besser als die
+beste Lösung mit fixierten Bins (abhängig davon, ob die initiale Binreihenfolge zufällig "`gut"' ist).
 
 \subsection{Mehrere fixierte Reihenfolgen}
-\textit{Jetzt damit anfangen. Wahrscheinlich bis Ende August.}
+Das MIP in Unterabschnitt \ref{subsec:MIPMitFreienBins} liefert zwar theoretisch optimale Lösungen, diese zu berechnen benötigt aber zu viel Zeit.
+Schon bie kleinen Instanzen mit $\tilde{n}=10$ Jobgruppen und $m=8$ beträgt der LP-Gap nach einer Stunde Berechnung noch $20\%$
+Das MIP mit fixierten Bins hingegen findet erst ab Instanzen mit ca. $\tilde{n}=25$ nicht mehr die optimale Lösung innerhalb von einer Stunde.
+Je nach größe der Jobgruppen kann dies ein beträchtlicher Unterschied sein. 
+Allerdings ist die Güte der Lösungen des MIPs mit fixierten Bins von der initialen Binreihenfolge abhängig.
+Dazu wird in diesem Unterabschnitt versucht, solch eine initiale Binreihenfolge zu erzeugen, mit der das MIP dann arbeiten kann.
 
-Basierend auf den Erkenntnissen aus \ref{subsec:mipfreibins} das MIP mit fixierten Bins für mehrere Binreihenfolgen laufen lassen.
-Um nicht sämtliche Binreihenfolgen durchprobieren zu müssen,
-ggf. mit bipartitem gewichteten Matching ein lokales Optimum zwischen zwei Bins suchen und daraus eine "`gute"' Binreihenfolge erstellen.
+\subsubsection{asdgsdg}
+
+\subsubsection{sdgsdg}
 
 
 \chapter{Rechenergebnisse und Vergleiche}

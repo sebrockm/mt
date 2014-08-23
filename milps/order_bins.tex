@@ -1,0 +1,37 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+
+\begin{document}
+
+\begin{align}
+    \text{min}\quad &\sum_{\substack{i,j\in\tilde{N}\\b_i\neq b_j}} 
+            \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
+    \text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in\tilde{N}, j\in\tilde{N}_{b_i} 
+            \label{con:reflex}\\
+    x_{ij} + x_{jk} &\leq x_{ik} + 1 &i\in\tilde{N},\,\, j,k\in\tilde{N}_{b_i} 
+            \label{con:transitiv} \\
+    s_i &= \sum_{\substack{j\in\tilde{N}_{b_i}\\i\neq j}} g_j x_{ji} &i\in\tilde{N} 
+            \label{con:start} \\
+    \sum_{b\in B}\betha_{bd} &= 1 &d\in B \\
+    \sum_{d\in B}\betha_{bd} &= 1 &b\in B \\
+    \betha_{bd} + \betha_{cd^*} &\leq \nu_{bcd} &b,c,d\in B \\
+    \nu_{bcd} &\leq \betha_{bd} &b,c,d\in B \\
+    \nu_{bcd} &\leq \betha_{bd^*} &b,c,d\in B \\
+    My_{ij} &\geq s_j - s_i - \nu_{b_ib_jm} + \epsilon &i,j\in\tilde{N} \\
+    M(1-y_{ij}) &\geq s_i + \nu_{b_ib_jm} - s_j &i,j\in\tilde{N} \\
+    Mz_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j - n_j + \epsilon &i,j\in\tilde{N} \\
+    M(1-z_{ij}) &\geq s_j + n_j - s_i - n_i - \nu_{b_ib_jm} &i,j\in\tilde{N} \\
+    w_{ij} &= \sum_{d\in B} \nu_{b_ib_jd} &i,j\in\tilde{N} \\
+    o_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j - M(2-y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq s_j + n_j - s_i - \nu_{b_ib_jm} - M(2+y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq n_j - M(3-y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq n_i - M(1+y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq 0 &i,j\in\tilde{N} \\
+    x_{ij} &\in \{0,1\} &i\in\tilde{N},j\in\tilde{N}_{b_i} \\
+    y_{ij},z_{ij},w_{ij} &\in \{0,1\} &i,j\in\tilde{N}
+\end{align}
+\end{document}

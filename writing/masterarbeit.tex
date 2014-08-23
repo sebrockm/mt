@@ -841,9 +841,9 @@ Dieses MIP ist allerdings nur anwendbar bei zwei dominierenden Maschinen, die ni
 Ein MIP, das auch die Bins untereinander anordnet, d.h. den Stationen zuordnet, wird in Unterabschnitt \ref{MIPMitFreienBins} vorgestellt.
 
 Mit $\tilde{N}=\{1,\ldots,\tilde{n}\}$ wird die Menge der Jobgruppen bezeichnet.
-$B=\{1,\ldots,m\}$ ist die Menge der Bins und für $b\in B$ ist $\tilde{N_b}\subset \tilde{N}$ die Teilmenge der Jobgruppen in Bin $b$.
+$B=\{1,\ldots,m\}$ ist die Menge der Bins und für $b\in B$ ist $\tilde{N}_b\subset \tilde{N}$ die Teilmenge der Jobgruppen in Bin $b$.
 Für $i\in\tilde{N}$ gibt $b_i\in B$ den Bin an, in dem sich $i$ befindet.
-$\tilde{N_b}^*\in \tilde{N}$ bezeichnet die Menge der Jobgruppen im `"Nachbarbin'" von $b$.
+$\tilde{N}_b^*\in \tilde{N}$ bezeichnet die Menge der Jobgruppen im `"Nachbarbin'" von $b$.
 Der Nachbarbin von $b$ ist derjenige, dessen Jobs auf der ersten dominierenden Maschine sind, während die Jobs von $b$ gerade auf der zweiten dominierenden Maschine sind.
 Wenn die beiden dominierenden Maschinen beispielsweise einen Abstand von $2$ haben, dann ist der Nachbarbin eines Bins auch um zwei Bins weiter rechts (modulo $m$).
 $p_{1i}$ und $p_{2i}$ sind die Prozesszeiten auf den beiden dominierenden Maschinen.
@@ -852,31 +852,73 @@ $\sigma_{ij}$ gibt also an, ob bei der Berechnung der Überlappung der Jobgruppe
 \begin{align}
     \text{min}\quad &\sum_{b\in B}\sum_{\substack{i\in \tilde{N_b}\\j\in \tilde{N}_b^*}} 
             \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
-			\text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in \tilde{N}, j\in \tilde{N}_{b_i} 
-            \label{con:reflex}\\
-			x_{ij} + x_{jk} &\leq x_{ik} + 1 &i\in \tilde{N},\,\, j,k\in \tilde{N}_{b_i}
-            \label{con:transitiv} \\
-			s_i &= \sum_{\substack{j\in \tilde{N}_{b_i}\\i\neq j}} g_j x_{ji} &i\in \tilde{N} 
-            \label{con:start} \\
-			My_{ij} &\geq s_j - s_i + \sigma_{ij}+ \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
-		    M(1-y_{ij}) &\geq s_i - s_j - \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
-		    Mz_{ij} &\geq s_i + g_i - s_j - g_j - \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
-		    M(1-z_{ij}) &\geq s_j + g_j- s_i - g_i + \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
-		    o_{ij} &\geq s_i + g_i - s_j - \sigma_{ij} - M(1-y_{ij}+z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
-		    o_{ij} &\geq s_j + g_j - s_i + \sigma_{ij} - M(1-y_{ji}+z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
-		    o_{ij} &\geq g_j - M(2-y_{ij}-z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \\
-		    o_{ij} &\geq g_i - M(2-y_{ji}-z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} 
+			\text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in \tilde{N}, j\in \tilde{N}_{b_i} \label{con:reflex}\\
+			x_{ij} + x_{jk} &\leq x_{ik} + 1 &i\in \tilde{N},\,\, j,k\in \tilde{N}_{b_i} \label{con:transitiv} \\
+			s_i &= \sum_{\substack{j\in \tilde{N}_{b_i}\\i\neq j}} n_j x_{ji} &i\in \tilde{N} \label{con:start} \\
+            My_{ij} &\geq s_j - s_i + \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:y1} \\
+            M(1-y_{ij}) &\geq s_i - s_j - \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:y2} \\
+            Mz_{ij} &\geq s_i + n_i - s_j - n_j - \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:z1} \\
+            M(1-z_{ij}) &\geq s_j + n_j- s_i - n_i + \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:z2} \\
+            o_{ij} &\geq s_i + n_i - s_j - \sigma_{ij} - M(1-y_{ij}+z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:o1} \\
+            o_{ij} &\geq s_j + n_j - s_i + \sigma_{ij} - M(1-y_{ji}+z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:o2} \\
+            o_{ij} &\geq n_j - M(2-y_{ij}-z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:o3} \\
+            o_{ij} &\geq n_i - M(2-y_{ji}-z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:o4} \\
+            o_{ij} &\geq 0 &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con:o5} \\
+            x_{ij} &\in \{0,1\} &i\in \tilde{N}, j\in \tilde{N}_{b_i} \\
+            y_{ij},z_{ij} &\in \{0,1\} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i}
 \end{align}
+Für je zwei Jobgruppen $i,j\in N_b$, die im selben Bin $b$ liegen, gibt es
+zwei Binärvariablen $x_{ij},x_{ji}$. Es ist $x_{ij}=1$ genau dann, wenn 
+Jobgruppe $i$ vor $j$ auf dem Bin liegt. Dabei muss $i$ nicht notwendiger
+Weise direkt vor $j$ liegen, sondern an beliebiger Position davor.
+Mit (\ref{con:reflex}) wird erreicht, dass immer entweder $i$ vor $j$ liegt
+oder umgekehrt. (\ref{con:transitiv}) stellt die Transitivität dieser Beziehung
+her. Auf Grundlage der $x_{ij}$ und der Größen der Jobgruppen $g_i$ 
+kann in (\ref{con:start}) der Startzeitpunkt jeder Jobgruppe berechnet werden.
+Die Variablen $s_i$ dienen dabei nur der Übersicht und können in den übrigen 
+Constraints durch die Summe aus (\ref{con:start}) ersetzt werden.
 
-Außerdem die erweiterte Formulierung auf allgemeine $s_{fg}$ und Diskussion.
-\textit{MIP sollte bis Ende Juli formuliert und Laufzeiten gemessen sein.}
+Über (\ref{con:y1}) und (\ref{con:y2}) wird den Indikatorvariablen $y_{ij}$ für
+zwei Jobgruppen $i,j$ aus benachbarten Bins folgende
+Bedeutung gegeben: $y_{ij}=1$ genau dann, wenn $s_j \geq s_i$, d.h. wenn der Startzeitpunkt von $i$ nicht vor dem von $j$ liegt.
+Analog wird mit (\ref{con:z1}) und (\ref{con:z2}) $z_{ij}=1$ gesetzt genau dann, wenn $s_i+n_i \geq s_j+n_j$, der Endzeitpunkt von $j$ also nicht vor dem von $i$ liegt.
+
+Mit den Variablen $o_{ij}$ wird die Überlappung von zwei Jobgruppen in benachbarten Bins berechnet.
+Je nachdem, welche der $y_{ij}$ und $z_{ij}$ auf $1$ bzw. $0$ gesetzt sind, 
+wird der Wert von $o_{ij}$ durch eine der Nebenbedingungen (\ref{con:o1}) bis (\ref{con:o5}) festgelegt.
+Die Zielfunktion (\ref{objfunc}) multipliziert die Überlappung mit der jeweiligen Prozesszeit und minimiert die Summe darüber.
 
 \subsection{MIP mit freien Bins}
 \label{subsec:MIPMitFreienBins}
-\textit{Muss nur noch aufgeschrieben werden. Evtl. noch ein paar Laufzeiten messen.}
-
-Vorstellung des MIPs mit freien Bins. 
-Die Laufzeit ist sehr viel schlechter, die primale Lösung ist aber meist schon nach kurzer Zeit besser als beim MIP mit fixierten Bins.
+\begin{align}
+    \text{min}\quad &\sum_{\substack{i,j\in\tilde{N}\\b_i\neq b_j}} 
+            \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
+    \text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in\tilde{N}, j\in\tilde{N}_{b_i} 
+            \label{con:reflex}\\
+    x_{ij} + x_{jk} &\leq x_{ik} + 1 &i\in\tilde{N},\,\, j,k\in\tilde{N}_{b_i} 
+            \label{con:transitiv} \\
+    s_i &= \sum_{\substack{j\in\tilde{N}_{b_i}\\i\neq j}} g_j x_{ji} &i\in\tilde{N} 
+            \label{con:start} \\
+    \sum_{b\in B}\beta_{bd} &= 1 &d\in B \\
+    \sum_{d\in B}\beta_{bd} &= 1 &b\in B \\
+    \beta_{bd} + \beta_{cd^*} &\leq \nu_{bcd} &b,c,d\in B \\
+    \nu_{bcd} &\leq \beta_{bd} &b,c,d\in B \\
+    \nu_{bcd} &\leq \beta_{bd^*} &b,c,d\in B \\
+    My_{ij} &\geq s_j - s_i - \nu_{b_ib_jm} + \epsilon &i,j\in\tilde{N} \\
+    M(1-y_{ij}) &\geq s_i + \nu_{b_ib_jm} - s_j &i,j\in\tilde{N} \\
+    Mz_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j - n_j + \epsilon &i,j\in\tilde{N} \\
+    M(1-z_{ij}) &\geq s_j + n_j - s_i - n_i - \nu_{b_ib_jm} &i,j\in\tilde{N} \\
+    w_{ij} &= \sum_{d\in B} \nu_{b_ib_jd} &i,j\in\tilde{N} \\
+    o_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j \notag \\
+           &\phantom{\geq} - M(2-y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq s_j + n_j - s_i - \nu_{b_ib_jm} \notag \\
+           &\phantom{\geq} - M(2+y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq n_j - M(3-y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq n_i - M(1+y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+    o_{ij} &\geq 0 &i,j\in\tilde{N} \\
+    x_{ij} &\in \{0,1\} &i\in\tilde{N},j\in\tilde{N}_{b_i} \\
+    y_{ij},z_{ij},w_{ij} &\in \{0,1\} &i,j\in\tilde{N}
+\end{align}
 
 \subsection{Mehrere fixierte Reihenfolgen}
 \textit{Jetzt damit anfangen. Wahrscheinlich bis Ende August.}

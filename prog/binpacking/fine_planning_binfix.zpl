@@ -13,7 +13,12 @@ param praebin[<i> in praeJobgroups] := sum <j> in praeJobgroups with i == index[
 set Jobgroups := {<i> in praeJobgroups with praebin[i] > 8*p and praebin[i] <= 8*(p+1)};
 #set Jobgroups := {<i> in praeJobgroups with praebin[i] mod 3 == p};
 
-param test[Bins] := <1> 8, <2> 7, <3> 3, <4> 5, <5> 2, <6> 1, <7> 4, <8> 6;
+#param test[Bins] := <1> 8, <2> 7, <3> 3, <4> 5, <5> 2, <6> 1, <7> 4, <8> 6;
+param blaindex[Bins] := read "bla" as "2n" use 8;
+param bla[Bins] := read "bla" as "1n" use 8;
+param test[<b> in Bins] := sum <bb> in Bins: if blaindex[bb]==b then bla[bb] else 0 end;
+
+do forall <b> in Bins do print test[b];
 
 param bin[<i> in Jobgroups] := test[praebin[i] - 8*p];
 #param bin[<i> in Jobgroups] := ceil(praebin[i] / 3);

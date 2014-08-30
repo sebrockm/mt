@@ -21,6 +21,10 @@ struct bin
     unsigned id;
 };
 
+//Calculates the cost between two bins.
+//Normally the station of b1 is before b2's station.
+//Otherwise n must be set to true
+//which means that the first job of b2 and the last job of b1 must not be taken into account.
 double calculate_cost(const bin& b1, const bin& b2, bool n = false)
 {
     double sum = 0;

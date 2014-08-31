@@ -13,6 +13,7 @@ struct jobgroup
     vector<double> times;
     unsigned length;
     unsigned id;
+    unsigned res; //available resources
 };
 
 struct bin

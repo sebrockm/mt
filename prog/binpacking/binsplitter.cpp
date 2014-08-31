@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
+
+#include "../local_bin_search/local_bin_search.hpp" //for jobgroup and bin
 
 using namespace std;
 
@@ -19,6 +22,7 @@ vector<string> readFile(string name)
     }
     return vfile;
 }
+
 
 int main(int argc, char** argv)
 {
@@ -37,26 +41,15 @@ int main(int argc, char** argv)
     int n;
     stringstream(vfile.front()) >> n;
 
-    //map groups to the bin binfile tells they belong to
-    //and get the biggest bin number
-    vector<int> group_to_bin(n);
-    int maxbin = 0;
-    for(auto line : vbinfile)
-    {
-        int group, bin;
-        stringstream(line) >> group >> bin;
-        group_to_bin[group-1] = bin-1;
-        maxbin = max(bin-1, maxbin);
-    }
-
     //read group sizes
-    vector<int> groupsizes(n);
+    vector<jobgroup> groups(n);
     int sum = 0;
     for(int i = 1; i < n+1; i++)
     {
         int size;
         stringstream(vfile[i]) >> size;
-        groupsizes[i-1] = size;
+        groups[i-1].id = i-1;
+        groups[i-1].length = size;
         sum += size;
     }
     int binsize = sum / numbins;
@@ -66,105 +59,168 @@ int main(int argc, char** argv)
     }
 
     //read resources
-    vector<int> resources(n);
     for(int i = n+1; i < 2*n+1; i++)
     {
         int res;
         stringstream(vfile[i]) >> res;
-        resources[i-n-1] = res;
+        groups[i-n-1].res = res;
+    }
+    if(!silent)
+    {
+        cout << "resources read" << endl;
     }
 
     //read process times
-    vector<pair<string,string>> times(n);
     for(int i = 2*n+1; i < 3*n+1; i++)
     {
-        string t1, t2;
+        double t1, t2;
         stringstream(vfile[i]) >> t1 >> t2;
-        times[i-2*n-1] = {t1, t2};
+        groups[i-2*n-1].times = {t1, t2};
     }
+    if(!silent)
+    {
+        cout << "process times read" << endl;
+    }
+
+    //assign the groups to the bin binfile tells they belong to
+    //and get the sizes of the bins
+    vector<bin> bins(numbins);
+    vector<int> binsizes(numbins);
+    for(auto line : vbinfile)
+    {
+        int group, bin;
+        stringstream(line) >> group >> bin;
+        bins[bin-1].id = bin-1;
+        bins[bin-1].groups.push_back(groups[group-1]);
+        binsizes[bin-1] += groups[group-1].length;
+    }
+    if(!silent)
+    {
+        cout << "bins read" << endl;
+    }
+
+    int first_empty;
+    for(first_empty = 0; binsizes[first_empty] > 0; ++first_empty);
+
 
     for(int bin = 0; bin < numbins; bin++)
     {
-        int asize = 0;//size of actual bin
-        int group = 0;
-
-        //fill bin until it's full
-        while(group < n && asize < binsize)
+        //split overfull bins
+        if(binsizes[bin] > binsize)
         {
-            if(group_to_bin[group] == bin)
+            //comparator for jobgroups
+            auto comparator = [binsize] (const jobgroup& g1, const jobgroup& g2) 
             {
-                asize += groupsizes[group];
-                if(!silent)
+                //compare by available resources or by id if equal
+                if(g1.res - g1.length / binsize == g2.res - g2.length / binsize)
+                    return g1.id < g2.id;
+                return g1.res - g1.length / binsize == g2.res - g2.length / binsize;
+            };
+
+            //sort groups by comparator
+            //so groups with just a few resources will be assigned to bin first 
+            sort(bins[bin].groups.begin(), bins[bin].groups.end(), comparator);
+
+            //search for group to split
+            while(true)
+            {
+                int fill_level = 0;//of current bin
+                int g = 0;
+                while(fill_level < binsize)
                 {
-                    cout << "group " << group+1 << " stays in bin " << bin+1 << endl;
-                    cout << "size of bin " << bin+1 << ": " << asize << endl;
-                }
-            }
-            group++;
-        }
-        if(asize > binsize)//split group
-        {
-            int diff = asize - binsize;
-            groupsizes[group-1] -= diff;
+                    fill_level += bins[bin].groups[g].length;
+                    g++;
+                } //g+1 is the index of the group to be split
+                --g;
 
-            //install new group
-            groupsizes.push_back(diff);
-            resources.push_back(resources[group-1]);//TODO resources may not be available
-            times.push_back(times[group-1]);
-            group_to_bin.push_back(bin);
-
-            if(!silent)
-            {
-                cout << "split bin " << bin+1 << ", it's " << diff << " too full:" << endl;
-                cout << "group " << group << " now has size " << groupsizes[group-1] << endl;
-                cout << "new group " << n+1 << " created with size " << diff << " in bin " << bin+1 << endl;
-            }
-
-            n++;
-            maxbin++;
-
-            //move other groups from this bin to the next free one
-            while(group < n)
-            {
-                if(group_to_bin[group] == bin)
+                //is split possible?
+                if(bins[bin].groups[g].res - bins[bin].groups[g].length / binsize > 1)
                 {
+                    int new_gsize = fill_level - binsize;
+                    bins[bin].groups[g].length -= new_gsize;
+                    groups[bins[bin].groups[g].id].length -= new_gsize;
+
+                    //add new group to empty bin and configurate it
+                    bins[first_empty].groups.push_back(bins[bin].groups[g]);
+                    bins[first_empty].groups.back().length = new_gsize;
+                    binsizes[first_empty] = new_gsize;
+                    bins[first_empty].groups.back().id = n++;
+                    groups.push_back(bins[first_empty].groups.back());
+
+                    //give them resources
+                    bins[first_empty].groups.back().res = bins[bin].groups[g].res - 1;
+                    bins[bin].groups[g].res = 1;
+
                     if(!silent)
                     {
-                        cout << "group " << group+1 << " moved to bin " << maxbin+1 << endl;
+                        cout << "split bin " << bin+1 << ", it's " << new_gsize << " too full:" << endl;
+                        cout << "now group " << bins[bin].groups[g].id+1 << " has size " << bins[bin].groups[g].length << endl;
+                        cout << "new group " << n << " created with size " << new_gsize << " in bin " << first_empty+1 << endl;
                     }
-                    group_to_bin[group] = maxbin;
-                }
-                group++;
-            }
 
+                    //transfer remaining groups to that bin
+                    while(bins[bin].groups.size() > (unsigned)g+1)
+                    {
+                        bins[first_empty].groups.push_back(move(bins[bin].groups.back()));
+                        binsizes[first_empty] += bins[bin].groups.back().length;
+                        bins[bin].groups.pop_back();
+                        if(!silent)
+                        {
+                            cout << "group " << bins[first_empty].groups.back().id+1 << " moved to bin " << first_empty+1 << endl;
+                        }
+                    }
+
+                    binsizes[bin] = binsize;
+                    ++first_empty;
+
+                    break;
+                }
+                else //this group cannot be split
+                {
+                    //try next lexicographical permutation
+                    bool next = next_permutation(bins[bin].groups.begin(), bins[bin].groups.end(), comparator);
+
+                    if(!next) //tried all possibilities to split
+                    {
+                        throw "impossible to split";
+                    }
+                } 
+            }
         }
     }
 
-    stringstream f;
-    f << argv[2];
-    ofstream file(f.str());
+    //write results back to files
+    ofstream file(argv[2]);
     file << n << endl << endl;
-    
-    for(auto s : groupsizes)
+
+    for(auto& g : groups)
     {
-        file << s << endl;
+        file << g.length << endl;
     }
     file << endl;
-    for(auto r : resources)
+
+    for(auto& g : groups)
     {
-        file << r << endl;
+        file << g.res << endl;
     }
     file << endl;
-    for(auto p : times)
+
+    for(auto& g : groups)
     {
-        file << p.first << " " << p.second << endl;
+        file << g.times[0] << g.times[1] << endl;
     }
 
-    f.str("");
-    f << argv[3];
-    ofstream binfile(f.str());
-    for(int i = 0; i < n ; i++)
+    ofstream binfile(argv[3]);
+    for(auto& bin : bins)
     {
-        binfile << i+1 << " " << group_to_bin[i]+1 << endl;
+        for(auto& g : bin.groups)
+        {
+            binfile << g.id+1 << " " << bin.id+1 << endl;
+        }
+    }
+
+    if(!silent)
+    {
+        cout << "done" << endl;
     }
 }

@@ -18,6 +18,7 @@ using namespace boost::algorithm;
 
 typedef typename nonfull_schedule<int>::job job;
 
+//read jobs from file
 vector<job> read_jobs(const char* file_name)
 {
     ifstream file(file_name);
@@ -32,7 +33,6 @@ vector<job> read_jobs(const char* file_name)
     string line;
     while(getline(file, line))
     {
-        //cout << "read " << line << endl;
         trim(line);
         if(line.empty() || line.front() == '#')
             continue;
@@ -42,7 +42,6 @@ vector<job> read_jobs(const char* file_name)
             stringstream(line) >> m >> n;
             jobs.reserve(n);
             read_mn = true;
-            //cout << "m=" << m << " n=" << n << endl;
         }
         else
         {
@@ -59,26 +58,30 @@ vector<job> read_jobs(const char* file_name)
         }        
     }
 
-    //cout << jobs.size() << endl;
-
     return jobs.size() == n ? jobs : vector<job>();
 }
 
 
+//solve with cplex on terminal
+//returns the lower and upper bound
 pair<double, double> do_cplex(const char* file_name)
 {
+    //invoke zimpl
     stringstream ss;
     ss << "zimpl ../synmvCmax.zpl -v0 -D file=" << file_name;    
     int tmp = system(ss.str().c_str());
 
+    //invoce cplex and write its output to .tmp-file
     ss.str("");
     ss << "cplex -c \"re synmvCmax.lp\" \"set timelimit 1800\" \"o\" \"dis sol obj\" \"dis sol bestb\" > " << file_name << ".tmp";
     tmp += system(ss.str().c_str());
 
+    //read that .tmp-file
     ss.str("");
     ss << file_name << ".tmp";
     ifstream output(ss.str());
 
+    //read last 4 lines
     string line[4];
     while(getline(output, line[3]))
     {
@@ -87,12 +90,14 @@ pair<double, double> do_cplex(const char* file_name)
         line[2] = line[3];
     }
 
+    //delete .tmp-file
     output.close();
     tmp += system(("rm " + ss.str()).c_str());
 
-    if(tmp > 0)
+    if(tmp > 0) //at least one of the system()-calls failed
         exit(tmp);
 
+    //search for one of these strings in the last 4 lines
     string optimal = "CPLEX> MIP - Integer optimal solution:  Objective =";
     string tolerance = "CPLEX> MIP - Integer optimal, tolerance (0.0001/1e-06):  Objective =";
     string aborted = "CPLEX> MIP - Aborted, integer feasible:  Objective =";
@@ -102,6 +107,7 @@ pair<double, double> do_cplex(const char* file_name)
 
     int gappos = line[1].find("(gap");
     
+    //read the lower bound
     if(line[1].find(bound) == 0)
     {
         res.first = stod(line[1].substr(bound.size(), gappos - bound.size()));
@@ -111,6 +117,7 @@ pair<double, double> do_cplex(const char* file_name)
         cerr << "second last line: " << line[1] << endl;
     }
 
+    //read the upper bound/best solution
     if(line[0].find(optimal) == 0)
     {
         res.second = stod(line[0].substr(optimal.size()));
@@ -136,6 +143,9 @@ pair<double, double> do_cplex(const char* file_name)
 }
 
 
+//read file and calculate Cmax with all heuristics
+//output info on stderr
+//output measured time and Cmax on stdout
 int main(int argc, char** argv)
 {
     /*
@@ -168,12 +178,12 @@ int main(int argc, char** argv)
 
     cout << jobs.size() << "\t\t";
 
-    //cplex
+    //cplex only for small instances
     auto t1 = chrono::high_resolution_clock::now();
-    //auto p = jobs.size() <= 1500 ? do_cplex(argv[1]) : make_pair(0., 0.);
+    auto p = jobs.size() <= 1500 ? do_cplex(argv[1]) : make_pair(0., 0.);
     auto t2 = chrono::high_resolution_clock::now();
 
-    //cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
     if(jobs.size() <= 1500)
         cerr << "done cplex" << endl;
 
@@ -212,9 +222,9 @@ int main(int argc, char** argv)
     cerr << "done denfs" << endl;
 
 
-    //gg
+    //gg with 3,4 dom machines
     t1 = chrono::high_resolution_clock::now();
-    sch.jobs = gg_heuristik(sch.jobs, 0, 0);
+    sch.jobs = gg_heuristik(sch.jobs, 3, 4);
     t2 = chrono::high_resolution_clock::now();
 
     cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";

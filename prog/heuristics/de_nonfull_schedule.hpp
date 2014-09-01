@@ -9,7 +9,7 @@
 #include <ostream>
 #include <iomanip>
 
-#include <boost/range/adaptor/reversed.hpp>//to fill a std::vector in reverse
+#include <boost/range/adaptor/reversed.hpp>//to access a std::vector in reverse, only needed for output
 
 using namespace std;
 

@@ -14,8 +14,10 @@ using namespace std;
 typedef typename nonfull_schedule<int>::job job;
 
 
+//Find those neighboring dominating machines that qualify best for gg.
 pair<int, int> find_best_dom(const vector<job>& jobs)
 {
+    //find the minimum and maximum process time on each machine
     vector<int> mins(jobs[0].size(), numeric_limits<int>::max());
     vector<int> maxs(jobs[0].size(), 0);
 
@@ -30,6 +32,8 @@ pair<int, int> find_best_dom(const vector<job>& jobs)
     
     auto k = numeric_limits<float>::max();
 
+    //calculate k for all pairs of neighboring dominating machines 
+    //and choose smallest
     int pos = 0;
     for(unsigned i = 0; i+1 < mins.size(); i++)
     {
@@ -55,16 +59,12 @@ pair<int, int> find_best_dom(const vector<job>& jobs)
 
 vector<job> gg_heuristik(const vector<job>& jobs, int dom1, int dom2)
 {
-    dom1 = 3;
-    dom2 = 4;
-    auto pi = tsp_gg(jobs, dom1, dom2);
-    //cerr << "dom1 " << dom1 << " dom2 " << dom2 << endl;
+    auto pi = tsp_gg(jobs, dom1, dom2); // gg call
 
+    //pi is a vector of indexes, so transform it into a vector of jobs
     vector<job> sch(jobs.size());
     for(unsigned i = 0; i < sch.size(); ++i)
     {
-        //cerr << "pi[" << i << "]=" << pi[i] << endl;
-        //cerr << "sch[" << i << "] = jobs[" << pi[i]-1 << "]" << endl;
         sch[i] = jobs[pi[i]-1];
     }
 

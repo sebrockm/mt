@@ -9,6 +9,7 @@ using namespace std;
 
 
 
+//neighborhood interface
 class neighborhood
 {
 public:
@@ -21,26 +22,32 @@ public:
     neighborhood(vector<job>& pi)
         :_pi(pi) {}
 
+    //calculate gain of "doing something" with the i-th and j-th job
     virtual int gain(int i, int j) = 0;
 
+    //"do something" with the i-th and j-th job
     virtual void make(int i, int j) = 0;
 };
 
 
+//exchange neighborhood
 class xch_neighborhood : public neighborhood
 {
 public:
     xch_neighborhood(vector<job>& pi)
         :neighborhood(pi) {}
 
+    //calculate the gain of an exchange of the i-th and j-th job
     virtual int gain(int i, int j)
     {
+        //W.l.o.g i < j
         if(j < i)
             swap(i, j);
 
         int m = _pi[0].size();
         int n = _pi.size();
 
+        //calculate sum of all cycle times i and j are involved in
         int before = 0;
         for(int k = i; k < i+m && k < n+m-1; ++k)
         {
@@ -52,7 +59,7 @@ public:
 
             before += maxt;
         }
-        for(int k = max(j, i+m); k < j+m && k < n+m-1; ++k)
+        for(int k = max(j, i+m); k < j+m && k < n+m-1; ++k)//make sure to count no cycle time twice
         {
             int maxt = 0;
             for(int l = max(0, k-n+1); l < m && k-l >= 0; ++l)
@@ -63,8 +70,10 @@ public:
             before += maxt;
         }
 
+        //really make an exchange
         this->make(i, j);
 
+        //calculate cycle times again
         int after = 0;
         for(int k = i; k < i+m && k < n+m-1; ++k)
         {
@@ -87,11 +96,13 @@ public:
             after += maxt;
         }
 
+        //undo the exchange
         this->make(i, j);
 
         return before - after;
     }
 
+    //exchange i and j
     virtual void make(int i, int j)
     {
         swap(_pi[i], _pi[j]);
@@ -100,12 +111,14 @@ public:
 
 
 
+//shift neighborhood, actually not used
 class shift_neighborhood : public neighborhood
 {
 public:
     shift_neighborhood(vector<job>& pi)
         :neighborhood(pi) {}
 
+    //TODO
     virtual int gain(int i, int j)
     {
         return 0;

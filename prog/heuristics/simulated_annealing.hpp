@@ -11,6 +11,7 @@ using namespace std;
 
 
 
+//simulated annealing approach
 vector<typename neighborhood::job> simulated_annealing(vector<neighborhood::job> pi, int cost)
 {
     uniform_real_distribution<double> rand(0, 1);
@@ -19,10 +20,12 @@ vector<typename neighborhood::job> simulated_annealing(vector<neighborhood::job>
 
     vector<neighborhood::job> best_pi = pi;
     int best_cost = cost;
+
+    //temperature function
     auto t = [cost] (int i) -> double {return 50 * abs(cos(i/33.0)) / i;};
 
-    int no_improvements = 0;
-    int i = 1;
+    int no_improvements = 0;//counter for unsuccessfull iterations
+    int i = 1;//iteration counter
     do
     {
         int k1 = rand_pos(generator);
@@ -34,7 +37,6 @@ vector<typename neighborhood::job> simulated_annealing(vector<neighborhood::job>
 
         xch_neighborhood nbh(pi);
         int gain = nbh.gain(k1, k2);
-        //cout << "gain=" << gain << " t(i)=" << t(i) << endl;
         
         if(rand(generator) < min(1.0, exp(gain / t(i++))))
         {
@@ -45,21 +47,18 @@ vector<typename neighborhood::job> simulated_annealing(vector<neighborhood::job>
             {
                 best_pi = pi;
                 best_cost = cost;
-                //cout << "rand improved, " << no_improvements << endl;
                 no_improvements = 0;
             }
             else
             {
                 no_improvements++;
-                //cout << "rand not improved" << endl;
             }
         }
         else
         {
-            //cout << "rand discarded" << endl;
             no_improvements++;
         }
-    } while(no_improvements < 1000);
+    } while(no_improvements < 1000); //stop after 1000 unsuccessfull iterations
 
     return best_pi;
 }

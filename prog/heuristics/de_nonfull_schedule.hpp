@@ -9,21 +9,26 @@
 #include <ostream>
 #include <iomanip>
 
-#include <boost/range/adaptor/reversed.hpp>
+#include <boost/range/adaptor/reversed.hpp>//to fill a std::vector in reverse
 
 using namespace std;
 
 
 
+//This class represents a double ended non-full schedule.
+//It provides some helper methods to decide which job is best do add next.
 template <class time_type>
 class de_nonfull_schedule
 {
 public:
+    //identical to nonfull_schedule<time_type>::job
     typedef vector<time_type> job;
 
+    //two vectors of jobs, one growing from left to right and one from right to left
     vector<job> jobs_front, jobs_back;
     const unsigned m;
 
+    //constructor
     de_nonfull_schedule(unsigned m, unsigned n = 0)
         :jobs_front(), jobs_back(), m(m)
     {
@@ -31,6 +36,7 @@ public:
         jobs_back.reserve(n);
     }
 
+    //calculate the i-th last cycle time at the front
     time_type get_last_cycle_time_front(unsigned i) const
     {
         time_type t = 0;
@@ -42,6 +48,7 @@ public:
         return t;
     }
 
+    //calculate the i-th last cycle time at the end
     time_type get_last_cycle_time_back(unsigned i) const
     {
         time_type t = 0;
@@ -63,13 +70,9 @@ public:
         jobs_back.push_back(j);
     }
 
+    //evaluate how well a job would fit at the front (compare non_full_schedule)
     pair<time_type, time_type> evaluate_job_front(const job& j) const 
     {
-        /*if(jobs_front.empty())
-        {
-            return j.front();
-        }*/
-
         pair<time_type, time_type> diff = {0, 0};
         for(int i = 0; i < m-1; ++i)
         {
@@ -80,13 +83,9 @@ public:
         return diff;
     }
 
+    //evaluate how well a job would fit at the end (compare non_full_schedule)
     pair<time_type, time_type> evaluate_job_back(const job& j) const 
     {
-        /*if(jobs_back.empty())
-        {
-            return j.back();
-        }*/
-
         pair<time_type, time_type> diff = {0, 0};
         for(int i = 0; i < m-1; ++i)
         {
@@ -97,17 +96,24 @@ public:
         return diff;
     }
 
+    //calculate Cmax of the non-full schedule (both ends together)
     time_type get_cost() const
     {
         time_type sum = 0;
+
+        //those cycles only jobs of the front take into account
         for(unsigned i = 0; i < jobs_front.size(); ++i)
         {
             sum += get_last_cycle_time_front(jobs_front.size()+m-2-i);
         }
+
+        //those cycles both ends take into account
         for(int i = 0; i < m-1; ++i)
         {
             sum += max(get_last_cycle_time_front(m-2-i), get_last_cycle_time_back(i));
         }
+
+        //and those onlye jobs of the back take into account
         for(unsigned i = 0; i < jobs_back.size(); ++i)
         {
             sum += get_last_cycle_time_back(i+m-1);
@@ -118,6 +124,8 @@ public:
 };
 
 
+
+//Creates a schedule using the doble ended non-full-schedule-heuristic.
 template <class time_type>
 de_nonfull_schedule<time_type> create_de_schedule(unsigned m, vector<vector<time_type>>& unscheduled)
 {
@@ -127,6 +135,7 @@ de_nonfull_schedule<time_type> create_de_schedule(unsigned m, vector<vector<time
 
     while(!unscheduled.empty())
     {
+        //get the unscheduled job that would fit best to the front
         auto mini_front = min_element(unscheduled.begin(), unscheduled.end(), [&schedule](const job& j1, const job& j2)
                 {
                     auto p1 = schedule.evaluate_job_front(j1);
@@ -136,6 +145,7 @@ de_nonfull_schedule<time_type> create_de_schedule(unsigned m, vector<vector<time
                     return p1.first < p2.first;
                 });
 
+        //get the unscheduled job that would fit best to the end
         auto mini_back = min_element(unscheduled.begin(), unscheduled.end(), [&schedule](const job& j1, const job& j2)
                 {
                     auto p1 = schedule.evaluate_job_back(j1);
@@ -145,6 +155,7 @@ de_nonfull_schedule<time_type> create_de_schedule(unsigned m, vector<vector<time
                     return p1.first < p2.first;
                 });
 
+        //add the better one to the front or back respectively
         if(schedule.evaluate_job_front(*mini_front) < schedule.evaluate_job_back(*mini_back))
         {
             schedule.add_job_front(*mini_front);

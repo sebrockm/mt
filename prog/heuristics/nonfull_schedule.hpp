@@ -12,21 +12,28 @@ using namespace std;
 
 
 
+//This class represents a non-full schedule.
+//It provides some helper methods to decide which job is best do add next.
 template <class time_type>
 class nonfull_schedule
 {
 public:
+    //this typedef is used by many other heuristics, too
     typedef vector<time_type> job;
 
+    //the list of jobs
     vector<job> jobs;
     const unsigned m;
 
+    //constructor
     nonfull_schedule(unsigned m, unsigned n = 0)
         :jobs(), m(m)
     {
         jobs.reserve(n);
     }
 
+    //calculates the last cycle time in the non-full schedule for i==0,
+    //the socond last cycle time for i==1, ...
     time_type get_last_cycle_time(unsigned i) const
     {
         time_type t = 0;
@@ -38,18 +45,20 @@ public:
         return t;
     }
 
+    //adds a job at the back of the schedule
     void add_job(const job& j)
     {
         jobs.push_back(j);
     }
 
+    //Evaluates, how well a job would fit at the end of the schedule.
+    //The result is a pair of numbers: 
+    //The first one is the amount of time the already existing cycle times would be increased by
+    //because the job's process times are larger than them.
+    //The second one is the amount of time that would be "wasted" 
+    //because the job's process times are smaller than the cycle times
     pair<time_type, time_type> evaluate_job(const job& j) const 
     {
-        /*if(jobs.empty())
-        {
-            return j.front();
-        }*/
-
         pair<time_type, time_type> diff = {0, 0};
         for(int i = 0; i < m-1; ++i)
         {
@@ -60,6 +69,7 @@ public:
         return diff;
     }
 
+    //Calculates Cmax of the non-full schedule
     time_type get_cost() const
     {
         time_type sum = 0;
@@ -73,6 +83,7 @@ public:
 };
 
 
+//Creates a schedule using the non-full-schedule-heuristic.
 template <class time_type>
 nonfull_schedule<time_type> create_schedule(unsigned m, vector<vector<time_type>>& unscheduled)
 {
@@ -82,6 +93,7 @@ nonfull_schedule<time_type> create_schedule(unsigned m, vector<vector<time_type>
 
     while(!unscheduled.empty())
     {
+        //find that unscheduled job with the best evaluation
         auto mini = min_element(unscheduled.begin(), unscheduled.end(), [&schedule](const job& j1, const job& j2)
                 {
                     auto p1 = schedule.evaluate_job(j1); 
@@ -91,8 +103,10 @@ nonfull_schedule<time_type> create_schedule(unsigned m, vector<vector<time_type>
                     return p1.first < p2.first;
                 });
 
+        //add it to non-full schedule
         schedule.add_job(*mini);
 
+        //and remove from unscheduled
         swap(*mini, unscheduled.back());
         unscheduled.pop_back();
     }
@@ -101,6 +115,7 @@ nonfull_schedule<time_type> create_schedule(unsigned m, vector<vector<time_type>
 }
 
 
+//simple way of displaying a nonfull_schedule
 template <class time_type>
 ostream& operator << (ostream& s, const nonfull_schedule<time_type>& nfs)
 {

@@ -56,7 +56,7 @@ int h1(vector<job> jobs)
         nonfull_schedule<int> sch(m, n); //use nonfull_schdule to calculate Cmax
         for(int j = 0; j < n; ++j)
         {
-            sch.jobs[j] = jobs[Spos[j].second];
+            sch.add_job(jobs[Spos[j].second]);
         }
 
         int cmax = sch.get_cost();

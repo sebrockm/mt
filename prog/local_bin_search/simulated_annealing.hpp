@@ -6,6 +6,7 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -14,6 +15,14 @@ using namespace std;
 vector<bin> simulated_annealing(vector<bin> pi, double& best_cost)
 {
     const int m = pi.size();
+    const int n = accumulate(pi.begin(), pi.end(), 0, [](int init, const bin& b)
+            {
+                return init + accumulate(b.groups.begin(), b.groups.end(), 0, [] (int init, const jobgroup& g)
+                        {
+                            return init + g.length;
+                        });
+            });
+
     uniform_real_distribution<double> rand(0, 1);
     uniform_int_distribution<int> rand_bin_pos(0, pi.size()-1);
     default_random_engine generator(time(0));
@@ -34,7 +43,7 @@ vector<bin> simulated_annealing(vector<bin> pi, double& best_cost)
         //cerr << i << endl;
 
         int bin1 = rand_bin_pos(generator);
-        if(rand(generator) < 1.0/m) //exchange bins
+        if(rand(generator) < ((double)m)/(m+n)) //exchange bins
         {
             int bin2;
             do

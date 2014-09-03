@@ -2,6 +2,7 @@
 #include "de_nonfull_schedule.hpp"
 #include "gg_heuristik.hpp"
 #include "simulated_annealing.hpp"
+#include "soylu.hpp"
 
 #include <vector>
 #include <iostream>
@@ -229,6 +230,24 @@ int main(int argc, char** argv)
 
     cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
     cerr << "done gg" << endl;
+
+
+    //soylu
+    t1 = chrono::high_resolution_clock::now();
+    int cost = h1(sch.jobs);
+    t2 = chrono::high_resolution_clock::now();
+
+    cout << cost << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cerr << "done soylu H1" << endl;
+
+
+    t1 = chrono::high_resolution_clock::now();
+    cost = h3(sch.jobs);
+    t2 = chrono::high_resolution_clock::now();
+
+    cout << cost << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cerr << "done soylu H3" << endl;
+
 
     cout << endl;
 }

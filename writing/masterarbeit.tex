@@ -9,6 +9,10 @@
 \usepackage{graphicx}
 
 
+\newtheorem{defi}{Definition}
+\newtheorem{satz}{Satz}
+
+\allowdisplaybreaks
 \parskip 12pt
 
 \begin{document}
@@ -724,7 +728,7 @@ Dabei wird davon ausgegangen, dass Rüstkosten einzig durch einen Ressourcenwech
 In Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} wird auf den Spezialfall $s_{fg}=s$, der mit einem Binpackingansatz gelöst werden kann,
 eingegangen.
 
-In realen Anwendungsfällen ist es in häufig nicht der Fall, dass bei $n$ zu produzierenden Jobs alle $n$ Jobs unterschiedlich sind,
+In realen Anwendungsfällen ist es häufig nicht der Fall, dass bei $n$ zu produzierenden Jobs alle $n$ Jobs unterschiedlich sind,
 d.h. unterschiedliche Prozesszeiten und Ressourcen haben.
 Stattdessen bietet ein Produzent eine gewisse Anzahl unterschiedlicher Güter an und ein Käufer gibt mehrere identische Güter auf einmal in Auftrag.
 Im Folgenden ist daher von \textit{Jobgruppen} die Rede, wobei eine Jobgruppe $g$ aus $n_g\in\mathbb{N}$ identischen Jobs besteht.
@@ -743,22 +747,27 @@ Auf diese Weise muss die Ressource in der entsprechenden Station so lange nicht 
 bis alle Jobs aus einer Jobgruppe fertiggestellt worden sind.
 Erst danach, wenn Jobs aus einer anderen Gruppe eingelegt werden, muss einmalig die Ressource gewechselt werden,
 so dass nur dann Rüstkosten auftreten.
-Dabei soll zunächst nur der Spezialfall mit disjunkten Ressourcenmengen und konstanten Rüstkosten ($s_{fg}=s$) betrachtet werden.
+Dabei soll nur der Spezialfall mit disjunkten Ressourcenmengen und konstanten Rüstkosten ($s_{fg}=s$) betrachtet werden.
 
-O.B.d.A. sei $n$ ein Vielfaches von $m$, denn andernfalls kann eine weitere "`Dummy"'-Jobgruppe $g_d$ aus Idle-Jobs konstruiert werden,
+O.B.d.A. sei $n$ ein Vielfaches von $m$, denn andernfalls kann eine weitere "`Dummy"'-Jobgruppe $g_d$ konstruiert werden,
 deren Jobs die Prozesszeiten $0$ haben und die genau so groß ist, dass $n+n_{g_d}$ ein Vielfaches von $m$ ist.
 Bei $\tilde{n}$ gegebenen Jobgruppen mit den Größen $n_g, \, g=1,\ldots,\tilde{n}$ ist das Ziel,
 die Jobgruppen in $m$ gleichgroße Teilmengen zu unterteilen, möglichst ohne eine der Jobgruppen zu teilen.
 Dieses Problem lässt sich als Binpacking-Instanz betrachten, wobei entschieden werden muss, ob $\tilde{n}$ Items 
 mit den Größen $n_1,\ldots,n_{\tilde{n}}$ in $m$ Bins der Größe $\frac{n}{m}$ untergebracht werden können.
-Für den Fall, dass es möglich ist, müssen noch die Bins den Stationen der Anlage zugeordnet werden und die Reihenfolge
+Jobs, die sich in einem Bin befinden, werden danach einer Station der Anlage zugewiesen.
+Da eine Station sich nach genau $m$ Zyklen wieder an ihrer Ausgangsposition befindet,
+werden die Jobs eines Bins immer im Abstand von $m$ in die Anlage eingelegt und wenn sie zur gleichen Jobgruppe gehören, treten keine Rüstkosten auf,
+da die Ressource in der Station bleiben kann.
+
+Für den Fall, dass die Binpacking-Instanz eine Lösung hat, müssen noch die Bins den Stationen zugeordnet werden und die Reihenfolge
 der Jobgruppen in jedem Bin muss so bestimmt werden, dass die Zykluszeiten minimiert werden.
 Dies wird in Abschnitt \ref{sec:AnordnungDerJobgruppen} beschrieben.
 Falls dies nicht möglich ist, bedeutet das, dass mindestens eine der Jobgruppen aufgeteilt werden muss auf zwei Bins,
 so dass ein weiteres Mal Rüstkosten auftreten.
 
 Um herauszufinden, welche Jobgruppe geteilt werden muss und wie groß die beiden Hälften sein müssen,
-wird eine weitere Binpacking-Instanz\footnote{Streng genommen handelt es sich hierbei nicht mehr um eine Binpacking-Instanz.} 
+wird eine weitere Binpacking-Instanz\footnote{Streng genommen handelt es sich hierbei nicht mehr um eine Binpacking-Instanz wegen der unterschiedlichen Bingrößen.} 
 gelöst, die bis auf eine Änderung identisch zur vorherigen ist:
 Es gibt nicht mehr $m$ Bins, sondern nur noch $m-1$ und einer dieser Bins hat die Größe $2\frac{n}{m}$ (alle anderen haben weiterhin die Größe $\frac{n}{m}$).
 Wenn hier eine Aufteilung möglich ist, kann der Bin mit doppelter Größe wieder halbiert werden,
@@ -768,25 +777,57 @@ Dazu wird wiederum eine neue Binpacking-Instanz erzeugt.
 Abbildung \ref{abb:binpart} zeigt, wie die Bingrößen in den weiteren Instanzen aussehen.
 Es handelt sich dabei um die \textit{ungeordnete Zahlenpartition} von $m$.
 Spätestens bei der Binpacking-Instanz, die nur noch einen Bin enthält mit der Größe $n$, gibt es eine Lösung,
-bei der dann $m$ Jobgruppen aufgeteilt werden müssen, so dass $m$ weitere Ressourcenwechsel und damit Rüstkosten auftreten.
+bei der dann $m-1$ Jobgruppen aufgeteilt werden müssen, so dass $m-1$ weitere Ressourcenwechsel und damit Rüstkosten auftreten.
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{cccccccc}
+            1 & 1 & 1 & 1 & 1 & 1 & 1 & 1  \\ \hline
+            2 & 1 & 1 & 1 & 1 & 1 & 1 & \\ \hline
+            2 & 2 & 1 & 1 & 1 & 1 & &\\
+            3 & 1 & 1 & 1 & 1 & 1 & &\\ \hline
+            2 & 2 & 2 & 1 & 1 & & &\\
+            3 & 2 & 1 & 1 & 1 & & &\\
+            4 & 1 & 1 & 1 & 1 & & &\\ \hline
+            2 & 2 & 2 & 2 & & & &\\
+            3 & 2 & 2 & 1 & & & &\\
+            3 & 3 & 1 & 1 & & & &\\
+            4 & 2 & 1 & 1 & & & &\\
+            5 & 1 & 1 & 1 & & & &\\ \hline
+            3 & 3 & 2 & & & & &\\
+            4 & 2 & 2 & & & & &\\
+            4 & 3 & 1 & & & & &\\
+            5 & 2 & 1 & & & & &\\
+            6 & 1 & 1 & & & & &\\ \hline
+            4 & 4 & & & & & &\\
+            5 & 3 & & & & & &\\
+            6 & 2 & & & & & &\\
+            7 & 1 & & & & & &\\ \hline
+            8 & & & & & & &
+        \end{tabular}
+    \end{center}
+    \caption{
+        \label{abb:binpart}
+        Ungeordnete Zahlenpartition von $8$ bezüglich $m'$ gruppiert und sortiert.
+    }
+\end{figure}
 
 Das Binpacking-Problem ist zwar $\mathcal{NP}$-vollständig, da aber sowohl die Anzahl der Bins $m$ 
 als auch die Anzahl der Items bzw. Jobgruppen $\tilde{n}$ meist relativ klein sind (meist deutlich kleiner als die Anzahl Jobs $n$),
 lässt sich das Problem, die Jobgruppen den Bins zuzuordnen und ggf. geeignete Jobgruppen zu finden, die aufgeteilt werden müssen, 
-trotzdem in hinnehmbarer Zeit mit folgendem MIP lösen: 
+trotzdem in hinnehmbarer Zeit mit dem nachfolgenden MIP lösen. 
+Für die Binärvariablen $x_{gj}$ gilt: $x_{gj}=1$ genau dann, wenn Jobgruppe $g$ Bin $j$ zugeordnet wird.
+Die erste Nebenbedingung fordert, dass jede Jobgruppe in genau einem Bin ist 
+und die zweite Nebenbedingung verlangt, dass jeder Bin exakt gefüllt ist.
+Dabei sind $B_j$ die Größen der Bins, die zusammen mit der Anzahl der Bins $m'$ mit jedem Aufruf einer Zahlenpartition von $m$ entsprechen:
 \begin{align}
     \text{max} \quad &0 \\
     \text{s.t.}\quad \sum_{j=1}^{m'} x_{gj} &= 1 &g=1,\ldots,\tilde{n}\\
     \sum_{g=1}^{\tilde{n}} n_g x_{gj} &= B_j &j=1,\ldots,m' \\
     x_{gj} &\in \{0,1\} &g=1,\ldots,\tilde{n}, \, j=1,\ldots,m'
 \end{align}
-Für die Binärvariablen $x_{gj}$ gilt: $x_{gj}=1$ genau dann, wenn Jobgruppe $g$ in Bin $j$ ist.
-Die erste Nebenbedingung fordert, dass jede Jobgruppe in genau einem Bin ist 
-und die Zweite Nebenbedingung verlangt, dass jeder Bin exakt gefüllt ist.
-Dabei sind $B_j$ die Größen der Bins, die zusammen mit der Anzahl der Bins $m'$ mit jedem Aufruf einer Zahlenpartition von $m$ entsprechen.
 In Abbildung \ref{abb:binzeit} sind die Laufzeiten dieses MIPs aufgetragen.
 Dabei wurde das MIP in ZIMPL formuliert und mit CPLEX gelöst.
-Die Partitionen von $m$ wurden der Reihenfolge nach (vgl. Abbildung \ref{binpart}) mit kleiner werdendem $m'$ durchlaufen,
+Die Partitionen von $m$ wurden der Reihenfolge nach (vgl. Abbildung \ref{abb:binpart}) mit kleiner werdendem $m'$ durchlaufen,
 bis eine zulässige Aufteilung gefunden wurde.
 
 
@@ -796,59 +837,108 @@ In Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} wurde erläutert
 dass möglichst selten eine Ressource gewechselt werden muss, was Rüstkosten verursacht.
 Es wurde allerdings davon ausgegangen, dass immer genug Ressourcen vorhanden sind,
 d.h. es wurde nur optimiert, ohne zu beachten, ob diese Zuweisung von Ressourcen überhaupt zulässig ist.
-Die drei Fälle, wie die Ressourcen verteilt sein können (disjunkt, hierarchisch, beliebig) sollen hier deshalb diskutiert werden.
+Für den Fall der disjunkten Ressourcenmengen wird im Folgenden beschrieben, unter welchen Umständen die Lösung des Binpackings zulässig ist
+bezüglich der vorhandenen Ressourcen.
+Dazu wird zunächst beschrieben unter welchen Voraussetzungen eine Unzulässigkeit überhaupt nur auftreten kann.
+Anschließend wird erläutert, wie selbst dann teilweise doch noch Zulässigkeit erreicht werden kann.
 
-\subsubsection{Zulässigkeit bei disjunkten Ressourcenmengen}
+\subsubsection{Voraussetzungen für Unzulässigkeit}
 O.B.d.A. kann davon ausgegangen werden, dass es für jede Jobgruppe mindestens eine zulässige Ressource gibt.
 Andernfalls könnten diese Jobs niemals produziert werden.
-Außerdem kann mit dem oben beschriebenen Verfahren eine Jobgruppe $g$ nur dann mehr als einmal geteilt werden, wenn $n_g > \frac{n}{m}$ ist.
-Bei einer $k$-fachen Teilung von $g$ gilt für die resultierenden Teilgruppen $n_{g_1},n_{g_k}\leq\frac{n}{m}$ und $n_{g_i}=\frac{n}{m}$ für $i=2,\ldots,k$.
+Unzulässigkeit tritt genau dann auf, wenn weniger Ressourcen für eine Jobgruppe $g$ vorhanden sind als sich Jobs aus $g$ gleichzeitig in der Anlage befinden.
+Grundvoraussetzung dafür ist, dass $g$ beim Binpacking auf mehrere Bins aufgeteilt wurde.
+Ist dies nicht der Fall, werden die Jobs aus $g$ immer im Abstand von $m$ in die Anlage eingelegt,
+so dass nur genau eine Ressource benötigt wird, um alle Jobs aus $g$ zu produzieren.
+Eine Jobgruppe, die nicht geteilt wird, kann also keine Unzulässigkeit verursachen.
+Es müssen daher nur geteite Jobgruppen betrachtet werden, von denen es maximal $m-1$ geben kann.
+
+Nun soll der Fall betrachtet werden, dass eine Jobgruppe mehrfach geteilt wurde 
+(die Gesamtanzahl von Teilungen von allen Jobgruppen zusammen kann höchstens $m-1$ betragen).
+Eine Jobgruppe $g$ kann nur dann mehr als einmal geteilt werden, wenn $n_g > \frac{n}{m}$ ist.
+Bei einer $k$-fachen Teilung von $g$ gilt für die resultierenden Teilgruppen $n_{g_1},n_{g_k}\leq\frac{n}{m}$ und $n_{g_i}=\frac{n}{m}$ für $i=2,\ldots,k-1$
+(vgl. Abbildung \ref{kteilung}).
 Allen Teilgruppen mit $g_i=\frac{n}{m}$ kann eine Ressource fest zugeteilt werden, da sich Jobs dieser Teilgruppen durchgehend auf einer Station befinden.
 Sie können daher als eigenständige Jobgruppen mit genau einer zulässigen Ressource aufgefasst werden.
 Für $g_1$ und $g_k$ stehen dann entsprechend weniger Ressourcen zur Verfügung.
-Daher kann o.B.d.A. davon ausgegangen werden, dass jede Jobgruppe höchstens einmal aufgeteilt werden kann.
-Eine Jobgruppe, die nicht geteilt wird, benötigt nur eine Ressource.
-Es muss also nur der Fall betrachtet werden, dass es für eine Jobgruppe $g$, die geteilt wird, nur eine Ressource gibt.
-Denn dann dürfen sich zu keinem Zeitpunkt Jobs aus den beiden Teilgruppen $g_1$ und $g_2$ gleichzeitig in der Anlage befinden.
+Daher kann o.B.d.A. davon ausgegangen werden, dass jede Jobgruppe höchstens einmal geteilt werden kann, d.h. $k\leq 1$.
+
+Die Lösung des Binpackings kann also nur dann unzulässig sein, wenn es für eine Jobgruppe $g$, die geteilt wird, nur eine Ressource gibt.
+Denn wenn es für $g$ mehr als eine Ressource gibt, ist es kein Problem, wenn zwei Jobs aus $g$ gleichzeitig in der Anlage sind.
+
+\subsubsection{Anordnen der Jobgruppen vor der Teilung}
+Im vorigen Unterabschnitt wurde festgestellt, dass nur eine geteilte Jobgruppe, für die es nur eine Ressource gibt,
+zu Unzulässigkeit führen kann.
+Wenn ein Bin der Größe $B_j = k\frac{n}{m}$ (im Folgenden ein $k$\textit{-Bin} genannt) 
+mit den ihm zugewiesenen Jobgruppen aufgeteilt wird in $k$ Bins der Größe $\frac{n}{m}$, 
+stellt sich daher die Frage, ob es möglich ist, seine Jobgruppen vorher so Anzuordnen, dass sich nur solche Jobgruppen an den "`Bruchstellen"' befinden, 
+für die es mehr als eine Ressource gibt (vgl. Abbildung \ref{bruchstelle}), denn dann wäre die Lösung auf jeden Fall zulässig.
+
+\begin{satz}
+    Das Problem zu entscheiden, ob die Jobgruppen in einem $k$-Bin (mit $k>1$) so angeordnet werden können,
+    dass beim Zerlegen des $k$-Bins in $1$-Bins nur Jobgruppen mit mindestens zwei Ressourcen geteilt werden, ist $\mathcal{NP}$-vollständig.
+\end{satz}
+\begin{proof}
+    Dieses Problem liegt trivialer Weise in $\mathcal{NP}$.
+    Es muss also nur noch ein $\mathcal{NP}$-schweres Problem darauf reduziert werden.
+    Es folgt die Reduktion des \textit{Partition}-Problems:
+    Gegeben sei eine Instanz $J$ des \textit{Partition}-Problems mit Zahlen $a_1,\ldots,a_n$.
+    Es sei $A\coloneqq\sum_{i=1}^{n}a_i$.
+    Es wird eine Instanz $J'$ des gegebenen Problems erstellt mit $n+1$ Jobgruppen und einem $2$-Bin der Größe $A+2$.
+    Es wird $g_i \coloneqq a_i$ für $1\leq i\leq n$ gesetzt und $g_{n+1}\coloneqq 2$.
+    Für die Jobgruppen $1$ bis $n$ gibt es eine Ressource und für die die Jobgruppe $n+1$ gibt es zwei Ressourcen.
+    Die Jobgruppen müssen also so angeordnet werden, dass $n+1$ geteilt wird.
+    Die resultierenden $1$-Bins haben dann jeweils die Größe $\frac{A}{2}+1$ und enthalten jeweils eine Jobgruppe der Größe $1$, die aus $n+1$ hervorgehen.
+
+    "`$\Rightarrow$"': $J$ habe eine Lösung, nämlich eine Teilmenge $T\subseteq\{1,\ldots,n\}$ mit $\sum_{i\in T}a_i = \frac{A}{2}$.
+    Dann hat auch $J'$ eine Lösung: Alle $g\in T$ werden dem ersten $1$-Bin zugewiesen und alle $g\in\{1,\ldots,n\}\setminus T$ dem zweiten.
+    In beiden $1$-Bins ist dann noch genau für eine Jobgruppe der Größe $1$ Platz, sodass jeweils eine Hälfte der Gruppe $n+1$ diesen ausfüllen kann.
+
+    "`$\Leftarrow$"': Habe nun umgekehrt $J'$ eine Lösung. Da jeder $1$-Bin eine Jobgruppeder Größe $1$ enthält, die aus $n+1$ hervorgegangen ist,
+    müssen in beiden $1$-Bins die restlichen Jobgruppen zusammen die Größe $\frac{A}{2}$ haben.
+    Diese Jobgruppen sind dann auch eine Lösung für $J$.
+\end{proof}
+
+In der Praxis kommt es allerdings selten vor, dass es nur eine Jobgruppe mit mehr als einer Ressource gibt.
+Je mehr Jobgruppen mehr als eine Ressource haben, desto einfacher wird das Problem.
+Der Fall, dass es keine Jobgruppe mit nur einer Ressource gibt ist trivial, da alle Jobgruppen ohne Bedenken geteilt werden können.
+
+\subsubsection{Keine geeignete Anordnung möglich}
+Es bleibt noch der Fall zu klären, dass in einem $k$-Bin keine geeignete Reihenfolge der Jobgruppen gefunden werden kann.
+Es wird also mindestens eine Jobgruppe $g$ geteilt, obwohl es nur eine Ressource für sie gibt.
 
 Falls $n_g \leq \frac{n}{m}$ ist, ist es immer möglich, die beiden Teilgruppen, die aus $g$ hervorgehen,
 so in den Bins anzuordnen, dass niemals zwei Jobs aus $g$ zur gleichen Zeit in der Anlage sind, indem beispielsweise
 $g_1$ an den Anfang ihres Bins gelegt wird und $g_2$ ans Ende von ihrem Bin (vgl. Abbildung \ref{abb:blabla}).
-Diese Bedingung, dass $g_1$ und $g_2$ sich nicht überlappen dürfen, muss allerdings in den nachfolgenden Verfahren, 
-die $C_{\max}$ minimieren (s. Abschnitt \ref{sec:AnordnungDerJobgruppen}), beachtet werden.
-Falls mehrere Jobgruppen mit $n_g\leq\frac{n}{m}$ geteilt werden (es können höchstens $m$ sein), können in jedem Bin höchstens zwei resultierende 
-Teilgruppen vorkommen, so dass es immer möglich ist, eine von beiden an den Anfang und die andere an das Ende das Bins zu legen (vgl. Abbildung \ref{abb:bla}).
+Falls mehrere Jobgruppen mit $n_g \leq \frac{n}{m}$ geteilt werden (es können höchstens $m-1$ sein), können in jedem Bin höchstens zwei resultierende 
+Teilgruppen vorkommen, so dass es immer möglich ist, eine von beiden an den Anfang und die andere an das Ende des Bins zu legen (vgl. Abbildung \ref{abb:bla}).
+Diese Bedingungen, dass die resultierenden Teilgruppen sich nicht \textit{überlappen} (vgl. Abbildung \ref{ueberlappen}) dürfen, 
+muss allerdings in den nachfolgenden Verfahren, die $C_{\max}$ minimieren (s. Abschnitt \ref{sec:AnordnungDerJobgruppen}), beachtet werden.
+Alternativ kann das Binpacking wiederholt werden, falls es mehrere unterschiedliche Lösungen für eine Instanz gibt. 
+Dort werden dann ggf. andere Jobgruppen geteilt, so dass es evtl. keine möglichen Unzulässigkeiten mehr gibt.
+Falls keine davon eine bessere Lösung liefert, kann die nächsten Zahlenpartition von $m$ getestet werden.
+Je nachdem, ob in der nächsten Zahlenpartition $m'$ verringert wird (vgl. Abbildung \ref{abb:binpart}),
+wird dadurch allerdings eine weitere Jobgruppenteilung und damit ein weiteres Mal Rüstkosten in Kauf genommen.
 
-Falls eine Jobgruppe $g$ mit $n_g > \frac{n}{m}$ geteilt wird,
+Wenn $n_g > \frac{n}{m}$ ist,
 gibt es keine Möglichkeit, $g$ so aufzuteilen, 
 dass sich in jedem Zyklus höchstens ein Job aus $g$ in der Anlage befindet,
 da nur $\frac{n}{m}$ Zyklen gemacht werden. 
-Da $g$ zu groß ist für einen Bin, muss $g$ aber zwangsweise geteilt werden, so dass bei nur einer geeigneten Ressource definitiv keine zulässige Lösung existiert
-(dieser Umstand kann bereits im Voraus geprüft werden, so dass dieser Fall hier o.B.d.A. nicht auftritt).
-Von dieser Regel gibt es allerdings eine Ausnahme:
-Falls $n_g = \frac{n}{m}+1$ ist, kann $g_1$ in ihrem Bin an vorderster Stelle eingeplant werden und $g_2$ in ihrem Bin an hinterster Stelle.
-Wenn dann der Bin von $g_1$ Station $1$ und der von $g_2$ Station $m$ zugeordnet wird, ist trotzdem in jedem Zyklus nur ein Job aus $g$ in der Anlage 
-wie in Abbildung \ref{abb:blabalbal} dargestellt.
-Von dieser Ausnahme kann allerdings höchstens einmal Gebrauch gemacht werden.
+Da $g$ zu groß ist für einen Bin, muss $g$ aber zwangsweise irgendwo geteilt werden, so dass bei nur einer geeigneten Ressource definitiv keine zulässige Lösung existiert.
+Dieser Umstand kann aber bereits im Voraus geprüft werden, so dass dieser Fall hier o.B.d.A. nicht auftritt.
 
-Das Probleme, dass eine Jobgruppe mit nur einer Ressource geteilt wird, kann vermieden werden, indem beim Binpacking, 
-sobald die Notwendigkeit der Teilung einer Jobgruppe festgestellt wurde,
-nicht eine beliebige Jobgruppe für die Teilung ausgewählt wird, sondern eine, für die es mindestens zwei Ressourcen gibt.
-Wenn solch eine Jobgruppe nicht zur Auswahl steht, kann trotzdem eine mit $n_g\leq\frac{n}{m}$ ausgewählt werden, was dann zusätzliche Bedingungen für die
-nachfolgenden Verfahren verursacht. Wenn auch solch eine Jobgruppe nicht existiert, muss eine neue Binpacking-Instanz mit der nächsten Zahlenpartition von $m$ gelöst werden.
-Erst, wenn alle Partitionen getestet wurden, steht fest, dass keine zulässige Ressourcenzuteilung existiert.
-
-\subsubsection{Zulässigkeit bei hierarchischen Ressourcenmengen}
-\textit{Fällt weg, oder?}
-
-\subsubsection{Zulässigkeit bei beliebigen Ressourcenmengen}
-\textit{Fällt weg, oder?}
+\subsubsection{Zusammenfassung}
+Insgesamt kann also nur sehr selten keine zulässige Ressourcenzuweisung gefunden werden.
+Unzulässige Fälle sind häufig unabhängig von der Zuweisung der Jobgruppen an die Bins und können bereits im Voraus erkannt werden.
+Da im Zweifelsfall sämtliche Lösungen von allen Zahlenpartitionen beim Binpacking durchprobiert werden, ist es ausgeschlossen, dass eine Lösung,
+bei der nur solche Jobgruppen mit mehr als zwei Ressourcen geteilt werden, nicht gefunden wird, obwohl sie existiert.
+Falls tatsächlich keine solche Lösung existiert, gibt es noch die Möglichkeit, in den nachfolgenden Verfahren mit zusätzlichen Nebenbedingungen darauf zu achten,
+dass Teilgruppen sich nicht überlappen.
 
 
 \section{Anordnung der Jobgruppen}
 \label{sec:AnordnungDerJobgruppen}
 In diesem Abschnitt werden Verfahren zur Anordnung der Jobgruppen in den Bins einerseits und
-zum Anordnen der Bins untereinander andererseits vorgestellt.
+zum Zuordnen der Bins zu den Stationen andererseits vorgestellt.
 Aus den vorangegangenen Verfahren (vgl. Abschnitt \ref{sec:Ressourcenzuweisung}) ist bekannt, zu welchen Bins die Jobgruppen gehören.
 Geteilte Jobgruppen werden hier als eingenständige Gruppen betrachtet.
 Auch eventuelle zusätzliche Restriktionen, dass die Teile einer geteilten Jobgruppe sich nicht überschneiden dürfen, sind bekannt.
@@ -857,65 +947,121 @@ Ziel ist es, $C_{\max}$ zu minimieren, ohne die Jobgruppen zu teilen und somit d
 
 \subsection{MIP mit fixierten Bins}
 \label{subsec:MIPMitFixiertenBins}
-Hier wird zunächst ein MIP vorgestellt, dass lediglich die Jobgruppen in den Bins anordnet.
+Hier wird zunächst ein MIP vorgestellt, das lediglich die Jobgruppen in den Bins anordnet.
 Die Bins sind dabei bereits fest den Stationen zugeordnet (der erste Bin zur ersten Station usw.).
 Dieses MIP ist allerdings nur anwendbar bei zwei dominierenden Maschinen, die nicht notwendiger Weise benachbart sein müssen.
 Ein MIP, das auch die Bins untereinander anordnet, d.h. den Stationen zuordnet, wird in Unterabschnitt \ref{subsec:MIPMitFreienBins} vorgestellt.
 
-Mit $\tilde{N}=\{1,\ldots,\tilde{n}\}$ wird die Menge der Jobgruppen bezeichnet.
+Die Idee des MIPs besteht darin, jeder Jobgruppe $i$ in ihrem Bin $b_i$ einen \textit{Startposition} $s_i$ zuzuweisen.
+Aus der Startposition und der Länge $n_i$ einer Jobgruppe kann ihre \textit{Endposition} bestimmt werden.
+Anhand dieser Start- und Endpositionen kann dann die Überlappung $o_{ij}$ mit einer anderen Jobgruppen $j$ aus einem anderen Bin $b_j$
+berechnet werden.
+Da die Bins den Stationen fest zugeordnet sind und es nur zwei dominierende Maschinen gibt, deren Abstand bekannt ist, 
+müssen jeweils nur die Überlappungen von Jobs in Bins mit dem Abstand der dominierenden Maschinen berechnet werden.
+Dazu ein Beispiel: Es gebe $m=8$ Maschinen, wobei $M_3$ und $M_4$ dominierend sind. 
+Jobgruppe $1$ habe die Größe $n_1=10$ und liege im ersten Bin.
+Jobgruppe $2$ habe die Größe $n_2=7$ und liege im zweiten Bin.
+Da der Abstand der dominierenden Maschinen $1$ beträgt, wird der zweite Bin der \textit{Nachbarbin} von Bin 1 genannt.
+Bin 3 ist der Nachbarbin von Bin 2, Bin 4 ist der Nachbarbin von Bin 3, \ldots und Bin 1 ist der Nachbarbin von Bin 8.
+Wenn der Abstand der dominierenden Maschinen z.B. $3$ betragen würde, dann wäre Bin 4 der Nachbarbin von Bin 1 usw.
+Als erstes wird ein Job aus dem ersten Bin in die Anlage eingelegt, dann einer aus dem zweiten usw. 
+Die Jobs im ersten Bin werden also immer genau in dem Moment von $M_4$ bearbeitet, wenn die Jobs im zweiten Bin von $M_3$ bearbeitet werden.
+Die Startposition von $1$ sei nun $s_1=0$ (als allererstes wird also ein Job aus Gruppe $1$ in die Anlage eingelegt)
+und die Startposition von $2$ sei $s_2=6$.
+Die Überlappung von $1$ und $2$ beträgt also $4$, wie auch in Abbildung \ref{abb:binfixbsp} zu sehen ist.
+D.h. es kommt genau viermal vor, dass ein Job aus Gruppe $1$ von Maschine $M_4$ bearbeitet wird, während ein Job aus Gruppe $2$ von $M_3$ bearbeitet wird.
+Da diese beiden Maschinen dominierend sind, beträgt die Zykluszeit in diesen vier Zyklen $\max\{p_{41},p_{32}\}$.
+
+Ziel muss es also sein den Jobgruppen Startpositionen in ihren Bins zuzuweisen und darauf basierend die Überlappungen mit Gruppen 
+aus den Nachbarbins zu berechnen. 
+Aus dem Maximum der Prozesszeiten der Jobgruppen und ihrer Überlappung kann dann $C_{\max}$ bestimmt werden.
+
+Die Berechnung der Überlappungen bildet den Kern dieses MIPs.
+Es gibt fünf Möglichkeiten, wie sie berechnet werden müssen, die auch in Abbildung \ref{abb:overlap} illustriert sind:
+\begin{enumerate}
+    \item $o_{ij} = s_i + n_i - s_j$,
+    \item $o_{ij} = s_j + n_j - s_i$,
+    \item $o_{ij} = n_i$,
+    \item $o_{ij} = n_j$ und
+    \item $o_{ij} = 0$.
+\end{enumerate}
+Welche davon die passende ist, muss anhand einiger Hilfsvariblen und Nebenbedingung ermittelt werden.
+Außerdem gibt es auch noch den Sonderfall, dass zwischen zwei Nachbarbins der Übergang von Bin $m$ zu Bin $1$ liegt.
+Dieser Fall ist in Abbildung \ref{abb:sigma} veranschaulicht.
+Wie dort zu sehen ist, muss dann die Berechnung der Überlappung leicht abgeändert werden, da Bin $1$ im Verhältnis zu Bin $m$ um 1 nach oben verschoben scheint.
+Die ersten beiden Möglichkeiten zur Berechnung der Überlappung ändern sich dann zu
+\begin{enumerate}
+    \item $o_{ij} = s_i + n_i + 1 - s_j$ und 
+    \item $o_{ij} = s_j + n_j - s_i - 1$.
+\end{enumerate}
+Die Startpositionen von $i$ werden also jeweils um $1$ nach hinten verschoben, bzw. die von $j$ um $1$ nach vorn.
+Zur Vereinfachung wird im MIP ein binärer Parameter $\sigma_{ij}$ benutzt, der genau dann den Wert $1$ hat, wenn dieser Sonderfall eintritt, und sonst $0$.
+Auf diese Weise kann $\sigma_{ij}$ direkt in die Berechnung von $o_{ij}$ integriert werden:
+\begin{enumerate}
+    \item $o_{ij} = s_i + n_i + \sigma_{ij} - s_j$ und 
+    \item $o_{ij} = s_j + n_j - s_i - \sigma_{ij}$.
+\end{enumerate}
+
+Um festzustellen, welche der Berechnungen für $o_{ij}$ benutzt werden muss, werden binäre Hilfsvariblen $y_{ij}$ und $z_{ij}$ verwendet.
+Es ist $y_{ij}=1$ genau dann, wenn $s_j \geq s_i + \sigma_{ij}$ ist, d.h. $j$ "`startet"' gleichzeitig oder später als $i$.
+Für $z_{ij}$ gilt in ähnlicher Weise: $z_{ij}=1$ genau dann, wenn $s_i + n_i + \sigma_{ij} \geq s_j + n_j$, 
+d.h. die Endposition von $i$ liegt hinter der von $j$ oder gleichauf.
+Aus den vier möglichen Kombinationen der Werte von $y_{ij}$ und $z_{ij}$ lässt sich bestimmen, 
+welche der ersten vier Berechnungsmöglichkeiten für $o_{ij}$ gewählt werden muss.
+Sollte diese Berechnung einen negativen Wert liefern, tritt der fünfte Fall ein.
+
+Im MIP wird mit $\tilde{N}=\{1,\ldots,\tilde{n}\}$ die Menge der Jobgruppen bezeichnet.
 $B=\{1,\ldots,m\}$ ist die Menge der Bins und für $b\in B$ ist $\tilde{N}_b\subset \tilde{N}$ die Teilmenge der Jobgruppen, die in Bin $b$ liegen.
 Für $i\in\tilde{N}$ gibt $b_i\in B$ den Bin an, in dem sich $i$ befindet.
-$\tilde{N}_b^*\subset \tilde{N}$ bezeichnet die Menge der Jobgruppen im "`Nachbarbin"' von $b$.
-Der Nachbarbin von $b$ ist derjenige, dessen Jobs auf der ersten dominierenden Maschine sind, während die Jobs von $b$ gerade auf der zweiten dominierenden Maschine sind.
-Wenn die beiden dominierenden Maschinen beispielsweise einen Abstand von $2$ haben, dann ist der Nachbarbin eines Bins auch um zwei Bins weiter rechts (modulo $m$).
-$p_{1i}$ und $p_{2i}$ sind die Prozesszeiten auf den beiden dominierenden Maschinen.
-Der Parameter $\sigma_{ij}$ hat für je zwei Jobgruppen $i\in\tilde{N},j\in\tilde{N}^*_{b_i}$ den Wert $1$, wenn $b_j<b_i$, und $0$ sonst.
-$\sigma_{ij}$ gibt also an, ob bei der Berechnung der Überlappung der Jobgruppen $i$ und $j$ eine Verschiebung um $1$ stattfinden muss (vgl. Abbildung \ref{abb:bla}).
+$\tilde{N}_b^*\subset \tilde{N}$ bezeichnet die Menge der Jobgruppen im Nachbarbin von $b$.
+$p_{1i}$ und $p_{2i}$ sind die Prozesszeiten von Jobgruppe $i$ auf der ersten bzw. zweiten dominierenden Maschine.
+Für je zwei Jobgruppen $i,j\in N_b$, die im selben Bin $b$ liegen, gibt es
+zwei Binärvariablen $x_{ij},x_{ji}$. Es ist $x_{ij}=1$ genau dann, wenn 
+Jobgruppe $i$ vor $j$ auf dem Bin liegt. Dabei muss $i$ nicht notwendiger
+Weise direkt vor $j$ liegen, sondern an beliebiger Position davor.
+Mithilfe der $x_{ij}$ lassen sich die Startpositionen bestimmen:
 \begin{align}
     \text{min}\quad &\sum_{b\in B}\sum_{\substack{i\in \tilde{N_b}\\j\in \tilde{N}_b^*}} 
             \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc1}\\
-			\text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in \tilde{N}, j\in \tilde{N}_{b_i} \label{con1:reflex}\\
+			\text{s.t.} \quad x_{ij} + x_{ji} &= 1 &i\in \tilde{N}, j\in \tilde{N}_{b_i}, i<j \label{con1:reflex}\\
 			x_{ij} + x_{jk} &\leq x_{ik} + 1 &i\in \tilde{N},\,\, j,k\in \tilde{N}_{b_i} \label{con1:transitiv} \\
 			s_i &= \sum_{\substack{j\in \tilde{N}_{b_i}\\i\neq j}} n_j x_{ji} &i\in \tilde{N} \label{con1:start} \\
-            My_{ij} &\geq s_j - s_i + \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:y1} \\
-            M(1-y_{ij}) &\geq s_i - s_j - \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:y2} \\
-            Mz_{ij} &\geq s_i + n_i - s_j - n_j - \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:z1} \\
-            M(1-z_{ij}) &\geq s_j + n_j- s_i - n_i + \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:z2} \\
-            o_{ij} &\geq s_i + n_i - s_j - \sigma_{ij} - M(1-y_{ij}+z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:o1} \\
-            o_{ij} &\geq s_j + n_j - s_i + \sigma_{ij} - M(1-y_{ji}+z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:o2} \\
+            My_{ij} &\geq s_j - s_i - \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:y1} \\
+            M(1-y_{ij}) &\geq s_i - s_j + \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:y2} \\
+            Mz_{ij} &\geq s_i + n_i - s_j - n_j + \sigma_{ij} + \epsilon &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:z1} \\
+            M(1-z_{ij}) &\geq s_j + n_j- s_i - n_i - \sigma_{ij} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:z2} \\
+            o_{ij} &\geq s_i + n_i - s_j + \sigma_{ij} - M(1-y_{ij}+z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:o1} \\
+            o_{ij} &\geq s_j + n_j - s_i - \sigma_{ij} - M(1-y_{ji}+z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:o2} \\
             o_{ij} &\geq n_j - M(2-y_{ij}-z_{ij}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:o3} \\
             o_{ij} &\geq n_i - M(2-y_{ji}-z_{ji}) &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:o4} \\
             o_{ij} &\geq 0 &i\in \tilde{N}, j\in \tilde{N}^*_{b_i} \label{con1:o5} \\
             x_{ij} &\in \{0,1\} &i\in \tilde{N}, j\in \tilde{N}_{b_i} \\
             y_{ij},z_{ij} &\in \{0,1\} &i\in \tilde{N}, j\in \tilde{N}^*_{b_i}
 \end{align}
-Für je zwei Jobgruppen $i,j\in N_b$, die im selben Bin $b$ liegen, gibt es
-zwei Binärvariablen $x_{ij},x_{ji}$. Es ist $x_{ij}=1$ genau dann, wenn 
-Jobgruppe $i$ vor $j$ auf dem Bin liegt. Dabei muss $i$ nicht notwendiger
-Weise direkt vor $j$ liegen, sondern an beliebiger Position davor.
 Mit (\ref{con1:reflex}) wird erreicht, dass immer entweder $i$ vor $j$ liegt
 oder umgekehrt. (\ref{con1:transitiv}) stellt die Transitivität dieser Beziehung
 her. Auf Grundlage der $x_{ij}$ und der Größen der Jobgruppen $g_i$ 
-kann in (\ref{con1:start}) der Startzeitpunkt jeder Jobgruppe berechnet werden.
+kann in (\ref{con1:start}) die Startposition jeder Jobgruppe berechnet werden.
 Die Variablen $s_i$ dienen dabei nur der Übersicht und können in den übrigen 
 Constraints durch die Summe aus (\ref{con1:start}) ersetzt werden.
-
-Über (\ref{con1:y1}) und (\ref{con1:y2}) wird den Indikatorvariablen $y_{ij}$ für
-zwei Jobgruppen $i,j$ aus benachbarten Bins folgende
-Bedeutung gegeben: $y_{ij}=1$ genau dann, wenn $s_j \geq s_i$, d.h. wenn der Startzeitpunkt von $i$ nicht vor dem von $j$ liegt.
-Analog wird mit (\ref{con1:z1}) und (\ref{con1:z2}) $z_{ij}=1$ gesetzt genau dann, wenn $s_i+n_i \geq s_j+n_j$, der Endzeitpunkt von $i$ also nicht vor dem von $j$ liegt.
-
-Mit den Variablen $o_{ij}$ wird die Überlappung von zwei Jobgruppen in benachbarten Bins berechnet.
+Über (\ref{con1:y1}) und (\ref{con1:y2}) wird den Indikatorvariablen $y_{ij}$ 
+mit einem "`Big-M"' die oben beschriebene Bedeutung gegeben.
+Analog wird mit (\ref{con1:z1}) und (\ref{con1:z2}) der Wert der $z_{ij}$ entsprechend der obigen Bedeutung gesetzt.
 Je nachdem, welche der $y_{ij}$ und $z_{ij}$ auf $1$ bzw. $0$ gesetzt sind, 
-wird der Wert von $o_{ij}$ durch eine der Nebenbedingungen (\ref{con1:o1}) bis (\ref{con1:o5}) festgelegt.
-Die Zielfunktion (\ref{objfunc1}) multipliziert die Überlappung mit der jeweiligen Prozesszeit und minimiert die Summe darüber.
+werden drei der vier Nebenbedingungen (\ref{con1:o1}) bis (\ref{con1:o4}) durch die "`Big-Ms"' faktisch bedeutungslos ($o_{ij}\geq -M$)
+und nur eine bleibt bestehen, so dass genau die passende der vier Berechnungsmöglichkeiten für die $o_{ij}$ gewählt wird.
+Da die Zielfunktion (\ref{objfunc1}) die Überlappung mit dem Maximum der jeweiligen Prozesszeiten multipliziert und die Summe darüber minimiert,
+müssen die $o_{ij}$ nicht per Nebenbedingung nach oben beschränkt werden.
+Sie sind automatisch durch die Größe der Bins beschränkt.
+Damit sie nicht negativ werden, sind sie allerdings durch (\ref{con1:o5}) nach unten durch $0$ beschränkt.
+Dies bedeutet, dass die jeweiligen Jobgruppen sich nicht überschneiden.
 
 \subsection{MIP mit freien Bins}
 \label{subsec:MIPMitFreienBins}
 Das folgende MIP erweitert das MIP aus Unterabschnitt \ref{subsec:MIPMitFixiertenBins} um die Fähingkeit, die Bins untereinander zu Vertauschen,
 was dem Zuweisen der Bins an die Stationen entspricht.
 Für die Berechnung der Überschneidungen zwischen den Jobgruppen sind daher weitere Variablen notwendig, die als Indikator dafür dienen,
-Bins der Jobgruppen auf benachbarten Stationen liegen.
+ob die Bins der Jobgruppen auf benachbarten Stationen liegen.
 \begin{align}
     \text{min}\quad &\sum_{\substack{i,j\in\tilde{N}\\b_i\neq b_j}} 
             \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\

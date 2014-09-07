@@ -687,12 +687,14 @@ Dieses MIP liefert genau wie jenes aus \ref{subsubsec:ZulaessigkeitBeiBeliebigen
 \label{UnzulaessigeReihenfolgen}
 Für den Fall, dass für eine gegebene Reihenfolge $\pi$ kein zulässiges Mapping $f$ erstellt werden kann, muss $\pi$ nachträglich verändert werden.
 
-\subsection{Nachbarschaftssuche}
+%\subsection{Nachbarschaftssuche}
+Eine Nachbarschaftssuche ist eine Möglichkeit zur nachträglichen Änderung von $\pi$:
 Mit einer Vertauschung zweier Jobs kann $\pi$ unter Umständen so abgeändert werden, dass doch ein zulässiges Mapping existiert.
 Der Greedy-Algorithmus aus Unterabschnitt \ref{subsubsec:ZulaessigkeitBeiDisjunktenRessourcenmengen} kann so abgewandelt werden,
 dass er, sobald einer der Counter negativ wird, nicht terminiert, sondern weiter Ressourcen zuweist, auch wenn dies eigentlich gar nicht geht.
 Sei $j$ ein Job, dessen Counter negativ geworden ist.
-Ziel ist es, einen anderen Job $k$ zu finden mit der Eigenschaft, dass die Counter von $j$ und $k$ jeweils noch mindesten $1$ betragen, wenn man ihre Positionen vertauscht,
+Ziel ist es, einen anderen Job $k$ zu finden mit der Eigenschaft, dass die Counter von $j$ und $k$ jeweils noch mindesten $1$ betragen würde, 
+wenn man ihre Positionen vertauschen würde,
 und dass auch keiner der Counter der umliegenden Jobs von $j$ und $k$ durch eine Vertauschung negativen werden würde.
 Falls mehrere solcher $k$ existieren, wird derjenige ausgewählt, dessen Vertauschung mit $j$ die geringste Verschlechterung von $C_{\max}$ verursacht.
 Die Counter der umgebenen Jobs müssen nach der Vertauschung aktualisiert werden.
@@ -700,12 +702,12 @@ Dieses Vorgehen wird so lange wiederholt, bis es keine negativen Counter mehr gi
 Falls kein solcher Job $k$ existiert, kann die Zulässigkeit von $\pi$ mit dieser Methode nicht erlangt werden.
 
 
-\subsection{Idle-Jobs}
-Falls mit der Nachbarschaftssuche keine Lösung gefunden werden kann, besteht die Möglichkeit sogenannte Idle-Jobs in $\pi$ einzufügen.
-Idle-Jobs sind Jobs, die auf allen Maschinen die Prozesszeit $0$ haben und keine Ressourcen benötigen.
-In der Praxis kann ein Idle-Job durch "`nichts"' realisiert werden, es wird also einfach kein Job in die Station eingelegt.
-Nach dem Einfügen eines Idle-Jobs kann erneut die Nachbarschaftssuche angewandt werden.
-Es können so lange Idle-Jobs eingefügt werden, bis eine gültige Ressourcenzuweisung gefunden wurde.
+%\subsection{Idle-Jobs}
+%Falls mit der Nachbarschaftssuche keine Lösung gefunden werden kann, besteht die Möglichkeit sogenannte Idle-Jobs in $\pi$ einzufügen.
+%Idle-Jobs sind Jobs, die auf allen Maschinen die Prozesszeit $0$ haben und keine Ressourcen benötigen.
+%In der Praxis kann ein Idle-Job durch "`nichts"' realisiert werden, es wird also einfach kein Job in die Station eingelegt.
+%Nach dem Einfügen eines Idle-Jobs kann erneut die Nachbarschaftssuche angewandt werden.
+%Es können so lange Idle-Jobs eingefügt werden, bis eine gültige Ressourcenzuweisung gefunden wurde.
 
 
 
@@ -719,6 +721,9 @@ So wird sichergestellt, dass die durch das Mapping $f$ vorgeschriebenen Ressourc
 In Abschnitt \ref{sec:Ressourcenzuweisung} wird erklärt, wie ein optimales Mapping $f$ mit möglichst wenigen Rüstkosten mit einem Binpacking-Ansatz erstellt werden kann.
 Anschließend wird in Abschnitt \ref{sec:AnordnungDerJobgruppen} beschrieben, wie basierend auf dem gegebenen Mapping $f$ eine Reihenfolge $\pi$ erstellt wird,
 so dass die Summe der Zykluszeiten ($C_{\max}$) minimal ist.
+
+In den meisten nachfolgend genannten Verfahren wird nur der Spezialfall mit konstanten Rüstkosten ($s_{fg}=s$),
+disjunkten Ressourcenmengen ($\rho_i\cap\rho_j=\emptyset$) und zwei dominierenden Maschinen betrachtet.
 
 
 \section{Ressourcenzuweisung}
@@ -808,6 +813,7 @@ bei der dann $m-1$ Jobgruppen aufgeteilt werden müssen, so dass $m-1$ weitere R
     \caption{
         \label{abb:binpart}
         Ungeordnete Zahlenpartition von $8$ bezüglich $m'$ gruppiert und sortiert.
+        Jede Zeile stellt die Anzahl der Bins und deren Größe bei möglichen Binpacking-Instanzen dar.
     }
 \end{figure}
 
@@ -850,7 +856,7 @@ Grundvoraussetzung dafür ist, dass $g$ beim Binpacking auf mehrere Bins aufgete
 Ist dies nicht der Fall, werden die Jobs aus $g$ immer im Abstand von $m$ in die Anlage eingelegt,
 so dass nur genau eine Ressource benötigt wird, um alle Jobs aus $g$ zu produzieren.
 Eine Jobgruppe, die nicht geteilt wird, kann also keine Unzulässigkeit verursachen.
-Es müssen daher nur geteite Jobgruppen betrachtet werden, von denen es maximal $m-1$ geben kann.
+Es müssen daher nur geteilte Jobgruppen betrachtet werden, von denen es maximal $m-1$ geben kann.
 
 Nun soll der Fall betrachtet werden, dass eine Jobgruppe mehrfach geteilt wurde 
 (die Gesamtanzahl von Teilungen von allen Jobgruppen zusammen kann höchstens $m-1$ betragen).
@@ -866,11 +872,11 @@ Die Lösung des Binpackings kann also nur dann unzulässig sein, wenn es für ei
 Denn wenn es für $g$ mehr als eine Ressource gibt, ist es kein Problem, wenn zwei Jobs aus $g$ gleichzeitig in der Anlage sind.
 
 \subsubsection{Anordnen der Jobgruppen vor der Teilung}
-Im vorigen Unterabschnitt wurde festgestellt, dass nur eine geteilte Jobgruppe, für die es nur eine Ressource gibt,
-zu Unzulässigkeit führen kann.
+Im vorigen Unterabschnitt wurde festgestellt, dass eine geteilte Jobgruppe nur dann
+zu Unzulässigkeit führen kann, wenn es für sie nur eine Ressource gibt.
 Wenn ein Bin der Größe $B_j = k\frac{n}{m}$ (im Folgenden ein $k$\textit{-Bin} genannt) 
 mit den ihm zugewiesenen Jobgruppen aufgeteilt wird in $k$ Bins der Größe $\frac{n}{m}$, 
-stellt sich daher die Frage, ob es möglich ist, seine Jobgruppen vorher so Anzuordnen, dass sich nur solche Jobgruppen an den "`Bruchstellen"' befinden, 
+stellt sich daher die Frage, ob es möglich ist, die Jobgruppen des $k$-Bins vorher so Anzuordnen, dass sich nur solche Jobgruppen an den "`Bruchstellen"' befinden, 
 für die es mehr als eine Ressource gibt (vgl. Abbildung \ref{bruchstelle}), denn dann wäre die Lösung auf jeden Fall zulässig.
 
 \begin{satz}
@@ -879,7 +885,7 @@ für die es mehr als eine Ressource gibt (vgl. Abbildung \ref{bruchstelle}), den
 \end{satz}
 \begin{proof}
     Dieses Problem liegt trivialer Weise in $\mathcal{NP}$.
-    Es muss also nur noch ein $\mathcal{NP}$-schweres Problem darauf reduziert werden.
+    Es muss also nur noch ein $\mathcal{NP}$-vollständiges Problem darauf reduziert werden.
     Es folgt die Reduktion des \textit{Partition}-Problems:
     Gegeben sei eine Instanz $J$ des \textit{Partition}-Problems mit Zahlen $a_1,\ldots,a_n$.
     Es sei $A\coloneqq\sum_{i=1}^{n}a_i$.
@@ -893,7 +899,7 @@ für die es mehr als eine Ressource gibt (vgl. Abbildung \ref{bruchstelle}), den
     Dann hat auch $J'$ eine Lösung: Alle $g\in T$ werden dem ersten $1$-Bin zugewiesen und alle $g\in\{1,\ldots,n\}\setminus T$ dem zweiten.
     In beiden $1$-Bins ist dann noch genau für eine Jobgruppe der Größe $1$ Platz, sodass jeweils eine Hälfte der Gruppe $n+1$ diesen ausfüllen kann.
 
-    "`$\Leftarrow$"': Habe nun umgekehrt $J'$ eine Lösung. Da jeder $1$-Bin eine Jobgruppeder Größe $1$ enthält, die aus $n+1$ hervorgegangen ist,
+    "`$\Leftarrow$"': Habe nun umgekehrt $J'$ eine Lösung. Da jeder $1$-Bin eine Jobgruppe der Größe $1$ enthält, die aus $n+1$ hervorgegangen ist,
     müssen in beiden $1$-Bins die restlichen Jobgruppen zusammen die Größe $\frac{A}{2}$ haben.
     Diese Jobgruppen sind dann auch eine Lösung für $J$.
 \end{proof}
@@ -940,7 +946,7 @@ dass Teilgruppen sich nicht überlappen.
 In diesem Abschnitt werden Verfahren zur Anordnung der Jobgruppen in den Bins einerseits und
 zum Zuordnen der Bins zu den Stationen andererseits vorgestellt.
 Aus den vorangegangenen Verfahren (vgl. Abschnitt \ref{sec:Ressourcenzuweisung}) ist bekannt, zu welchen Bins die Jobgruppen gehören.
-Geteilte Jobgruppen werden hier als eingenständige Gruppen betrachtet.
+Geteilte Jobgruppen werden hier als eigenständige Gruppen betrachtet.
 Auch eventuelle zusätzliche Restriktionen, dass die Teile einer geteilten Jobgruppe sich nicht überschneiden dürfen, sind bekannt.
 Ziel ist es, $C_{\max}$ zu minimieren, ohne die Jobgruppen zu teilen und somit die bereits minimierten Rüstkosten zu verändern.
 
@@ -952,7 +958,7 @@ Die Bins sind dabei bereits fest den Stationen zugeordnet (der erste Bin zur ers
 Dieses MIP ist allerdings nur anwendbar bei zwei dominierenden Maschinen, die nicht notwendiger Weise benachbart sein müssen.
 Ein MIP, das auch die Bins untereinander anordnet, d.h. den Stationen zuordnet, wird in Unterabschnitt \ref{subsec:MIPMitFreienBins} vorgestellt.
 
-Die Idee des MIPs besteht darin, jeder Jobgruppe $i$ in ihrem Bin $b_i$ einen \textit{Startposition} $s_i$ zuzuweisen.
+Die Idee des MIPs besteht darin, jeder Jobgruppe $i$ in ihrem Bin $b_i$ eine \textit{Startposition} $s_i$ zuzuweisen.
 Aus der Startposition und der Länge $n_i$ einer Jobgruppe kann ihre \textit{Endposition} bestimmt werden.
 Anhand dieser Start- und Endpositionen kann dann die Überlappung $o_{ij}$ mit einer anderen Jobgruppen $j$ aus einem anderen Bin $b_j$
 berechnet werden.
@@ -961,20 +967,20 @@ müssen jeweils nur die Überlappungen von Jobs in Bins mit dem Abstand der domi
 Dazu ein Beispiel: Es gebe $m=8$ Maschinen, wobei $M_3$ und $M_4$ dominierend sind. 
 Jobgruppe $1$ habe die Größe $n_1=10$ und liege im ersten Bin.
 Jobgruppe $2$ habe die Größe $n_2=7$ und liege im zweiten Bin.
-Da der Abstand der dominierenden Maschinen $1$ beträgt, wird der zweite Bin der \textit{Nachbarbin} von Bin 1 genannt.
+Da der Abstand der dominierenden Maschinen $1$ beträgt, wird der zweite Bin als \textit{Nachbarbin} von Bin 1 bezeichnet.
 Bin 3 ist der Nachbarbin von Bin 2, Bin 4 ist der Nachbarbin von Bin 3, \ldots und Bin 1 ist der Nachbarbin von Bin 8.
-Wenn der Abstand der dominierenden Maschinen z.B. $3$ betragen würde, dann wäre Bin 4 der Nachbarbin von Bin 1 usw.
+Wenn der Abstand der dominierenden Maschinen hingegen z.B. $3$ betragen würde, dann wäre Bin 4 der Nachbarbin von Bin 1 usw.
 Als erstes wird ein Job aus dem ersten Bin in die Anlage eingelegt, dann einer aus dem zweiten usw. 
 Die Jobs im ersten Bin werden also immer genau in dem Moment von $M_4$ bearbeitet, wenn die Jobs im zweiten Bin von $M_3$ bearbeitet werden.
-Die Startposition von $1$ sei nun $s_1=0$ (als allererstes wird also ein Job aus Gruppe $1$ in die Anlage eingelegt)
-und die Startposition von $2$ sei $s_2=6$.
-Die Überlappung von $1$ und $2$ beträgt also $4$, wie auch in Abbildung \ref{abb:binfixbsp} zu sehen ist.
+Die Startposition von Gruppe $1$ sei nun $s_1=0$ (als allererstes wird also ein Job aus Gruppe $1$ in die Anlage eingelegt)
+und die Startposition von Gruppe $2$ sei $s_2=6$.
+Die Überlappung der Gruppen $1$ und $2$ beträgt also $4$, wie auch in Abbildung \ref{abb:binfixbsp} zu sehen ist.
 D.h. es kommt genau viermal vor, dass ein Job aus Gruppe $1$ von Maschine $M_4$ bearbeitet wird, während ein Job aus Gruppe $2$ von $M_3$ bearbeitet wird.
 Da diese beiden Maschinen dominierend sind, beträgt die Zykluszeit in diesen vier Zyklen $\max\{p_{41},p_{32}\}$.
 
-Ziel muss es also sein den Jobgruppen Startpositionen in ihren Bins zuzuweisen und darauf basierend die Überlappungen mit Gruppen 
+Ziel muss es also sein, den Jobgruppen Startpositionen in ihren Bins zuzuweisen und darauf basierend die Überlappungen mit Gruppen 
 aus den Nachbarbins zu berechnen. 
-Aus dem Maximum der Prozesszeiten der Jobgruppen und ihrer Überlappung kann dann $C_{\max}$ bestimmt werden.
+Aus dem Maximum der Prozesszeiten der Jobgruppen und ihren Überlappungen kann dann $C_{\max}$ bestimmt werden.
 
 Die Berechnung der Überlappungen bildet den Kern dieses MIPs.
 Es gibt fünf Möglichkeiten, wie sie berechnet werden müssen, die auch in Abbildung \ref{abb:overlap} illustriert sind:
@@ -985,7 +991,7 @@ Es gibt fünf Möglichkeiten, wie sie berechnet werden müssen, die auch in Abbi
     \item $o_{ij} = n_j$ und
     \item $o_{ij} = 0$.
 \end{enumerate}
-Welche davon die passende ist, muss anhand einiger Hilfsvariblen und Nebenbedingung ermittelt werden.
+Welche davon die passende ist, muss anhand einiger Hilfsvariablen und Nebenbedingung ermittelt werden.
 Außerdem gibt es auch noch den Sonderfall, dass zwischen zwei Nachbarbins der Übergang von Bin $m$ zu Bin $1$ liegt.
 Dieser Fall ist in Abbildung \ref{abb:sigma} veranschaulicht.
 Wie dort zu sehen ist, muss dann die Berechnung der Überlappung leicht abgeändert werden, da Bin $1$ im Verhältnis zu Bin $m$ um 1 nach oben verschoben scheint.
@@ -1002,7 +1008,7 @@ Auf diese Weise kann $\sigma_{ij}$ direkt in die Berechnung von $o_{ij}$ integri
     \item $o_{ij} = s_j + n_j - s_i - \sigma_{ij}$.
 \end{enumerate}
 
-Um festzustellen, welche der Berechnungen für $o_{ij}$ benutzt werden muss, werden binäre Hilfsvariblen $y_{ij}$ und $z_{ij}$ verwendet.
+Um festzustellen, welche der Berechnungen für $o_{ij}$ benutzt werden muss, werden binäre Hilfsvariablen $y_{ij}$ und $z_{ij}$ verwendet.
 Es ist $y_{ij}=1$ genau dann, wenn $s_j \geq s_i + \sigma_{ij}$ ist, d.h. $j$ "`startet"' gleichzeitig oder später als $i$.
 Für $z_{ij}$ gilt in ähnlicher Weise: $z_{ij}=1$ genau dann, wenn $s_i + n_i + \sigma_{ij} \geq s_j + n_j$, 
 d.h. die Endposition von $i$ liegt hinter der von $j$ oder gleichauf.
@@ -1043,25 +1049,43 @@ oder umgekehrt. (\ref{con1:transitiv}) stellt die Transitivität dieser Beziehun
 her. Auf Grundlage der $x_{ij}$ und der Größen der Jobgruppen $g_i$ 
 kann in (\ref{con1:start}) die Startposition jeder Jobgruppe berechnet werden.
 Die Variablen $s_i$ dienen dabei nur der Übersicht und können in den übrigen 
-Constraints durch die Summe aus (\ref{con1:start}) ersetzt werden.
+Nebenbedingungen durch die Summe aus (\ref{con1:start}) ersetzt werden.
 Über (\ref{con1:y1}) und (\ref{con1:y2}) wird den Indikatorvariablen $y_{ij}$ 
-mit einem "`Big-M"' die oben beschriebene Bedeutung gegeben.
+mit einem "`Big-M"' die oben beschriebene Bedeutung gegeben:
+(\ref{con1:y1}) setzt $y_{ij}$ auf $1$, wenn $s_j-s_i-\sigma_{ij}+\epsilon > 0$ ist,
+was äquivalent zu $s_j \geq s_i+\sigma_{ij}$ ist.
+$\epsilon$ ist ein hinreichend kleiner Parameter, falls alle Prozesszeiten ganzzahlig sind, ist jeder Wert $\epsilon<1$ geeignet.
+(\ref{con1:y2}) andererseits setzt $y_{ij}$ auf $0$, wenn $s_i-s_j+\sigma_{ij} > 0$ ist (oder äquivalent dazu: $s_j < s_i+\sigma_{ij}$).
 Analog wird mit (\ref{con1:z1}) und (\ref{con1:z2}) der Wert der $z_{ij}$ entsprechend der obigen Bedeutung gesetzt.
 Je nachdem, welche der $y_{ij}$ und $z_{ij}$ auf $1$ bzw. $0$ gesetzt sind, 
 werden drei der vier Nebenbedingungen (\ref{con1:o1}) bis (\ref{con1:o4}) durch die "`Big-Ms"' faktisch bedeutungslos ($o_{ij}\geq -M$)
 und nur eine bleibt bestehen, so dass genau die passende der vier Berechnungsmöglichkeiten für die $o_{ij}$ gewählt wird.
-Da die Zielfunktion (\ref{objfunc1}) die Überlappung mit dem Maximum der jeweiligen Prozesszeiten multipliziert und die Summe darüber minimiert,
+Da die Zielfunktion (\ref{objfunc1}) die Überlappungen (mit dem Maximum der jeweiligen Prozesszeiten multipliziert) minimiert,
 müssen die $o_{ij}$ nicht per Nebenbedingung nach oben beschränkt werden.
 Sie sind automatisch durch die Größe der Bins beschränkt.
 Damit sie nicht negativ werden, sind sie allerdings durch (\ref{con1:o5}) nach unten durch $0$ beschränkt.
 Dies bedeutet, dass die jeweiligen Jobgruppen sich nicht überschneiden.
 
+Die Qualität der Lösung dieses MIPs ist stark von der gegebenen Zuordnung der Bins an die Stationen abhängig.
+Bei einigen Zuordnungen kann es sehr gute Lösungen geben, und bei anderen dagegen nur sehr schlechte, was sich nur durch eine
+Änderung der Zuordnung (bzw. der Binreihenfolge) verbessern lässt, wozu dieses MIP allerdings nicht in der Lage ist.
+Im Folgenden werden daher ein weiteres MIP vorgestellt, das diese Fähigkeit besitzt, und heuristische Methoden,
+die die Bins den Stationen zuweisen, um darauf basierend dieses MIP anzuwenden.
+
+
 \subsection{MIP mit freien Bins}
 \label{subsec:MIPMitFreienBins}
-Das folgende MIP erweitert das MIP aus Unterabschnitt \ref{subsec:MIPMitFixiertenBins} um die Fähingkeit, die Bins untereinander zu Vertauschen,
+Das folgende MIP erweitert das MIP aus Unterabschnitt \ref{subsec:MIPMitFixiertenBins} um die Fähigkeit, die Bins untereinander zu Vertauschen,
 was dem Zuweisen der Bins an die Stationen entspricht.
 Für die Berechnung der Überschneidungen zwischen den Jobgruppen sind daher weitere Variablen notwendig, die als Indikator dafür dienen,
 ob die Bins der Jobgruppen auf benachbarten Stationen liegen.
+Dazu dienen die Binärvariablen $\beta_{bd}$, die genau dann auf $1$ gesetzt werden, wenn Bin $b$ Station $d$ zugewiesen ist.
+Weitere Binärvariablen $\nu_{bcd}$ werden auf $1$ gesetzt, wenn Bin $b$ Station $d$ zugewiesen ist und Bin $c$ der Nachbarstation von $d$ (mit $d^*$ bezeichnet).
+Auf diese Weise können die $\nu_{bcd}$ die $\sigma_{ij}$ aus dem MIP in Unterabschnitt \ref{subsec:MIPMitFixiertenBins} ersetzen:
+Wenn die beiden dominierenden Maschinen benachbart sind (also den Abstand $1$ haben), ist für zwei Jobgruppen $i$ und $j$ $\nu_{b_ib_jm}=1$ genau dann, 
+wenn der Bin von $i$ der letzten Station $m$ zugewiesen ist und der Bin von $j$ der ersten Station (also genau dann, wenn im anderen MIP $\sigma_{ij}=1$ ist).
+Außerdem gibt es weitere Binärvariablen $w_{ij}$, die als Indikator dafür dienen, ob die Bins der Jobgruppen $i$ und $j$ benachbarten Stationen zugewiesen sind.
+Denn nur dann muss zwischen diesen Jobgruppen die Überlappung $o_{ij}$ berechnet werden.
 \begin{align}
     \text{min}\quad &\sum_{\substack{i,j\in\tilde{N}\\b_i\neq b_j}} 
             \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc}\\
@@ -1073,10 +1097,10 @@ ob die Bins der Jobgruppen auf benachbarten Stationen liegen.
             \label{con:start} \\
 	\sum_{b\in B}\beta_{bd} &= 1 &d\in B \label{con:binpos} \\
 	\sum_{d\in B}\beta_{bd} &= 1 &b\in B \label{con:binpos2} \\
-	\beta_{bd} + \beta_{cd^*} &\leq \nu_{bcd} &b,c,d\in B \label{con:nu} \\
+	\beta_{bd} + \beta_{cd^*} &\leq \nu_{bcd} + 1 &b,c,d\in B \label{con:nu} \\
 	\nu_{bcd} &\leq \beta_{bd} &b,c,d\in B \label{con:nurev} \\
     \nu_{bcd} &\leq \beta_{bd^*} &b,c,d\in B \label{con:nurev2} \\
-    My_{ij} &\geq s_j - s_i - \nu_{b_ib_jm} + \epsilon &i,j\in\tilde{N} \\
+    My_{ij} &\geq s_j - s_i - \nu_{b_ib_jm} + \epsilon &i,j\in\tilde{N} \label{con:y1}\\
     M(1-y_{ij}) &\geq s_i + \nu_{b_ib_jm} - s_j &i,j\in\tilde{N} \\
     Mz_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j - n_j + \epsilon &i,j\in\tilde{N} \\
     M(1-z_{ij}) &\geq s_j + n_j - s_i - n_i - \nu_{b_ib_jm} &i,j\in\tilde{N} \\
@@ -1084,7 +1108,7 @@ ob die Bins der Jobgruppen auf benachbarten Stationen liegen.
     o_{ij} &\geq s_i + n_i + \nu_{b_ib_jm} - s_j \notag \\
 		   &\phantom{\geq} - M(2-y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \label{con:o1} \\
     o_{ij} &\geq s_j + n_j - s_i - \nu_{b_ib_jm} \notag \\
-           &\phantom{\geq} - M(2+y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
+           &\phantom{\geq} - M(2+y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \label{con:o2} \\
     o_{ij} &\geq n_j - M(3-y_{ij}-z_{ij}-w_{ij}) &i,j\in\tilde{N} \\
 	o_{ij} &\geq n_i - M(1+y_{ij}+z_{ij}-w_{ij}) &i,j\in\tilde{N} \label{con:o4} \\
     o_{ij} &\geq 0 &i,j\in\tilde{N} \\
@@ -1093,32 +1117,30 @@ ob die Bins der Jobgruppen auf benachbarten Stationen liegen.
     x_{ij} &\in \{0,1\} &i\in\tilde{N},j\in\tilde{N}_{b_i} \\
     y_{ij},z_{ij},w_{ij} &\in \{0,1\} &i,j\in\tilde{N}
 \end{align}
-Die Positionen der Bins werden durch die Variablen $\beta_{bd}$ beschrieben.
-Es ist $\beta_{bd}=1$ genau dann, wenn Bin $b$ der Station $d$ zugewiesen wird.
 Die Nebenbedingungen (\ref{con:binpos}) und (\ref{con:binpos2}) gewährleisten, dass jeder der $m$ Bins genau einer der $m$ Stationen zugewiesen wird.
 Über die Nebenbedingungen (\ref{con:nu}), (\ref{con:nurev}) und (\ref{con:nurev2}) wird erzwungen, dass die Binärvariablen
 $\nu_{bcd}$ genau dann auf $1$ gesetzt werden, wenn Bin $b$ Station $d$ zugewiesen ist und zugleich Bin $c$ der Nachbarstation $d^*$.
-Die $\nu_{bcd}$ ersetzen in den weiteren Nebenbedingungen die $\sigma_{ij}$ aus dem MIP in Abschnitt \ref{subsec:MIPMitFixiertenBins}.
-Wenn $\nu_{b_ib_jm}=1$ ist, dann ist der Bin von Jobgruppe $i$ der letzten Station $m$ zugewiesen und der Bin von Jobgruppe $j$ ist auf der Nachbarstation von $m$,
-so dass die Überschneidung von $i$ und $j$ um $1$ versetzt berechnet werden muss.
-Dies funktioniert allerdings nur, wenn die beiden dominierenden Maschinen direkt benachbart sind.
-Denn dann muss die Versetzung um $1$ nur zwischen den Stationen $m$ und $1$ stattfinden, was anhand der $\nu_{b_ib_jm}$ identifiziert werden kann.
-Wenn noch eine Maschine zwischen den dominierenden Maschinen liegt, dann muss die Versetzung um $1$ sowohl zwischen den Stationen $m$ und $2$ als auch zwischen
-$m-1$ und $1$ stattfinden. Mit den $\nu_{bcd}$ können zwar beide dieser Situationen erkannt werden, aber 
-es bräuchte weitere Binärvariblen, die eine Oder-Verknüpfung zwischen $\nu_{b_ib_j(m-1)}$ und $\nu_{b_ib_jm}$ darstellen, 
-damit diese in den Berechnungen der Überlappungen eingesetz werden können.
-Außerdem spielen bei der Berechnung der Überschneidungen $o_{ij}$ jetzt auch die Variablen $w_{ij}$ eine Rolle.
-Nur, wenn $w_{ij}=1$ ist, wird die Überschneidung von $i$ und $j$ in den Nebenbedingungen (\ref{con:o1}) bis (\ref{con:o4}) berechnet.
-In Nebenbedingung (\ref{con:w}) wird $w_{ij}=1$ gesetzt, wenn $i$ und $j$ in benachbarten Bins sind.
-Genau wie $s_{ij}$ dienen auch die $w_{ij}$ nur der Übersicht und können überall durch die Summe in (\ref{con:w}) ersetzt werden.
+In (\ref{con:w}) wird $w_{ij}$ auf $1$ gesetzt, falls die Bins von $i$ und $j$ benachbarten Stationen zugewiesen sind.
+Wenn $w_{ij}=0$ ist, verlieren die Nebenbedingungen (\ref{con:o1}) bis (\ref{con:o4}) ihre Bedeutung.
+Davon abgesehen sind diese Nebenbedingungen aber identisch zu denen aus dem MIP im vorherigen Unterabschnitt.
+Ähnlich wie die $s_i$ dienen die $w_{ij}$ nur der Übersicht und können durch die Summe in (\ref{con:w}) ersetzt werden.
+
+In dieser Form verlangt das MIP, dass die beiden dominierenden Maschinen benachbart sein müssen.
+Denn dann gibt es nur zwei Stationen, zwischen denen die Berechnung der Überlappung um $1$ versetzt stattfinden muss.
+Wenn die dominierenden Maschinen beispielsweise einen Abstand von $2$ haben,
+tritt dieser Sonderfall der Berechnung sowohl zwischen den Station $m-1$ und $1$ auf als auch zwischen $m$ und $2$,
+was durch die Variablen $\nu_{b_i,b_j,m-1}$ bzw. $\nu_{b_ib_jm}$ erkannt werden kann.
+Diese müssten dann auch beide in die Nebenbedingungen (\ref{con:y1}) bis (\ref{con:o2}) einfließen.
+Da immer höchstens eine von beiden gleichzeitig auf $1$ gesetzt sein kann, 
+bewirken dann diese beiden Variablen zusammen die um $1$ versetzte Berechnung der Überlappung.
 
 Das Lösen dieses MIPs mit CPLEX dauert sehr viel länger als beim MIP mit fixierten Bins.
 Allerdings ist die obere Schranke, also die aktuell beste gefundene Lösung, meist schon nach wenigen Minuten besser als die
-beste Lösung mit fixierten Bins (abhängig davon, ob die initiale Binreihenfolge zufällig "`gut"' ist).
+beste Lösung mit fixierten Bins (abhängig davon, ob die gegebene Binreihenfolge dort zufällig "`gut"' ist).
 
 \subsection{Mehrere fixierte Reihenfolgen}
 Das MIP in Unterabschnitt \ref{subsec:MIPMitFreienBins} liefert zwar theoretisch optimale Lösungen, diese zu berechnen benötigt aber zu viel Zeit.
-Schon bie kleinen Instanzen mit $\tilde{n}=10$ Jobgruppen und $m=8$ beträgt der LP-Gap nach einer Stunde Berechnung noch $20\%$.
+Schon bei kleinen Instanzen mit $\tilde{n}=10$ Jobgruppen und $m=8$ beträgt der LP-Gap nach einer Stunde Berechnung noch $20\%$.
 Man beachte, dass es bei $10$ Jobgruppen und $8$ Bins mindestens $6$ Bins gibt mit genau einer Jobgruppe.
 Es müssen also im Wesentlichen nur noch die Bins den Stationen zugeordnet werden.
 
@@ -1127,7 +1149,57 @@ Je nach Größe der Jobgruppen kann dies ein beträchtlicher Unterschied zu $\ti
 Allerdings ist die Güte der Lösungen des MIPs mit fixierten Bins von der initialen Binreihenfolge abhängig.
 Dazu wird in diesem Unterabschnitt versucht, solch eine initiale Binreihenfolge zu erzeugen, mit der das MIP dann arbeiten kann.
 
-\textit{kommt noch\ldots}
+\subsubsection{Benutzung beider MIPs}
+Beobachtungen der Leistung der beiden MIPs haben ergeben, dass das MIP mit freien Bins oft schon nach relativ kurzer Zeit eine bessere obere Schranke
+(d.h. die beste bis zu diesem Zeitpunkt gefundene Lösung) liefert als das MIP mit fixierten Bins.
+Daher ist ein Ansatz, das MIP mit freien Bins für eine gewisse Zeit laufen zu lassen und dann die Zuteilung der Bins zu den Stationen
+auszulesen (diese ist in den $\beta_{bd}$-Variablen kodiert), um anschließend mit dieser Binreihenfolge das MIP mit fixierten Bins zu starten.
+%hier noch ein bisschen mehr schreiben...
+
+
+\subsubsection{Optimum zwischen zwei Bins}
+Betrachtet man zwei beliebige Bins $b$ und $c$ auf benachbarten Stationen, ist es möglich, 
+all jene Zyklen $t$ zu betrachten, in denen ein Job aus $b$ auf der zweiten dominierenden Maschine ist und ein Job aus $c$ auf der ersten.
+Die zugehörigen Zykluszeiten $c_t$ werden dann durch die Prozesszeiten dieser Jobs auf den beiden dominierenden Maschinen definiert (vgl. Abbildung \ref{abb:lokalopt}).
+Die Summe dieser Zykluszeiten zwischen zwei benachbarten Bins $b$ und $c$ wird mit $C_{bc}$ bezeichnet.
+\begin{satz}
+    Seien $b$ und $c$ zwei Bins auf benachbarten Stationen.
+    Wenn die Jobgruppen in $b$ absteigend nach ihren Prozesszeiten auf der zweiten dominierenden Maschine angeordnet werden
+    und die Jobgruppen in $c$ absteigend nach ihren Prozesszeiten auf der ersten dominierenden Maschine,
+    dann ist $C_{bc}$ minimal.
+\end{satz}
+\begin{proof}
+    \textit{hmm...}
+\end{proof}
+Wenn die Jobgruppen in zwei benachbarten Bins so angeordnet sind, dass $C_{bc}$ minimal ist, wird dieser Wert mit $C_{bc}^*$ bezeichnet.
+Dieses Optimum zwischen zwei Bins ist auf die Anordnung aller $m$ Bins übertragen aber nur ein lokales:
+Wird ein Bin bezüglich eines seiner Nachbarn in dieser Weise angeordnet, ist es im Allgemeinen nicht der Fall,
+dass diese Anordnung auch bezüglich des anderen Nachbarn optimal ist.
+
+In den folgenden Absätzen werden einige Anwendungen dieses lokalen Optimums vorgestellt.
+
+\subsubsection{Bestimmung einer unteren Schranke}
+Eine Anwendungsmöglichkeit der lokal optimalen Bins ist die Berechnung einer unteren Schranke für $C_{\max}$ im zweiten Dekompositionsansatz.
+Eine mögliche untere Schranke lässt sich wie folgt berechnen:
+\[LB_{C_{\max}} = \frac{1}{2} \sum_{b=1}^m \left( \min_{\substack{a=1\\a\neq b}}^m C_{ab}^* + \min_{\substack{c=1\\c\neq b}}^m C_{bc}^* \right) \]
+Es werden also für jeden Bin $b$ sein optimaler linker Nachbar $a$ und sein optimaler rechter Nachbar $c$ gesucht.
+Da in der Summe all dieser $C_{bc}^*$-Werte jeder Bin zweimal (einmal als linker und einmal als rechter Nachbar) auftaucht,
+wird diese Summe noch halbiert.
+
+\subsubsection{Heuristik für initiale Binreihenfolge}
+Eine andere mögliche Anwendung der lokal optimalen Bins ist, eine initiale Binreihenfolge (bzw. eine initiale Zuweisung der Bins zu den Stationen)
+auf heuristischem Wege zu finden, mit der dann das MIP mit fixierten Bins arbeiten kann.
+Als erster Schritt wird unter allen möglichen $C_{bc}^*$-Werten (für alle Bins $b,c$) das Minimum gesucht.
+Die zugehörigen Bins $b$ und $c$ werden der ersten Station und der Nachbarstation der ersten Station zugewiesen.
+Anschließend wird unter allen noch nicht zugewiesenen Bins derjenige Bin $d$ gesucht, der den besten $C_{cd}^*$-Wert aufweist.
+Da $d$ ein "`vielversprechender"' Nachbar für $c$ ist, wird er der Nachbarstation von $c$ zugewiesen.
+Dieses Vorgehen wird so lange wiederholt, bis jeder Bin einer Station zugewiesen ist.
+
+Falls der Abstand der dominierenden Maschinen $d_{\mathit{dom}}$($=\text{Abstand benachbarter Stationen}$) und die Anzahl der Maschinen $m$ nicht teilerfremd sind,
+gibt es unter den Stationen disjunkte Gruppen, die untereinander nicht durch Nachbarschaft erreicht werden können.
+Beispielsweise bilden bei $m=8$ und $d_{\mathit{dom}}=2$ die Stationen $1,3,5,7$ und $2,4,6,8$ solche disjunkten Gruppen.
+In diesem Fall muss das obige Verfahren für jede dieser Gruppen separat durchgeführt werden.
+
 
 \subsection{Nachbarschaftssuche}
 Als Alternative zu den MIPs mit freien oder fixierten Bins lassen sich Nachbarschaftsoperatoren beschreiben, 
@@ -1139,11 +1211,12 @@ Naheliegende Operatoren sind:
 \end{itemize}
 Es wurde ein Simulated Annealing Algorithmus implementiert, der diese beiden Nachbarschaften benutzt.
 Dieser ähnelt dem Simulated Annealing aus Abschnitt \ref{subsubsec:Nachbarschaftssuche} und unterscheidet sich bloß in einem Punkt von diesem:
-In jeder Iteration wird mit einer Wahrscheinlichkeit von $\frac{m}{\tilde{n}+m}$ eine neue Lösunge aus der $\mathit{bch}_{bc}$-Nachbarschaft erzeugt 
+In jeder Iteration wird mit einer Wahrscheinlichkeit von $\frac{m}{\tilde{n}+m}$ eine neue Lösung aus der $\mathit{bch}_{bc}$-Nachbarschaft erzeugt 
 (mit zufällig gewählten $b$ und $c$) und mit einer Wahrscheinlichkeit von $\frac{\tilde{n}}{\tilde{n}+m}$ eine Lösung aus der $\mathit{jch}_{bjk}$-Nachbarschaft
 (mit ebenfalls zufälligen $b,j,k$).
 Auf diese Weise wird je nach Verhältnis zwischen der Anzahl der Jobgruppen ($\tilde{n}$) und der Bins ($m$) der entsprechende Operator häufiger benutzt.
 
+Im Gegensatz zu den beiden MIPs ist dieser heuristische Lösungsansatz nicht darauf angewiesen, dass nur zwei Maschinen dominierend sind.
 
 
 \chapter{Rechenergebnisse und Vergleiche}

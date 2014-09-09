@@ -33,13 +33,27 @@ public:
     }
 
     //calculates the last cycle time in the non-full schedule for i==0,
-    //the socond last cycle time for i==1, ...
+    //the second last cycle time for i==1, ...
     time_type get_last_cycle_time(unsigned i) const
     {
         time_type t = 0;
         for(unsigned j = max(0, (int)(i+1-jobs.size())); j <= i && j < m; ++j)
         {
             t = max(t, jobs[jobs.size()-1-i+j][m-1-j]);
+        }
+
+        return t;
+    }
+
+    //calculates the first cycle time in the non-full schedule for i==0,
+    //the second cycle time for i==1, ...
+    time_type get_first_cycle_time(unsigned i) const
+    {
+        time_type t = 0;
+        for(unsigned j = 0; j < m && j <= i; ++j)
+        {
+            if(jobs[i-j].size() == m)
+                t = max(t, jobs[i-j][j]);
         }
 
         return t;

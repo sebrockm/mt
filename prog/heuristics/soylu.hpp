@@ -7,12 +7,12 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include <functional>
 
 
 using namespace std;
 
 typedef typename nonfull_schedule<int>::job job;
-
 
 
 //uses Soylu's H1 to calculate Cmax
@@ -114,7 +114,7 @@ int h2(vector<job> jobs)
         if(it == cycles.end()) // may occur if only jobs at the very front or back of sch are still empty
         {
             //find any empty job
-            *find_if(sch.jobs.begin(), sch.jobs.end(), [](const job& j) {return j.empty();}) = move(jobs.back());
+            *find_if(sch.jobs.begin(), sch.jobs.end(), bind(&job::empty, placeholders::_1)) = move(jobs.back());
         }
         else
         {

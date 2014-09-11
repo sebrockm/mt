@@ -85,6 +85,20 @@ double calculate_cost(const bin& b1, const bin& b2, bool n = false)
 }
 
 
+//calculates sum of cost between all bins
+double calculate_cost(const vector<bin>& bins)
+{
+    int m = bins.size();
+
+    double cost = 0;
+    for(int i = 0; i < m; ++i)
+    {
+        cost += calculate_cost(bins[i], bins[(i+1)%m], i+1==m);
+    }
+    return cost;
+}
+
+
 class local_bin_search
 {
 private:

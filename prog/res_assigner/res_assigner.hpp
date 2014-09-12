@@ -6,14 +6,13 @@
 #include <limits>
 #include <iostream>
 
+#include "../heuristics/nonfull_schedule.hpp"
+
 using namespace std;
 
 
-struct job
-{
-    int group_id;
-    vector<int> times;
-};
+typedef typename nonfull_schedule<int>::job job;
+
 
 int calculate_exchange_cost(const vector<job>& cpi, int i, int j)
 {
@@ -27,49 +26,49 @@ int calculate_exchange_cost(const vector<job>& cpi, int i, int j)
         swap(i, j);
 
     int n = pi.size();
-    int m = pi[0].times.size();
+    int m = pi[0].size();
 
     int cost_before = 0;
     int cost_after = 0;
         
-    if(j - i >= m) //ranges do not cross
+    if(j - i >= 2*m) //ranges do not cross
     {
-        for(int t = i; i < min(i+m, n+m-1); ++t)
+        for(int t = i; t < min(i+m, n+m-1); ++t)
         {
             int maxc = 0;
             for(int c = max(t-n+1, 0); c < min(m, t+1); ++c)
             {
-                maxc = max(maxc, pi[t-c].times[c]);
+                maxc = max(maxc, pi[t-c][c]);
             }
             cost_before += maxc;
         }
-        for(int t = j; j < min(j+m, n+m-1); ++t)
+        for(int t = j; t < min(j+m, n+m-1); ++t)
         {
             int maxc = 0;
             for(int c = max(t-n+1, 0); c < min(m, t+1); ++c)
             {
-                maxc = max(maxc, pi[t-c].times[c]);
+                maxc = max(maxc, pi[t-c][c]);
             }
             cost_before += maxc;
         }
 
         swap(pi[i], pi[j]);
 
-        for(int t = i; i < min(i+m, n+m-1); ++t)
+        for(int t = i; t < min(i+m, n+m-1); ++t)
         {
             int maxc = 0;
             for(int c = max(t-n+1, 0); c < min(m, t+1); ++c)
             {
-                maxc = max(maxc, pi[t-c].times[c]);
+                maxc = max(maxc, pi[t-c][c]);
             }
             cost_after += maxc;
         }
-        for(int t = j; j < min(j+m, n+m-1); ++t)
+        for(int t = j; t < min(j+m, n+m-1); ++t)
         {
             int maxc = 0;
             for(int c = max(t-n+1, 0); c < min(m, t+1); ++c)
             {
-                maxc = max(maxc, pi[t-c].times[c]);
+                maxc = max(maxc, pi[t-c][c]);
             }
             cost_after += maxc;
         }
@@ -78,24 +77,24 @@ int calculate_exchange_cost(const vector<job>& cpi, int i, int j)
     }
     else //ranges do cross
     {
-        for(int t = i; i < min(j+m, n+m-1); ++t)
+        for(int t = i; t < min(j+m, n+m-1); ++t)
         {
             int maxc = 0;
             for(int c = max(t-n+1, 0); c < min(m, t+1); ++c)
             {
-                maxc = max(maxc, pi[t-c].times[c]);
+                maxc = max(maxc, pi[t-c][c]);
             }
             cost_before += maxc;
         }
 
         swap(pi[i], pi[j]);
 
-        for(int t = j; j < min(i+m, n+m-1); ++t)
+        for(int t = j; t < min(i+m, n+m-1); ++t)
         {
             int maxc = 0;
             for(int c = max(t-n+1, 0); c < min(m, t+1); ++c)
             {
-                maxc = max(maxc, pi[t-c].times[c]);
+                maxc = max(maxc, pi[t-c][c]);
             }
             cost_after += maxc;
         }
@@ -114,7 +113,7 @@ int search_for_swap_pos(const vector<job>& pi, const vector<vector<int>> avail, 
     int swap_pos = -1; //found osition to swap with
     int cost = numeric_limits<int>::max(); //cost that this swap would cause
     int n = pi.size();
-    int m = pi[0].times.size();
+    int m = pi[0].size();
 
     //search all possible positions
     for(int i = 0; i < (int)pi.size(); ++i)
@@ -153,7 +152,7 @@ int search_for_swap_pos(const vector<job>& pi, const vector<vector<int>> avail, 
 bool assign_resources(vector<job>& pi, const vector<int>& resource_map)
 {
     int n = pi.size();
-    int m = pi[0].times.size();
+    int m = pi[0].size();
 
     vector<vector<int>> available_res_matrix(n, resource_map);
     
@@ -178,6 +177,7 @@ bool assign_resources(vector<job>& pi, const vector<int>& resource_map)
                 }
 
                 swap(pi[i], pi[swap_pos]);
+                cout << "swaped " << pi[i].group_id << " at " << i << " with " << pi[swap_pos].group_id << " at " << swap_pos << endl;
 
                 // start from the beginning because the matrix may have changed completely
                 i = 0; 
@@ -189,8 +189,6 @@ bool assign_resources(vector<job>& pi, const vector<int>& resource_map)
 
     return true;
 }
-
-
 
 
 #endif

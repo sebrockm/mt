@@ -59,7 +59,14 @@ pair<int, int> find_best_dom(const vector<job>& jobs)
 
 vector<job> gg_heuristik(const vector<job>& jobs, int dom1, int dom2)
 {
-    auto pi = tsp_gg(jobs, dom1, dom2); // gg call
+    //transform non_full_schedule::job to vector<int> as needed by gg
+    vector<vector<int>> gg_jobs(jobs.size());
+    for(unsigned i = 0; i < jobs.size(); ++i)
+    {
+        gg_jobs[i] = jobs[i];
+    }
+
+    auto pi = tsp_gg(gg_jobs, dom1, dom2); // gg call
 
     //pi is a vector of indexes, so transform it into a vector of jobs
     vector<job> sch(jobs.size());

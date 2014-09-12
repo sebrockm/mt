@@ -3,6 +3,7 @@
 #include "gg_heuristik.hpp"
 #include "simulated_annealing.hpp"
 #include "soylu.hpp"
+#include "../res_assigner/res_assigner.hpp"
 
 #include <vector>
 #include <iostream>
@@ -143,6 +144,84 @@ pair<double, double> do_cplex(const char* file_name)
     return res;
 }
 
+//read jobgroups from file
+vector<job> read_jobgroups(const char* file_name, vector<int>* res_map = nullptr)
+{
+    ifstream file(file_name);
+    if(!file)
+        return {};
+
+    unsigned n;
+    unsigned m = 8;
+    bool read_n = false;
+
+    vector<int> sizes;
+    vector<pair<double, double>> times;
+
+    string line;
+    unsigned i = 0;
+    while(getline(file, line))
+    {
+        trim(line);
+        if(line.empty() || line.front() == '#')
+            continue;
+
+        if(!read_n)
+        {
+            stringstream(line) >> n;
+            sizes.reserve(n);
+            times.reserve(n);
+            if(res_map)
+                res_map->reserve(n);
+            read_n = true;
+        }
+        else if(i < n)//read sizes
+        {
+            int size;
+            stringstream(line) >> size;
+            sizes.push_back(size);
+            ++i;
+        }
+        else if(i < 2*n)//skip resources
+        {
+            if(res_map)
+            {
+                int res;
+                stringstream(line) >> res;
+                res_map->push_back(res);
+            }
+            ++i;
+        }
+        else if(i < 3*n)//read times
+        {
+            double t1, t2;
+            stringstream(line) >> t1 >> t2;
+            times.emplace_back(t1, t2);
+            ++i;
+        }
+        else
+        {
+            break;
+        }
+    }
+    if(i != 3*n) //something went wrong
+    {
+        return {};
+    }
+
+    vector<job> jobs;
+    for(i = 0; i < n; ++i)
+    {
+        job j(m);
+        j[3] = round(100 * times[i].first); //using integers here, not double
+        j[4] = round(100 * times[i].second);
+        j.group_id = i;
+
+        jobs.insert(jobs.end(), sizes[i], j);
+    }
+
+    return jobs;
+}
 
 //read file and calculate Cmax with all heuristics
 //output info on stderr
@@ -164,15 +243,17 @@ int main(int argc, char** argv)
     */
 
     ///*
-    if(argc != 2)
+    if(argc != 2 && argc != 3)
     {
-        cerr << "usage: " << argv[0] << " file" << endl;
+        cerr << "usage: " << argv[0] << " file [--groups]" << endl;
         return 1;
     }
     //*/
     
+    vector<int> res_map;
+    
     cerr << "start reading " << argv[1] << endl;
-    auto jobs = read_jobs(argv[1]);
+    auto jobs = argc == 3 ? read_jobgroups(argv[1], &res_map) : read_jobs(argv[1]);
     int m = jobs.front().size();
     cerr << "read " << argv[1] << endl;
 
@@ -181,11 +262,11 @@ int main(int argc, char** argv)
 
     //cplex only for small instances
     auto t1 = chrono::high_resolution_clock::now();
-    auto p = jobs.size() <= 1500 ? do_cplex(argv[1]) : make_pair(0., 0.);
+    auto p = jobs.size() <= 1000 && argc == 2 ? do_cplex(argv[1]) : make_pair(0., 0.);
     auto t2 = chrono::high_resolution_clock::now();
 
     cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
-    if(jobs.size() <= 1500)
+    if(jobs.size() <= 1000 && argc == 2)
         cerr << "done cplex" << endl;
 
     nonfull_schedule<int> sch(m);
@@ -194,13 +275,15 @@ int main(int argc, char** argv)
     //cout << sch;
     //cout << "initial Cmax: " << sch.get_cost() << endl;
 
+    bool res;
     //SA
     t1 = chrono::high_resolution_clock::now();
     sch.jobs = simulated_annealing(sch.jobs, sch.get_cost());
+    res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
     
     cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
-    cerr << "done SA" << endl;
+    cerr << "done SA res = " << res << endl;
 
 
     //nfs

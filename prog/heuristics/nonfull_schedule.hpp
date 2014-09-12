@@ -19,7 +19,12 @@ class nonfull_schedule
 {
 public:
     //this typedef is used by many other heuristics, too
-    typedef vector<time_type> job;
+    class job : public vector<time_type> 
+    {
+    public:
+        unsigned group_id;
+        using vector<time_type>::vector; //inheriting constructors
+    };
 
     //the list of jobs
     vector<job> jobs;
@@ -99,7 +104,7 @@ public:
 
 //Creates a schedule using the non-full-schedule-heuristic.
 template <class time_type>
-nonfull_schedule<time_type> create_schedule(unsigned m, vector<vector<time_type>>& unscheduled)
+nonfull_schedule<time_type> create_schedule(unsigned m, vector<typename nonfull_schedule<time_type>::job>& unscheduled)
 {
     typedef typename nonfull_schedule<time_type>::job job;
 

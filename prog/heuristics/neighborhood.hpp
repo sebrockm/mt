@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 
+#include "nonfull_schedule.hpp"
 
 using namespace std;
 
@@ -13,7 +14,7 @@ using namespace std;
 class neighborhood
 {
 public:
-    typedef vector<int> job;
+    typedef nonfull_schedule<int>::job job;
 
 protected:
     vector<job>& _pi;

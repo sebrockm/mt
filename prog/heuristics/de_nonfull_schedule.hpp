@@ -11,6 +11,8 @@
 
 #include <boost/range/adaptor/reversed.hpp>//to access a std::vector in reverse, only needed for output
 
+#include "nonfull_schedule.hpp"
+
 using namespace std;
 
 
@@ -21,8 +23,7 @@ template <class time_type>
 class de_nonfull_schedule
 {
 public:
-    //identical to nonfull_schedule<time_type>::job
-    typedef vector<time_type> job;
+    typedef typename nonfull_schedule<time_type>::job job;
 
     //two vectors of jobs, one growing from left to right and one from right to left
     vector<job> jobs_front, jobs_back;
@@ -126,9 +127,10 @@ public:
 
 
 //Creates a schedule using the doble ended non-full-schedule-heuristic.
-template <class time_type>
-de_nonfull_schedule<time_type> create_de_schedule(unsigned m, vector<vector<time_type>>& unscheduled)
+//template <class time_type>
+de_nonfull_schedule<int> create_de_schedule(unsigned m, vector<typename de_nonfull_schedule<int>::job>& unscheduled)
 {
+    typedef int time_type;
     typedef typename de_nonfull_schedule<time_type>::job job;
 
     de_nonfull_schedule<time_type> schedule(m, unscheduled.size());

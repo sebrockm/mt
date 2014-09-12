@@ -190,7 +190,8 @@ int main(int argc, char** argv)
     }
 
     //write results back to files
-    ofstream file(argv[2]);
+    string f = string(argv[2]) + string(".split");
+    ofstream file(f);
     file << n << endl << endl;
 
     for(auto& g : groups)

@@ -1,5 +1,5 @@
 #param file := "../families.dat";
-param binfile := file + ".bins.dat";
+#param binfile := file + ".bins.dat";
 param n := read file as "1n" use 1 comment "#";
 param p := 0;
 

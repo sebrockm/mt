@@ -9,6 +9,8 @@ fi
 
 for f in $files
 do
+    t=$(date +%s%N)
+    echo $t
     for i in $(seq 0 21)
     do
         zimpl binpacking -D partsline=$i -D file=$f
@@ -24,4 +26,5 @@ do
         fi
         rm output$i.txt
     done
+    echo "$f millis $((($(date +%s%N)-$t)/1000000))" >> binpacksplittimes.txt
 done

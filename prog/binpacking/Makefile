@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -std=c++11
+CFLAGS = -Wall -std=c++11 -O2
 
 default: binsplitter.cpp
 	$(CC) binsplitter.cpp $(CFLAGS) -o binsplitter

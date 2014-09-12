@@ -85,12 +85,16 @@ int main(int argc, char** argv)
     //assign the groups to the bin binfile tells they belong to
     //and get the sizes of the bins
     vector<bin> bins(numbins);
+    for(int i = 0; i < numbins; ++i)
+    {
+        bins[i].id = i;
+    }
+
     vector<int> binsizes(numbins);
     for(auto line : vbinfile)
     {
         int group, bin;
         stringstream(line) >> group >> bin;
-        bins[bin-1].id = bin-1;
         bins[bin-1].groups.push_back(groups[group-1]);
         binsizes[bin-1] += groups[group-1].length;
     }
@@ -184,14 +188,18 @@ int main(int argc, char** argv)
                     {
                         throw "impossible to split";
                     }
+
+                    if(!silent)
+                    {
+                        cout << "next permutation of bin " << bin+1 << endl;
+                    }
                 } 
             }
         }
     }
 
     //write results back to files
-    string f = string(argv[2]) + string(".split");
-    ofstream file(f);
+    ofstream file(string(argv[2]) + string(".split"));
     file << n << endl << endl;
 
     for(auto& g : groups)
@@ -208,7 +216,7 @@ int main(int argc, char** argv)
 
     for(auto& g : groups)
     {
-        file << g.times[0] << g.times[1] << endl;
+        file << g.times[0] << " " << g.times[1] << endl;
     }
 
     ofstream binfile(argv[3]);

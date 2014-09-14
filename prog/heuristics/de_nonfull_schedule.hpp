@@ -122,13 +122,22 @@ public:
 
         return sum;
     }
+
+    //returns the schedule as one vector
+    vector<job> get_as_one() const
+    {
+        vector<job> res = jobs_front;
+        res.insert(res.end(), jobs_back.rbegin(), jobs_back.rend());
+
+        return res;
+    }
 };
 
 
 
 //Creates a schedule using the doble ended non-full-schedule-heuristic.
 //template <class time_type>
-de_nonfull_schedule<int> create_de_schedule(unsigned m, vector<typename de_nonfull_schedule<int>::job>& unscheduled)
+de_nonfull_schedule<int> create_de_schedule(unsigned m, vector<typename de_nonfull_schedule<int>::job> unscheduled)
 {
     typedef int time_type;
     typedef typename de_nonfull_schedule<time_type>::job job;

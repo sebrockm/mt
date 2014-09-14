@@ -144,7 +144,7 @@ pair<double, double> do_cplex(const char* file_name)
     return res;
 }
 
-//read jobgroups from file
+//read jobgroups from file and optional resources
 vector<job> read_jobgroups(const char* file_name, vector<int>* res_map = nullptr)
 {
     ifstream file(file_name);
@@ -243,9 +243,9 @@ int main(int argc, char** argv)
     */
 
     ///*
-    if(argc != 2 && argc != 3)
+    if(argc != 2 && argc != 3 && argc != 4)
     {
-        cerr << "usage: " << argv[0] << " file [--groups]" << endl;
+        cerr << "usage: " << argv[0] << " file [--groups [--res]]" << endl;
         return 1;
     }
     //*/
@@ -253,7 +253,7 @@ int main(int argc, char** argv)
     vector<int> res_map;
     
     cerr << "start reading " << argv[1] << endl;
-    auto jobs = argc == 3 ? read_jobgroups(argv[1], &res_map) : read_jobs(argv[1]);
+    auto jobs = argc >= 3 ? read_jobgroups(argv[1], argc==4 ? &res_map : nullptr) : read_jobs(argv[1]);
     int m = jobs.front().size();
     cerr << "read " << argv[1] << endl;
 
@@ -275,68 +275,100 @@ int main(int argc, char** argv)
     //cout << sch;
     //cout << "initial Cmax: " << sch.get_cost() << endl;
 
-    bool res;
+    bool res = false;
     //SA
     t1 = chrono::high_resolution_clock::now();
-    sch.jobs = simulated_annealing(sch.jobs, sch.get_cost());
-    res = assign_resources(sch.jobs, res_map);
+    sch.jobs = simulated_annealing(jobs, sch.get_cost());
+    if(argc == 4)
+        res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
     
-    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
-    cerr << "done SA res = " << res << endl;
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t";
+    if(argc == 4)
+        cout << res << "\t" << count_changeovers(sch.jobs) << "\t";
+    cout << "\t";
+    cerr << "done SA" << endl;
 
 
     //nfs
     t1 = chrono::high_resolution_clock::now();
     sch.jobs = create_schedule<int>(m, jobs).jobs;
+    if(argc == 4)
+        res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
 
-    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t";
+    if(argc == 4)
+        cout << res << "\t" << count_changeovers(sch.jobs) << "\t";
+    cout << "\t";
     cerr << "done nfs" << endl;
 
 
-    jobs = sch.jobs;
-
     //denfs
     t1 = chrono::high_resolution_clock::now();
-    auto de_sch = create_de_schedule(m, jobs);
+    sch.jobs = create_de_schedule(m, jobs).get_as_one();
+    if(argc == 4)
+        res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
 
-    cout << de_sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t";
+    if(argc == 4)
+        cout << res << "\t" << count_changeovers(sch.jobs) << "\t";
+    cout << "\t";
     cerr << "done denfs" << endl;
 
 
     //gg with 3,4 dom machines
     t1 = chrono::high_resolution_clock::now();
-    sch.jobs = gg_heuristik(sch.jobs, 3, 4);
+    sch.jobs = gg_heuristik(jobs, 3, 4);
+    if(argc == 4)
+        res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
 
-    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t";
+    if(argc == 4)
+        cout << res << "\t" << count_changeovers(sch.jobs) << "\t";
+    cout << "\t";
     cerr << "done gg" << endl;
 
 
     //soylu
     t1 = chrono::high_resolution_clock::now();
-    int cost = h1(sch.jobs);
+    sch.jobs = h1(jobs);
+    if(argc == 4)
+        res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
 
-    cout << cost << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t";
+    if(argc == 4)
+        cout << res << "\t" << count_changeovers(sch.jobs) << "\t";
+    cout << "\t";
     cerr << "done soylu H1" << endl;
 
 
     t1 = chrono::high_resolution_clock::now();
-    cost = h2(sch.jobs);
+    sch.jobs = h2(jobs);
+    if(argc == 4)
+        res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
 
-    cout << cost << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t";
+    if(argc == 4)
+        cout << res << "\t" << count_changeovers(sch.jobs) << "\t";
+    cout << "\t";
     cerr << "done soylu H2" << endl;
 
 
     t1 = chrono::high_resolution_clock::now();
-    cost = h3(sch.jobs);
+    sch.jobs = h3(jobs);
+    if(argc == 4)
+        res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();
 
-    cout << cost << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+    cout << sch.get_cost() << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t";
+    if(argc == 4)
+        cout << res << "\t" << count_changeovers(sch.jobs) << "\t";
+    cout << "\t";
     cerr << "done soylu H3" << endl;
 
 

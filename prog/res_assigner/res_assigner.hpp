@@ -177,7 +177,7 @@ bool assign_resources(vector<job>& pi, const vector<int>& resource_map)
                 }
 
                 swap(pi[i], pi[swap_pos]);
-                cout << "swaped " << pi[i].group_id << " at " << i << " with " << pi[swap_pos].group_id << " at " << swap_pos << endl;
+                //cout << "swaped " << pi[i].group_id << " at " << i << " with " << pi[swap_pos].group_id << " at " << swap_pos << endl;
 
                 // start from the beginning because the matrix may have changed completely
                 i = 0; 
@@ -190,5 +190,20 @@ bool assign_resources(vector<job>& pi, const vector<int>& resource_map)
     return true;
 }
 
+
+int count_changeovers(const vector<job>& pi) 
+{
+    int n = pi.size();
+    int m = pi[0].size();
+
+    int counter = 0;
+    for(int i = 0; i < n-m; ++i)
+    {
+        if(pi[i].group_id != pi[i+m].group_id)
+            ++counter;
+    }
+
+    return counter;
+}
 
 #endif

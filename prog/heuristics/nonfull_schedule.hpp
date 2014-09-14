@@ -104,7 +104,7 @@ public:
 
 //Creates a schedule using the non-full-schedule-heuristic.
 template <class time_type>
-nonfull_schedule<time_type> create_schedule(unsigned m, vector<typename nonfull_schedule<time_type>::job>& unscheduled)
+nonfull_schedule<time_type> create_schedule(unsigned m, vector<typename nonfull_schedule<time_type>::job> unscheduled)
 {
     typedef typename nonfull_schedule<time_type>::job job;
 

@@ -16,7 +16,7 @@ typedef typename nonfull_schedule<int>::job job;
 
 
 //uses Soylu's H1 to calculate Cmax
-int h1(vector<job> jobs)
+vector<job> h1(vector<job> jobs)
 {
     int n = jobs.size();
     int m = jobs[0].size();
@@ -31,6 +31,8 @@ int h1(vector<job> jobs)
         else
             S[i] = n + m - i - 1;
     }
+
+    vector<job> best_jobs;
 
     int best_Cmax = numeric_limits<int>::max();
     for(int i = 0; i < m; ++i)
@@ -61,15 +63,19 @@ int h1(vector<job> jobs)
 
         int cmax = sch.get_cost();
         
-        best_Cmax = min(best_Cmax, cmax);
+        if(cmax < best_Cmax)
+        {
+            best_Cmax = cmax;
+            best_jobs = jobs;
+        }
     }
 
-    return best_Cmax;
+    return best_jobs;
 }
 
 
 //uses Soylu's H2 to calculate Cmax
-int h2(vector<job> jobs)
+vector<job> h2(vector<job> jobs)
 {
     int n = jobs.size();
     int m = jobs[0].size();
@@ -123,12 +129,12 @@ int h2(vector<job> jobs)
         jobs.pop_back();
     }
 
-    return sch.get_cost();
+    return sch.jobs;
 }
 
 
 //uses Soylu's H3 to calculate Cmax
-int h3(vector<job> jobs)
+vector<job> h3(vector<job> jobs)
 {
     int m = jobs[0].size();
 
@@ -149,7 +155,7 @@ int h3(vector<job> jobs)
         jobs.pop_back();
     }
 
-    return sch.get_cost();
+    return sch.jobs;
 }
 
 

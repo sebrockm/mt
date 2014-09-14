@@ -265,9 +265,12 @@ int main(int argc, char** argv)
     auto p = jobs.size() <= 1000 && argc == 2 ? do_cplex(argv[1]) : make_pair(0., 0.);
     auto t2 = chrono::high_resolution_clock::now();
 
-    cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
-    if(jobs.size() <= 1000 && argc == 2)
-        cerr << "done cplex" << endl;
+    if(argc == 2)
+    {
+        cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+        if(jobs.size() <= 1000)
+            cerr << "done cplex" << endl;
+    }
 
     nonfull_schedule<int> sch(m);
     sch.jobs = jobs;

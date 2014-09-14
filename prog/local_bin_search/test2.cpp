@@ -149,7 +149,7 @@ int main(int argc, char** argv)
 
 */
     //read bin order from input
-    /*vector<bin> bins2(bins.size());
+    vector<bin> bins2(bins.size());
     for(unsigned i = 0; i < bins.size(); ++i)
     {
         int id, pos;
@@ -161,11 +161,11 @@ int main(int argc, char** argv)
 
     cerr << "begin local opt" << endl;
     cout << local_order_in_bins(bins2) << "\t";
-*/
-    cerr << "begin rearranging bins" << endl;
+    /*cerr << "begin rearranging bins" << endl;
     auto order = greedy_bin_sequence(bins);
     for(unsigned i = 0; i < order.size(); ++i)
-        cout << i+1 << " " << order[i]+1 << " 1.0000000" << endl;
+        cout << i+1 << " " << order[i]+1 << endl;
+*/
     /*vector<bin> bins2(bins.size());
     unsigned char c = 0;
     for(unsigned i = 0; i < bins.size(); ++i)

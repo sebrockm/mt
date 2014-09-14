@@ -139,7 +139,6 @@ int main(int argc, char** argv)
     bins = read_bins(argv[1], bin_file.c_str());
 
 
-    //double cost;
     /*cerr << "begin SA" << endl;
     bins = simulated_annealing(bins, cost);
     cout << cost << "\t";
@@ -162,10 +161,11 @@ int main(int argc, char** argv)
     cerr << "begin local opt" << endl;
     cout << local_order_in_bins(bins2) << "\t";
 */
-    cerr << "begin rearranging bins" << endl;
+    /*cerr << "begin rearranging bins" << endl;
     auto order = greedy_bin_sequence(bins);
     for(unsigned i = 0; i < order.size(); ++i)
         cout << i+1 << " " << order[i]+1 << " 1.0000000" << endl;
+*/
     /*vector<bin> bins2(bins.size());
     unsigned char c = 0;
     for(unsigned i = 0; i < bins.size(); ++i)
@@ -176,11 +176,12 @@ int main(int argc, char** argv)
     cerr << hex << (unsigned)c << dec << endl;
     cerr << "begin local opt again" << endl;
     cout << local_order_in_bins(bins2) << "\t";
+    */
 
 
+    double cost;
     cerr << "begin SA" << endl;
     bins = simulated_annealing(bins, cost);
 
     cout << cost << endl;
-    */
 }

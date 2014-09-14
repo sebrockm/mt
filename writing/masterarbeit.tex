@@ -32,11 +32,15 @@ Die Reihenfolge, in der alle Jobs die Maschinen durchlaufen müssen ist also fes
 In Abbildung \ref{abb:Anlage} ist eine solche zyklische Anlage dargestellt.
 \begin{figure}[h]
     \begin{center}
-        \includegraphics[width=.6\textwidth]{graphics/anlage.pdf}
+        \begin{tabular}{cc}
+            \includegraphics[width=.45\textwidth]{graphics/anlage.pdf}
+            & \includegraphics[width=.45\textwidth]{graphics/anlage2.pdf}
+        \end{tabular}
     \end{center}
     \caption{
         \label{abb:Anlage}
-        Kreisförmige Anlage mit $m=8$ Maschinen und Stationen.
+        Kreisförmige Anlage mit $m=8$ Maschinen und Stationen, rechts nach einer Rotation. 
+        Die Stationen, in die die Jobs eingelegt werden, drehen sich mit der Anlage zu den außen herum aufgestellten Maschinen.
     }
 \end{figure}
 Eine Rotation darf immer nur dann stattfinden, wenn alle Maschinen ihren Produktionsschritt an ihrem aktuellen Job
@@ -49,13 +53,11 @@ und die Prozesszeiten von Job $j$ auf Maschine $M_i$ sind durch $p_{ij}$ gegeben
 Eine Beispielinstanz mit $n=5$ und $m=3$ ist in Tabelle \ref{abb:Bsp} zu sehen.
 \begin{figure}[h]
     \begin{center}
-        \begin{tabular}{c|ccc}
-            & $M_1$ & $M_2$ & $M_3$ \\ \hline
-            $1$ & 4 & 6 & 5 \\
-            $2$ & 1 & 5 & 6 \\
-            $3$ & 2 & 5 & 4 \\
-            $4$ & 5 & 2 & 4 \\
-            $5$ & 4 & 5 & 4
+        \begin{tabular}{c|ccccc}
+                  & 1 & 2 & 3 & 4 & 5 \\ \hline
+            $M_1$ & 4 & 1 & 2 & 5 & 4 \\ 
+            $M_2$ & 6 & 5 & 5 & 2 & 5 \\
+            $M_3$ & 5 & 6 & 4 & 4 & 4 
         \end{tabular}
     \end{center}
     \caption{
@@ -72,26 +74,26 @@ Eine Beispielinstanz mit $n=5$ und $m=3$ ist in Tabelle \ref{abb:Bsp} zu sehen.
     \end{center}
     \caption{
         \label{abb:gantt}
-        Gantt-Diagramme der initialen Reihenfolge von Beispiel \ref{abb:Bsp} mit $C_{\max}=34$
+        Gantt-Diagramme der initialen Reihenfolge der Beispielinstanz in Abb. \ref{abb:Bsp} mit $C_{\max}=34$
         und einer optimalen Reihenfolge mit $C_{\max}=30$.
     }
 \end{figure}
 Ziel ist es, eine Permutation $\pi$ der Jobs zu erstellen, die die gesamte Produktionsdauer minimiert.
 Diese Zielfunktion wird mit $C_{\max}$ bezeichnet.
-Die Beispielinstanz \ref{abb:Bsp} ist in Abbildung \ref{abb:gantt} als Gantt-Diagramm aufgetragen.
-Oben sind die Jobs in der initialen Reihenfolge und unten in einer bezüglich $C_{\max}$ optimalen Reihenfolge.
+Die Beispielinstanz in Abbildung \ref{abb:Bsp} ist in Abbildung \ref{abb:gantt} als Gantt-Diagramm aufgetragen.
+Oben sind die Jobs in der initialen Reihenfolge (1-2-3-4-5) und unten in einer bezüglich $C_{\max}$ optimalen Reihenfolge.
 Die Zykluszeiten $c_t$ mit $1\leq t\leq n+m-1$ berechnen sich wie folgt:
 \[ c_t = \max_{i=\max\{1,t-n+1\}}^{\min\{t,m\}} p_{i\pi_{t-i+1}} \]
 Die Zielfunktion lässt sich also durch $C_{\max} = \sum_{t=1}^{n+m-1} c_t$ berechnen.
 Andere Zielfunktionen werden in dieser Masterarbeit nicht betrachtet.
 
-\begin{defi}
-    Eine Teilmenge $D \subseteq \{1,\ldots,m\}$ der Maschinen heißt \underline{dominierend}, wenn 
-    \[ p_{dj} \geq p_{ej} \quad \forall j\in J, d\in D, e\not\in D \] 
-    ist. 
-\end{defi}%
+Eine Teilmenge $D \subseteq \{1,\ldots,m\}$ der Maschinen heißt \textit{dominierend}, wenn 
+\[ p_{dj} \geq p_{ej} \quad \forall j\in J, d\in D, e\not\in D \] 
+ist. 
 Die Prozesszeiten aller Jobs auf dominierenden Maschinen sind also immer mindestens so groß wie die Prozesszeiten auf den restlichen Maschinen.
 Treten dominierende Maschinen auf, müssen für die Berechnung der Zykluszeiten die Prozesszeiten auf den übrigen Maschinen also nicht betrachtet werden.
+Dominierende Maschinen treten in der Praxis häufig auf und spielen in dieser Masterarbeit eine tragende Rolle, 
+vor allem in Kapitel \ref{chap:DerZweiteDekompositionsansatz}.
 
 Zusätzlich benötigen die Jobs unter Umständen Ressourcen aus einer Menge $R$, um in die Stationen eingelegt werden zu können. Diese Ressourcen können erst nach
 Fertigstellung eines Jobs, also nachdem er nach Maschine $M_m$ aus der Anlage genommen wurde, wiederverwendet werden.
@@ -127,14 +129,14 @@ Wenn $\rho_i=\rho_j$, dann gehören $i$ und $j$ zur gleichen Familie.
 Das setzt allerdings voraus, dass für $i$ und $j$ auf jeden Fall die selbe Ressource verwendet wird, falls sie in $\pi$ im Abstand von $m$ vorkommen.
 
 Wenn Rüstkosten auftreten, soll nicht mehr nur die Summe aller Zykluszeiten minimiert werden, sondern zusätzlich noch die Summe aller auftretenden Rüstkosten.
-Diese Zielfunktion lässt sich als 
-\[ \min\left(C_{\max}+\sum_{i=1}^{n-m}s_{i,i+m}\right) \] 
+Die Zielfunktion $C_{\max}$ lässt sich dann als 
+\[ \min\left(\sum_{t=1}^{n+m-1}c_t +\sum_{i=1}^{n-m}s_{i,i+m}\right) \] 
 formulieren, wobei hier die Rüstkosten direkt mit den Jobs statt mit den Familien indiziert sind.
 
 \begin{figure}
     \begin{center}
         \begin{tabular}{c|ccccc}
-            & $j_1$ & $j_2$ & $j_3$ & $j_4$ & $j_5$ \\ \hline
+            & $1$ & $2$ & $3$ & $4$ & $5$ \\ \hline
             $1$ & 0 & 8 & 5 & 9 & 4\\
             $2$ & 6 & 0 & 6 & 8 & 8\\
             $3$ & 4 & 7 & 0 & 5 & 4\\
@@ -145,7 +147,7 @@ formulieren, wobei hier die Rüstkosten direkt mit den Jobs statt mit den Famili
     \caption{
         \label{abb:BspRes}
         Rüstkosten für die Beispielinstanz aus Tabelle \ref{abb:Bsp}.
-        Beispielsweise treten Rüstkosten von $6$ auf, wenn von $j_2$ auf $j_1$ gewechselt werden muss.
+        Beispielsweise treten Rüstkosten von $6$ auf, wenn von Job $2$ auf Job $1$ gewechselt werden muss.
     }
 \end{figure}
 In Abbildung \ref{abb:BspRes} ist eine mögliche Rüstkostentabelle für das Beispiel aus \ref{abb:Bsp} gegeben.
@@ -159,7 +161,7 @@ Die initiale Reihenfolge und eine optimale sind in Abbildung \ref{abb:ganttres} 
     \end{center}
     \caption{
         \label{abb:ganttres}
-        Initiale und eine optimale Lösung als Gantt-Diagramme für das Beispiel aus \ref{abb:Bsp} erweitert um Rüstkosten aus \ref{abb:BspRes}.
+        Initiale und eine optimale Lösung als Gantt-Diagramme für das Beispiel aus Abb. \ref{abb:Bsp} erweitert um Rüstkosten aus Abb. \ref{abb:BspRes}.
     }
 \end{figure}
 
@@ -204,7 +206,7 @@ synchrone Flow-Shop-Probleme mit Ressourcen und Rüstkosten eine gute Alternativ
 
 
 \section{Motivation für Dekompositionsansätze}
-In \cite{casestudy} wurde gezeigt, dass schon das Optimieren bezüglich $C_{\max}$, also ohne Ressourcen und Rüstkosten, $\mathcal{NP}$-schwer ist für $m>2$.
+In \cite{preprint} wurde gezeigt, dass schon das Optimieren bezüglich $C_{\max}$, also ohne Ressourcen und Rüstkosten, $\mathcal{NP}$-schwer ist für $m>2$.
 Versuche, dieses Problem -- oder auch einige Spezialfälle davon -- mit ganzzahliger linearer Programmierung optimal zu lösen, waren nur für sehr kleine Instanzen mit
 $n<30$ in hinnehmbarer Zeit erfolgreich, was weit hinter praktischen Anforderungen zurückliegt (vgl. Abschnitt \ref{subsec:LineareProgrammierung}).
 Aufgrund der Komplexität des Gesamtproblems (vgl. das MIP aus Abschnitt \ref{sec:Problembeschreibung}) sollen in dieser Arbeit zwei Dekompositionsansätze verfolgt werden:
@@ -251,7 +253,7 @@ Danach werden in \ref{subsec:HeuristischeVerfahren} einige heuristische Verfahre
 
 \subsection{Ganzzahlige Lineare Programmierung}
 \label{subsec:LineareProgrammierung}
-Zum Finden einer $C_{\max}$-optimalen Lösung wurde folgendes MIP aufgestellt, das in dieser Form auch schon in \cite{...} vorgestellt wurde.
+Zum Finden einer $C_{\max}$-optimalen Lösung wurde folgendes MIP aufgestellt, das in dieser Form auch schon in \cite{karabati} vorgestellt wurde.
 Es ist identisch mit dem MIP in Abschnitt \ref{sec:Problembeschreibung} bis auf die Nichtberücksichtigung der Rüstkosten.
 \begin{align}
     \text{min} \quad \sum_{t=1}^{n+m-1} &c_t \\
@@ -317,13 +319,13 @@ Das Vorgehen dieser Heuristik wird anhand der Beispielinstanz \ref{abb:Bsp} in A
     \end{center}
     \caption{
         \label{abb:nfsbsp}
-        Illustration der Non-Full-Schedule-Heuristik anhand der Beispielinstanz \ref{abb:Bsp}.
-        Bislang wurden $j_2$, $j_1$ und $j_5$ eingefügt. $j_3$ und $j_4$ müssen noch eingefügt werden.
-        $j_2$ wurde zuerst eingefügt, da dieser mit $p_{12}+p_{22}=1+5$ die geringsten $c_+$-Werte auf den ersten $m-1=2$ Maschinen hat.
-        $j_1$ und $j_5$ wurden eingefügt, weil ihre beiden ersten Prozesszeiten die beiden letzten Zykluszeiten nicht vergrößern.
-        Als nächstes wird $j_4$ eingefügt werden, da weder seine Prozesszeit auf $M_1$ ($p_{14}=5$) die Zykluszeit $c_4=5$ vergrößern würde
+        Illustration der Non-Full-Schedule-Heuristik anhand der Beispielinstanz in Tabelle \ref{abb:Bsp}.
+        Bislang wurden die Jobs $2$, $1$ und $5$ eingefügt. $3$ und $4$ müssen noch eingefügt werden.
+        $2$ wurde zuerst eingefügt, da dieser mit $p_{12}+p_{22}=1+5$ die geringsten $c_+$-Werte auf den ersten $m-1=2$ Maschinen hat.
+        $1$ und $5$ wurden eingefügt, weil ihre beiden ersten Prozesszeiten die beiden letzten Zykluszeiten nicht vergrößern.
+        Als nächstes wird Job $4$ eingefügt, da weder seine Prozesszeit auf $M_1$ ($p_{14}=5$) die Zykluszeit $c_4=5$ vergrößern würde
         noch seine Prozesszeit auf $M_2$ ($p_{24}=2$) die Zykluszeit $c_5=4$ vergrößern würde.
-        $j_3$ hingegen würde mit $p_{23}=5$ die Zykluszeit $c_5=4$ um $1$ vergrößern.
+        Job $3$ hingegen würde mit $p_{23}=5$ die Zykluszeit $c_5=4$ um $1$ vergrößern.
     }
 \end{figure}
 
@@ -587,6 +589,7 @@ Falls kein solcher Job $k$ existiert, kann die Zulässigkeit von $\pi$ mit diese
 
 
 \chapter{Der zweite Dekompositionsansatz}
+\label{chap:DerZweiteDekompositionsansatz}
 In diesem Kapitel wird der zweite Dekompositionsansatz vorgestellt.
 Hierbei wird erst jedem Job eine Ressource zugewiesen, also ein Mapping $f$ erzeugt,
 und anschließend werden die Jobs in eine Reihenfolge $\pi$ gebracht.
@@ -721,8 +724,8 @@ Dabei sind $B_j$ die Größen der Bins, die zusammen mit der Anzahl der Bins $m'
     \sum_{g=1}^{\tilde{n}} n_g x_{gj} &= B_j &j=1,\ldots,m' \\
     x_{gj} &\in \{0,1\} &g=1,\ldots,\tilde{n}, \, j=1,\ldots,m'
 \end{align}
-In Abbildung \ref{abb:binzeit} sind die Laufzeiten dieses MIPs aufgetragen.
-Dabei wurde das MIP in ZIMPL formuliert und mit CPLEX gelöst.
+%In Abbildung \ref{abb:binzeit} sind die Laufzeiten dieses MIPs aufgetragen.
+%Dabei wurde das MIP in ZIMPL formuliert und mit CPLEX gelöst.
 Die Partitionen von $m$ wurden der Reihenfolge nach (vgl. Abbildung \ref{abb:binpart}) mit kleiner werdendem $m'$ durchlaufen,
 bis eine zulässige Aufteilung gefunden wurde.
 
@@ -779,7 +782,7 @@ Im vorigen Unterabschnitt wurde festgestellt, dass eine geteilte Jobgruppe nur d
 zu Unzulässigkeit führen kann, wenn es für sie nur eine Ressource gibt.
 Wenn ein Bin der Größe $B_j = k\frac{n}{m}$ (im Folgenden ein $k$\textit{-Bin} genannt) 
 mit den ihm zugewiesenen Jobgruppen aufgeteilt wird in $k$ Bins der Größe $\frac{n}{m}$, 
-stellt sich daher die Frage, ob es möglich ist, die Jobgruppen des $k$-Bins vorher so Anzuordnen, dass sich nur solche Jobgruppen an den "`Bruchstellen"' befinden, 
+stellt sich daher die Frage, ob es möglich ist, die Jobgruppen des $k$-Bins vorher so anzuordnen, dass sich nur solche Jobgruppen an den "`Bruchstellen"' befinden, 
 für die es mehr als eine Ressource gibt (vgl. Abbildung \ref{abb:resnp}), denn dann wäre die Lösung auf jeden Fall zulässig.
 \begin{figure}
     \begin{center}
@@ -878,6 +881,9 @@ Geteilte Jobgruppen werden hier als eigenständige Gruppen betrachtet.
 Auch eventuelle zusätzliche Restriktionen, dass die Teile einer geteilten Jobgruppe sich nicht überschneiden dürfen, sind bekannt.
 Ziel ist es, $C_{\max}$ zu minimieren, ohne die Jobgruppen zu teilen und somit die bereits minimierten Rüstkosten zu verändern.
 
+In Unterabschnitt \ref{subsec:MIPMitFixiertenBins} und \ref{subsec:MIPMitFreienBins} werden dazu zwei MIPs vorgestellt,
+die allerdings der Einschränkung unterliegen, dass es nur zwei dominierende Maschinen geben darf.
+Die in Unterabschnitt \ref{subsec:Nachbarschaftssuche} vorgestellte Nachbarschaftssuche hat diesbezüglich keine Einschränkungen.
 
 \subsection{MIP mit fixierten Bins}
 \label{subsec:MIPMitFixiertenBins}
@@ -913,6 +919,7 @@ Da diese beiden Maschinen dominierend sind, beträgt die Zykluszeit in diesen vi
         \label{abb:binfixbsp}
         Visualisierung einer Instanz mit $m=8$ Bins. 
         Rechts ist der Übergang von Station $8$ zu $1$ dargestellt, der um $1$ versetzt ist.
+        Das liegt daran, dass nach dem $i$-ten Job im Bin auf Station $8$ der $i+1$-te Job im Bin auf Station $1$ folgt.
     }
 \end{figure}
 
@@ -920,20 +927,20 @@ Ziel muss es also sein, den Jobgruppen Startpositionen in ihren Bins zuzuweisen 
 aus den Nachbarbins zu berechnen. 
 Aus dem Maximum der Prozesszeiten der Jobgruppen und ihren Überlappungen kann dann $C_{\max}$ bestimmt werden.
 
-Die Berechnung der Überlappungen bildet den Kern dieses MIPs.
+Die Berechnung der Überlappungen $o_{ij}$ bildet den Kern dieses MIPs.
 Es gibt fünf Möglichkeiten, wie sie berechnet werden müssen:
 \begin{enumerate}
-    \item $o_{ij} = s_i + n_i - s_j$ (z.B. $1$ und $2$ in Abb. \ref{abb:binfixbsp}),
-    \item $o_{ij} = s_j + n_j - s_i$ (z.B. $3$ und $4$ in Abb. \ref{abb:binfixbsp}),
-    \item $o_{ij} = n_i$ (z.B. $5$ und $4$ in Abb. \ref{abb:binfixbsp}),
-    \item $o_{ij} = n_j$ (z.B. $1$ und $6$ in Abb. \ref{abb:binfixbsp}) und
-    \item $o_{ij} = 0$.
+    \item $o_{ij} = s_i + n_i - s_j$, falls $s_i\leq s_j<s_i+n_i\leq s_j+n_j$ (z.B. $1$ und $2$ in Abb. \ref{abb:binfixbsp}),
+    \item $o_{ij} = s_j + n_j - s_i$, falls $s_j\leq s_i<s_j+n_j\leq s_i+n_i$ (z.B. $3$ und $4$ in Abb. \ref{abb:binfixbsp}),
+    \item $o_{ij} = n_i$, falls $s_j\leq s_i<s_i+n_i\leq s_j+n_j$ (z.B. $5$ und $4$ in Abb. \ref{abb:binfixbsp}),
+    \item $o_{ij} = n_j$, falls $s_i\leq s_j<s_j+n_j\leq s_i+n_i$ (z.B. $1$ und $6$ in Abb. \ref{abb:binfixbsp}) und
+    \item $o_{ij} = 0$, falls $s_i+n_i<s_j$ oder $s_j+n_j<s_i$.
 \end{enumerate}
 Dabei bezieht sich $i$ immer auf den Job im "`linken"' Bin und $j$ auf den im "`rechten"'.
-Welche davon die passende ist, muss anhand einiger Hilfsvariablen und Nebenbedingung ermittelt werden.
-Außerdem gibt es auch noch den Sonderfall, dass zwischen zwei Nachbarbins der Übergang von Bin $m$ zu Bin $1$ liegt.
+Welche davon die passende ist, muss im MIP anhand einiger Hilfsvariablen und Nebenbedingung ermittelt werden.
+Außerdem gibt es auch noch den Sonderfall, dass zwischen zwei Nachbarbins der Übergang von Station $m$ zu Station $1$ liegt.
 Dieser Fall ist ebenfalls in Abbildung \ref{abb:binfixbsp} rechts veranschaulicht.
-Wie dort zu sehen ist, muss dann die Berechnung der Überlappung leicht abgeändert werden, da Bin $1$ im Verhältnis zu Bin $m$ um 1 nach oben verschoben scheint.
+Wie dort zu sehen ist, muss dann die Berechnung der Überlappung leicht abgeändert werden, da Bin $1$ im Verhältnis zu Bin $m$ um 1 nach oben verschoben ist.
 Die ersten beiden Möglichkeiten zur Berechnung der Überlappung ändern sich dann zu
 \begin{enumerate}
     \item $o_{ij} = s_i + n_i + 1 - s_j$ und 
@@ -954,6 +961,7 @@ d.h. die Endposition von $i$ liegt hinter der von $j$ oder gleichauf.
 Aus den vier möglichen Kombinationen der Werte von $y_{ij}$ und $z_{ij}$ lässt sich bestimmen, 
 welche der ersten vier Berechnungsmöglichkeiten für $o_{ij}$ gewählt werden muss.
 Sollte diese Berechnung einen negativen Wert liefern, tritt der fünfte Fall ein.
+Für die Jobs $1$ und $2$ in Abbildung \ref{abb:binfixbsp} wäre beispielsweise $y_{12}=1$ und $z_{12}=0$.
 
 Im MIP wird mit $\tilde{N}=\{1,\ldots,\tilde{n}\}$ die Menge der Jobgruppen bezeichnet.
 $B=\{1,\ldots,m\}$ ist die Menge der Bins und für $b\in B$ ist $\tilde{N}_b\subset \tilde{N}$ die Teilmenge der Jobgruppen, die in Bin $b$ liegen.
@@ -964,7 +972,7 @@ Für je zwei Jobgruppen $i,j\in N_b$, die im selben Bin $b$ liegen, gibt es
 zwei Binärvariablen $x_{ij},x_{ji}$. Es ist $x_{ij}=1$ genau dann, wenn 
 Jobgruppe $i$ vor $j$ auf dem Bin liegt. Dabei muss $i$ nicht notwendiger
 Weise direkt vor $j$ liegen, sondern an beliebiger Position davor.
-Mithilfe der $x_{ij}$ lassen sich die Startpositionen bestimmen:
+Mithilfe der $x_{ij}$ lassen sich die Startpositionen $s_i$ bestimmen, mit denen wiederum die Überlappungen $o_{ij}$ wie oben beschrieben berechnet werden:
 \begin{align}
     \text{min}\quad &\sum_{b\in B}\sum_{\substack{i\in \tilde{N_b}\\j\in \tilde{N}_b^*}} 
             \max\{p_{2i},p_{1j}\}o_{ij} \label{objfunc1}\\
@@ -985,7 +993,7 @@ Mithilfe der $x_{ij}$ lassen sich die Startpositionen bestimmen:
 \end{align}
 Mit (\ref{con1:reflex}) wird erreicht, dass immer entweder $i$ vor $j$ liegt
 oder umgekehrt. (\ref{con1:transitiv}) stellt die Transitivität dieser Beziehung
-her. Auf Grundlage der $x_{ij}$ und der Größen der Jobgruppen $g_i$ 
+her. Auf Grundlage der $x_{ij}$ und der Größen der Jobgruppen $n_i$ 
 kann in (\ref{con1:start}) die Startposition jeder Jobgruppe berechnet werden.
 Die Variablen $s_i$ dienen dabei nur der Übersicht und können in den übrigen 
 Nebenbedingungen durch die Summe aus (\ref{con1:start}) ersetzt werden.
@@ -999,8 +1007,10 @@ Analog wird mit (\ref{con1:z1}) und (\ref{con1:z2}) der Wert der $z_{ij}$ entspr
 Je nachdem, welche der $y_{ij}$ und $z_{ij}$ auf $1$ bzw. $0$ gesetzt sind, 
 werden drei der vier Nebenbedingungen (\ref{con1:o1}) bis (\ref{con1:o4}) durch die "`Big-Ms"' faktisch bedeutungslos ($o_{ij}\geq \text{"`ein negativer Wert"'}$)
 und nur eine bleibt bestehen, so dass genau die passende der vier Berechnungsmöglichkeiten für die $o_{ij}$ gewählt wird.
+Für $y_{ij}=1$ und $z_{ij}=0$, wie bei den Jobs $1$ und $2$ in Abbildung \ref{abb:binfixbsp} der Fall, 
+würde beispielsweise das "`Big-M"' aus (\ref{con1:o1}) verschwinden, so dass die Bedingung $o_{ij}\geq s_i+n_i-s_j$ "`übrigbleibt"'.
 Da die Zielfunktion (\ref{objfunc1}) die Überlappungen (mit dem Maximum der jeweiligen Prozesszeiten multipliziert) minimiert,
-müssen die $o_{ij}$ nicht per Nebenbedingung nach oben beschränkt werden.
+wird daraus de facto $o_{ij}=s_i+n_i-s_j$ und die $o_{ij}$ müssen auch nicht per Nebenbedingung nach oben beschränkt werden.
 Sie sind automatisch durch die Größe der Bins beschränkt.
 Damit sie nicht negativ werden, sind sie allerdings durch (\ref{con1:o5}) nach unten durch $0$ beschränkt.
 Dies bedeutet, dass die jeweiligen Jobgruppen sich nicht überschneiden.
@@ -1008,13 +1018,13 @@ Dies bedeutet, dass die jeweiligen Jobgruppen sich nicht überschneiden.
 Die Qualität der Lösung dieses MIPs ist stark von der gegebenen Zuordnung der Bins an die Stationen abhängig.
 Bei einigen Zuordnungen kann es sehr gute Lösungen geben, und bei anderen dagegen nur sehr schlechte, was sich nur durch eine
 Änderung der Zuordnung (bzw. der Binreihenfolge) verbessern lässt, wozu dieses MIP allerdings nicht in der Lage ist.
-Im Folgenden werden daher ein weiteres MIP vorgestellt, das diese Fähigkeit besitzt, und heuristische Methoden,
+Im Folgenden wird daher ein weiteres MIP vorgestellt, das diese Fähigkeit besitzt, und heuristische Methoden,
 die die Bins den Stationen zuweisen, um darauf basierend dieses MIP anzuwenden.
 
 
 \subsection{MIP mit freien Bins}
 \label{subsec:MIPMitFreienBins}
-Das folgende MIP erweitert das MIP aus Unterabschnitt \ref{subsec:MIPMitFixiertenBins} um die Fähigkeit, die Bins untereinander zu Vertauschen,
+Das folgende MIP erweitert das MIP aus Unterabschnitt \ref{subsec:MIPMitFixiertenBins} um die Fähigkeit, die Bins untereinander zu vertauschen,
 was dem Zuweisen der Bins an die Stationen entspricht.
 Für die Berechnung der Überschneidungen zwischen den Jobgruppen sind daher weitere Variablen notwendig, die als Indikator dafür dienen,
 ob die Bins der Jobgruppen auf benachbarten Stationen liegen.
@@ -1117,15 +1127,17 @@ Dieses Optimum zwischen zwei Bins ist auf die Anordnung aller $m$ Bins übertrag
 Wird ein Bin bezüglich eines seiner Nachbarn in dieser Weise angeordnet, ist es im Allgemeinen nicht der Fall,
 dass diese Anordnung auch bezüglich des anderen Nachbarn optimal ist.
 
-In den folgenden Absätzen werden einige Anwendungen dieses lokalen Optimums vorgestellt.
+In den folgenden Absätzen werden einige Anwendungen dieses lokalen Optimierens vorgestellt.
 
 \subsubsection{Bestimmung einer unteren Schranke}
-Eine Anwendungsmöglichkeit der lokal optimalen Bins ist die Berechnung einer unteren Schranke für $C_{\max}$ im zweiten Dekompositionsansatz.
+Eine Anwendungsmöglichkeit der lokal optimalen Bins ist die Berechnung einer unteren Schranke für die Summe dier Zykluszeiten im zweiten Dekompositionsansatz.
 Eine mögliche untere Schranke lässt sich wie folgt berechnen:
-\[LB_{C_{\max}} = \frac{1}{2} \sum_{b=1}^m \left( \min_{a\neq b} C_{ab}^* + \min_{c\neq b} C_{bc}^* \right) \]
+\[LB_{\sum c_t} = \frac{1}{2} \sum_{b=1}^m \left( \min_{a\neq b} C_{ab}^* + \min_{c\neq b} C_{bc}^* \right) \]
 Es werden also für jeden Bin $b$ sein optimaler linker Nachbar $a$ und sein optimaler rechter Nachbar $c$ gesucht.
 Da in der Summe all dieser $C_{bc}^*$-Werte jeder Bin zweimal (einmal als linker und einmal als rechter Nachbar) auftaucht,
 wird diese Summe noch halbiert.
+Zusammen mit den auftretenden Rüstkosten, die nach der Zuweisung der Jobgruppen an die Bins feststehen (vgl. Abschnitt \ref{sec:Ressourcenzuweisung}),
+ist dies eine untere Schranke für die Zielfunktion $C_{\max}$.
 
 \subsubsection{Heuristik für initiale Binreihenfolge}
 Eine andere mögliche Anwendung der lokal optimalen Bins ist, eine initiale Binreihenfolge (bzw. eine initiale Zuweisung der Bins zu den Stationen)
@@ -1143,6 +1155,7 @@ In diesem Fall muss das obige Verfahren für jede dieser Gruppen separat durchge
 
 
 \subsection{Nachbarschaftssuche}
+\label{subsec:Nachbarschaftssuche}
 Als Alternative zu den MIPs mit freien oder fixierten Bins lassen sich Nachbarschaftsoperatoren beschreiben, 
 die für diverse Nachbarschaftssuchverfahren benutzt werden können.
 Naheliegende Operatoren sind:
@@ -1248,7 +1261,7 @@ Die Resultate sind analog zur ersten Testreihe in Abbildung \ref{abb:3domnorm} d
     }
 \end{figure}
 
-Die Laufzeiten der zweiten Testreihe unterscheiden nur marginal von denen der ersten, was zu erwarten war, 
+Die Laufzeiten der zweiten Testreihe unterscheiden sich nur marginal von denen der ersten, was zu erwarten war, 
 da die Laufzeiten der Heuristiken nicht von den Prozesszeiten abhängig sind.
 Die Kurven in Abbildung \ref{abb:3domnorm} unterscheiden sich im Verlauf kaum von denen in Abbildung \ref{abb:3dom}.
 Allerdings sind diese Kurven im Vergleich zur ersten Testreihe in etwa um den Faktor $2$ gestaucht.

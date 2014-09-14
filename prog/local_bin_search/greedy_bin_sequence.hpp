@@ -46,7 +46,7 @@ vector<unsigned> greedy_bin_sequence(const vector<bin>& bins)
     }
 
     //bins with best value first
-    vector<unsigned> result(n);
+    vector<unsigned> result(n, -1);
     result[0] = bins[best_i].id;
     result[1] = bins[best_j].id;
 

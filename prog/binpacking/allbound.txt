@@ -105,3 +105,62 @@
 
 ../../instances/bininstances/orders_reparsed/orderpool_1107_parsed.txt 5551.34
 
+../../instances/bininstances/rand_orders/order_n10.txt 612.595
+
+../../instances/bininstances/rand_orders/order_n11.txt 775.4
+
+../../instances/bininstances/rand_orders/order_n12.txt 
+../../instances/bininstances/rand_orders/order_n13.txt 820.075
+
+../../instances/bininstances/rand_orders/order_n14.txt 1419.62
+
+../../instances/bininstances/rand_orders/order_n15.txt 1397.3
+
+../../instances/bininstances/rand_orders/order_n16.txt 2540.76
+
+../../instances/bininstances/rand_orders/order_n17.txt 1833.9
+
+../../instances/bininstances/rand_orders/order_n18.txt 1991.22
+
+../../instances/bininstances/rand_orders/order_n19.txt 
+../../instances/bininstances/rand_orders/order_n20.txt 2546.34
+
+../../instances/bininstances/rand_orders/order_n21.txt 
+../../instances/bininstances/rand_orders/order_n22.txt 3064.57
+
+../../instances/bininstances/rand_orders/order_n23.txt 3444.59
+
+../../instances/bininstances/rand_orders/order_n24.txt 3938.09
+
+../../instances/bininstances/rand_orders/order_n25.txt 4494.24
+
+../../instances/bininstances/rand_orders/order_n26.txt 4049.98
+
+../../instances/bininstances/rand_orders/order_n27.txt 5116.42
+
+../../instances/bininstances/rand_orders/order_n28.txt 5400.8
+
+../../instances/bininstances/rand_orders/order_n29.txt 6212.84
+
+../../instances/bininstances/rand_orders/order_n30.txt 4372.43
+
+../../instances/bininstances/rand_orders/order_n31.txt 5929.93
+
+../../instances/bininstances/rand_orders/order_n32.txt 7324.2
+
+../../instances/bininstances/rand_orders/order_n33.txt 5397.39
+
+../../instances/bininstances/rand_orders/order_n34.txt 7792.54
+
+../../instances/bininstances/rand_orders/order_n35.txt 8611.96
+
+../../instances/bininstances/rand_orders/order_n36.txt 8137.03
+
+../../instances/bininstances/rand_orders/order_n37.txt 8372.87
+
+../../instances/bininstances/rand_orders/order_n38.txt 9967.88
+
+../../instances/bininstances/rand_orders/order_n39.txt 8566.37
+
+../../instances/bininstances/rand_orders/order_n40.txt 9515.44
+

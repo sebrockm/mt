@@ -48,9 +48,9 @@ durchgeführt haben. Auf diese Weise können die Jobs, im Gegensatz zum klassisc
 immer nur \textit{synchron} zur nachfolgenden Maschine gelangen.
 Die Zeit, die zwischen zwei Rotationen vergeht, wird als \textit{Zykluszeit} bezeichnet.
 
-Die zu produzierenden Jobs sind gegeben durch die Menge $J=\{1,\ldots,n\}$ 
+Die zu produzierenden Jobs sind gegeben durch die Menge $N=\{1,\ldots,n\}$ 
 und die Prozesszeiten von Job $j$ auf Maschine $M_i$ sind durch $p_{ij}$ gegeben.
-Eine Beispielinstanz mit $n=5$ und $m=3$ ist in Tabelle \ref{abb:Bsp} zu sehen.
+Ein Plan für eine Beispielinstanz mit $n=5$ und $m=3$ ist in Abbildung \ref{abb:Bsp} zu sehen.
 \begin{figure}[h]
     \begin{center}
         \begin{tabular}{c|ccccc}
@@ -80,7 +80,7 @@ Eine Beispielinstanz mit $n=5$ und $m=3$ ist in Tabelle \ref{abb:Bsp} zu sehen.
 \end{figure}
 Ziel ist es, eine Permutation $\pi$ der Jobs zu erstellen, die die gesamte Produktionsdauer minimiert.
 Diese Zielfunktion wird mit $C_{\max}$ bezeichnet.
-Die Beispielinstanz in Abbildung \ref{abb:Bsp} ist in Abbildung \ref{abb:gantt} als Gantt-Diagramm aufgetragen.
+Die Beispielinstanz, deren Plan in Abbildung \ref{abb:Bsp} zu sehen ist, ist in Abbildung \ref{abb:gantt} als Gantt-Diagramm aufgetragen.
 Oben sind die Jobs in der initialen Reihenfolge (1-2-3-4-5) und unten in einer bezüglich $C_{\max}$ optimalen Reihenfolge.
 Die Zykluszeiten $c_t$ mit $1\leq t\leq n+m-1$ berechnen sich wie folgt:
 \[ c_t = \max_{i=\max\{1,t-n+1\}}^{\min\{t,m\}} p_{i\pi_{t-i+1}} \]
@@ -88,31 +88,40 @@ Die Zielfunktion lässt sich also durch $C_{\max} = \sum_{t=1}^{n+m-1} c_t$ bere
 Andere Zielfunktionen werden in dieser Masterarbeit nicht betrachtet.
 
 Eine Teilmenge $D \subseteq \{1,\ldots,m\}$ der Maschinen heißt \textit{dominierend}, wenn 
-\[ p_{dj} \geq p_{ej} \quad \forall j\in J, d\in D, e\not\in D \] 
+\[ p_{dj} \geq p_{ej} \quad \forall j\in N, d\in D, e\not\in D \] 
 ist. 
 Die Prozesszeiten aller Jobs auf dominierenden Maschinen sind also immer mindestens so groß wie die Prozesszeiten auf den restlichen Maschinen.
 Treten dominierende Maschinen auf, müssen für die Berechnung der Zykluszeiten die Prozesszeiten auf den übrigen Maschinen also nicht betrachtet werden.
-Dominierende Maschinen treten in der Praxis häufig auf und spielen in dieser Masterarbeit eine tragende Rolle, 
-vor allem in Kapitel \ref{chap:DerZweiteDekompositionsansatz}.
+Dominierende Maschinen treten in der Praxis häufig auf. 
+Bei Kesseböhmer sind z.B. zwei von acht Maschinen dominierend.
+Diese beiden Maschinen sind dort außerdem benachbart, weshalb dieser Fall in dieser Masterarbeit besonders intensiv behandelt wird. 
 
 Zusätzlich benötigen die Jobs unter Umständen Ressourcen aus einer Menge $R$, um in die Stationen eingelegt werden zu können. Diese Ressourcen können erst nach
 Fertigstellung eines Jobs, also nachdem er nach Maschine $M_m$ aus der Anlage genommen wurde, wiederverwendet werden.
 Sie sind allerdings nur in begrenzter Zahl vorhanden und im Allgemeinen ist nicht jede Ressource für jeden Job geeignet.
-Für $j\in J$ sei $\rho_j\subseteq R$ die Menge der Ressourcen, die für $j$ geeignet ist.
-Umgekehrt sei für $r\in R$ mit $\iota_r\subseteq J$ die Menge der Jobs bezeichnet, für die $r$ geeignet ist.
-An Maschine $M_1$ kann es daher notwendig sein, vor dem Einlegen des nächsten Jobs die Ressource zu wechseln, 
-wenn auf der entsprechenden Station zuvor Job $j\in J$ mit Ressource $r\in\rho_j$ fertiggestellt wurde 
+Für $j\in N$ sei $\rho_j\subseteq R$ die Menge der Ressourcen, die für $j$ geeignet ist.
+Umgekehrt sei für $r\in R$ mit $\iota_r\subseteq N$ die Menge der Jobs bezeichnet, für die $r$ geeignet ist.
+Wenn eine Station nach der Entnahme eines Jobs nach Maschine $M_m$ wieder an Maschine $M_1$ angelangt, kann es daher notwendig sein, 
+vor dem Einlegen des nächsten Jobs die Ressource zu wechseln, 
+wenn auf der Station zuvor Job $j\in N$ mit Ressource $r\in\rho_j$ fertiggestellt wurde 
 und nun Job $j'\not\in\iota_r$ eingelegt werden soll.
 
 Für die Ressourcen können folgende Situationen auftreten:
-\begin{itemize}
-    \item Alle Ressourcen sind für alle Jobs geeignet, also $\rho_j=R$ für alle $j\in J$.
+\begin{enumerate}
+    \item Alle Ressourcen sind für alle Jobs geeignet, also $\rho_j=R$ für alle $j\in N$.
     \item Die Jobs lassen sich in disjunkte Gruppen unterteilen, so dass für alle Jobs aus einer Gruppe dieselbe Ressourcenmenge geeignet ist.
         Wenn also $\rho_i \cap \rho_j \neq \emptyset$, dann folgt $\rho_i=\rho_j$.
     \item Die Ressourcenmengen bilden Hierarchien. 
         D.h., wenn $\iota_q \cap \iota_r \neq \emptyset$, dann folgt $\iota_q \subseteq \iota_r$ oder $\iota_r \subseteq \iota_q$.
     \item Die $\rho_j$ sind beliebige Teilmengen von $R$.
-\end{itemize}%
+\end{enumerate}%
+Der erste Fall ist trivial, da niemals eine Ressource gewechselt werden muss.
+In dieser Masterarbeit liegt der Fokus auf dem zweiten Fall.
+Er ist dadurch motiviert, dass es in realen Anwendungsfällen häufig nicht der Fall ist, dass bei $n$ zu produzierenden Jobs alle $n$ Jobs unterschiedlich sind,
+d.h. unterschiedliche Prozesszeiten und Ressourcen haben.
+Stattdessen bietet ein Produzent eine gewisse Anzahl unterschiedlicher Güter an und ein Käufer gibt mehrere identische Güter auf einmal in Auftrag.
+Diese identischen Jobs können dann als \textit{Jobgruppen} bezeichnet werden, für die es eine Menge an nur für sie geeigneten Ressourcen gibt.
+
 Neben dem Wechsel von Ressourcen, der zusätzliche Zeit in Anspruch nimmt, können auch andere Formen von \textit{Rüstkosten}
 auftreten. Z.B. kann es sein, dass an einer Station zunächst einige Umstellungen vorgenommen werden müssen, bevor der
 neue Job eingelegt werden kann. Die Jobs können in Familien $\mathcal{F}$ eingeteilt werden, so dass beim Übergang
@@ -126,7 +135,7 @@ Diese Rüstkosten können
 Dabei wird $s_{ff} = 0$ angenommen für alle $f\in\mathcal{F}$, es treten also keine Rüstkosten innerhalb einer Familie auf.
 Wenn Ressourcen notwendig sind, können die Familien über die Ressourcen definiert werden:
 Wenn $\rho_i=\rho_j$, dann gehören $i$ und $j$ zur gleichen Familie.
-Das setzt allerdings voraus, dass für $i$ und $j$ auf jeden Fall die selbe Ressource verwendet wird, falls sie in $\pi$ im Abstand von $m$ vorkommen.
+%Das setzt allerdings voraus, dass für $i$ und $j$ auf jeden Fall die selbe Ressource verwendet wird, falls sie in $\pi$ im Abstand von $m$ vorkommen.
 
 Wenn Rüstkosten auftreten, soll nicht mehr nur die Summe aller Zykluszeiten minimiert werden, sondern zusätzlich noch die Summe aller auftretenden Rüstkosten.
 Die Zielfunktion $C_{\max}$ lässt sich dann als 
@@ -150,8 +159,8 @@ formulieren, wobei hier die Rüstkosten direkt mit den Jobs statt mit den Famili
         Beispielsweise treten Rüstkosten von $6$ auf, wenn von Job $2$ auf Job $1$ gewechselt werden muss.
     }
 \end{figure}
-In Abbildung \ref{abb:BspRes} ist eine mögliche Rüstkostentabelle für das Beispiel aus \ref{abb:Bsp} gegeben.
-Die initiale Reihenfolge und eine optimale sind in Abbildung \ref{abb:ganttres} als Gantt-Diagramm dargestellt.
+In Abbildung \ref{abb:BspRes} ist eine mögliche Rüstkostentabelle für das Beispiel aus Abbildung \ref{abb:Bsp} gegeben.
+Die initiale Reihenfolge (1-2-3-4-5) und eine optimale sind in Abbildung \ref{abb:ganttres} als Gantt-Diagramm dargestellt.
 \begin{figure}
     \begin{center}
         \includegraphics[width=\textwidth]{graphics/bspresinit.pdf}
@@ -165,10 +174,10 @@ Die initiale Reihenfolge und eine optimale sind in Abbildung \ref{abb:ganttres} 
     }
 \end{figure}
 
-Insgesamt gilt es, neben der Reihenfolge $\pi$ auch ein Mapping $f:J\rightarrow R$ zu finden, 
-das jedem Job $j\in J$ eine Ressource $r\in\rho_j$ zuweist und folgenden Ansprüchen genügt:
+Insgesamt gilt es, neben der Reihenfolge $\pi$ auch ein Mapping $f:N\rightarrow R$ zu finden, 
+das jedem Job $j\in N$ eine Ressource $r\in\rho_j$ zuweist und folgenden Ansprüchen genügt:
 \begin{itemize}
-    \item $f$ muss zulässig sein in dem Sinne, dass beim Einlegen jedes Jobs $j\in J$ eine Ressource $r\in\rho_j$ verfügbar ist
+    \item $f$ muss zulässig sein in dem Sinne, dass beim Einlegen jedes Jobs $j\in N$ eine Ressource $r\in\rho_j$ verfügbar ist
         (d.h., dass $r$ sich nicht gerade an anderer Stelle in der Anlage befindet).
     \item $f$ und $\pi$ zusammen sollen optimal sein in dem Sinne, dass die Summe aus den durch $\pi$ und $f$ definierten Zykluszeiten und 
         Rüstkosten minimal ist.
@@ -206,22 +215,24 @@ synchrone Flow-Shop-Probleme mit Ressourcen und Rüstkosten eine gute Alternativ
 
 
 \section{Motivation für Dekompositionsansätze}
-In \cite{preprint} wurde gezeigt, dass schon das Optimieren bezüglich $C_{\max}$, also ohne Ressourcen und Rüstkosten, $\mathcal{NP}$-schwer ist für $m>2$.
+In \cite{preprint} wurde gezeigt, dass synchroner Flow-Shop ohne Ressourcen und Rüstkosten $\mathcal{NP}$-schwer ist für $m>2$.
 Versuche, dieses Problem -- oder auch einige Spezialfälle davon -- mit ganzzahliger linearer Programmierung optimal zu lösen, waren nur für sehr kleine Instanzen mit
 $n<30$ in hinnehmbarer Zeit erfolgreich, was weit hinter praktischen Anforderungen zurückliegt (vgl. Abschnitt \ref{subsec:LineareProgrammierung}).
-Aufgrund der Komplexität des Gesamtproblems (vgl. das MIP aus Abschnitt \ref{sec:Problembeschreibung}) sollen in dieser Arbeit zwei Dekompositionsansätze verfolgt werden:
+Aufgrund der Komplexität des Gesamtproblems (vgl. das MIP aus Abschnitt \ref{sec:Problembeschreibung}) sollen in dieser Arbeit zwei Dekompositionsansätze verfolgt werden,
+die $C_{\max}$ in zwei Stufen getrennt nach Zykluszeiten und Rüstkosten optimieren:
 \begin{enumerate}
-    \item Zunächst wird eine Reihenfolge $\pi$ aufgestellt, ohne Ressourcen und Rüstkosten zu betrachten, so dass $C_{\max}$ möglichst gut ist.
-        Anschließend wird ein Mapping $f$ basierend auf $\pi$ erstellt, möglichst ohne nachträgliche Änderung an $\pi$ vorzunehmen.
+    \item Zunächst wird eine Reihenfolge $\pi$ aufgestellt, ohne Ressourcen und Rüstkosten zu betrachten, so dass die Summe der Zykluszeiten möglichst gering ist.
+        Anschließend wird ein zulässiges Mapping $f$ basierend auf $\pi$ erstellt, möglichst ohne nachträgliche Änderung an $\pi$ vorzunehmen,
+        so dass die Summe der Rüstkosten minimiert wird.
     \item Es wird zuerst ein Mapping $f$ erstellt, so dass die Ressourcen zulässig zugewiesen sind und die durch die Ressourcenwechsel verursachten Rüstkosten minimal sind.
-        Anschließend werden, ohne $f$ zu verändern, die Jobs so in einer Reihenfolge $\pi$ angeordnet, dass die Zykluszeiten möglichst minimal sind.
+        Anschließend werden, ohne $f$ zu verändern, die Jobs so in einer Reihenfolge $\pi$ angeordnet, dass $C_{\max}$ möglichst minimal ist.
 \end{enumerate}%
 Beide Ansätze liefern natürlich im Allgemeinen keine optimalen Lösungen, da jeweils getrennt bezüglich $\pi$ und $f$ optimiert wird,
 obwohl die optimale Lösung von beiden zusammen abhängig ist.
 Außerdem sind selbst die aus den Ansätzen resultierenden Teilprobleme teilweise noch $\mathcal{NP}$-schwer.
-Beispielsweise ist bei Ansatz (1) das Berechnen einer $C_{\max}$-optimalen Reihenfolge $\pi$ in dem Spezialfall,
-dass es nur eine dominierende Maschine gibt trivial, da $C_{\max}$ bei jeder Reihenfolge identisch ist,
-und wenn es genau zwei benachbarte dominierende Maschinen gibt,
+Beispielsweise ist bei Ansatz (1) das Berechnen einer $C_{\max}$-optimalen Reihenfolge $\pi$ im Allgemeinen $\mathcal{NP}$-schwer. 
+In dem Spezialfall, dass es nur eine dominierende Maschine gibt, ist es trivial, da $C_{\max}$ bei jeder Reihenfolge identisch ist,
+Wenn es genau zwei benachbarte dominierende Maschinen gibt,
 ist es mit dem Algorithmus von Gilmore und Gomory \cite{gg} in Polynomialzeit lösbar.
 Bei der anschließenden Zuweisung von Ressourcen ist noch unbekannt, ob ein polynomieller Algorithmus existiert.
 %Dies herauszufinden ist eines der Ziele dieser Arbeit.
@@ -232,12 +243,12 @@ Je nachdem, ob die Rüstkosten die Zykluszeiten dominieren oder umgekehrt, ist A
 \chapter{Der erste Dekompositionsansatz}
 Beim ersten Dekompositionsansatz wird zunächst eine (möglichst gute) Jobreihenfolge $\pi$ bestimmt.
 Dabei werden Ressourcen und Rüstkosten außer Acht gelassen. 
-Es wird also zunächst ausschließlich $C_{\max}$ optimiert. Anschließend wird ein Mapping $f$ aufgestellt,
+Es wird also zunächst ausschließlich die Summe der Zykluszeiten optimiert. Anschließend wird ein Mapping $f$ aufgestellt,
 so dass Ressourcen nur dann eingeplant werden, wenn sie auch zur Verfügung stehen, und darüber hinaus
 möglichst selten ausgetauscht werden müssen, so dass geringe Rüstkosten auftreten.
 
 In Abschnitt \ref{sec:BerechnenEinerJobreihenfolge} werden einige exakte und heuristische Verfahren für die
-Berechnung einer $C_{\max}$-optimalen Reihenfolge $\pi$ vorgestellt, was im Allgemeinen $\mathcal{NP}$-schwer ist.
+Berechnung einer bezüglich der Zykluszeiten optimalen Reihenfolge $\pi$ vorgestellt, was im Allgemeinen $\mathcal{NP}$-schwer ist.
 Anschließend werden in Abschnitt \ref{sec:ZuweisungVonRessourcen} Verfahren vorgestellt, die ein möglichst gutes Mapping $f$ erzeugen.
 Dabei wird darauf eingegangen, ob mit der gegebenen Reihenfolge $\pi$ und den gegebenen Ressourcen
 überhaupt eine zulässige Lösung möglich ist, und, wie dann ggf. die Zulässigkeit durch nachträgliche Änderungen an $\pi$
@@ -245,7 +256,7 @@ erzeugt werden kann.
 
 \section{Berechnen einer Jobreihenfolge}
 \label{sec:BerechnenEinerJobreihenfolge}
-Das Finden einer $C_{\max}$-optimalen Jobreihenfolge ist im Allgemeinen $\mathcal{NP}$-schwer.
+Das Finden einer $C_{\max}$-optimalen Jobreihenfolge ist im Allgemeinen schon ohne Ressourcen und Rüstkosten $\mathcal{NP}$-schwer.
 Daher wird im ersten Unterabschnitt \ref{subsec:LineareProgrammierung} zunächst ein MIP vorgestellt,
 das solch eine Reihenfolge findet.
 Anschließend wird in Unterabschnitt \ref{subsec:DerAlgorithmusVonGilmoreUndGomory} auf einen Spezialfall eingegangen, der in polynomieller Zeit lösbar ist.
@@ -253,7 +264,7 @@ Danach werden in \ref{subsec:HeuristischeVerfahren} einige heuristische Verfahre
 
 \subsection{Ganzzahlige Lineare Programmierung}
 \label{subsec:LineareProgrammierung}
-Zum Finden einer $C_{\max}$-optimalen Lösung wurde folgendes MIP aufgestellt, das in dieser Form auch schon in \cite{karabati} vorgestellt wurde.
+Zum Finden einer bezüglich Zykluszeiten optimalen Lösung wurde folgendes MIP aufgestellt, das in dieser Form auch schon in \cite{karabati} vorgestellt wurde.
 Es ist identisch mit dem MIP in Abschnitt \ref{sec:Problembeschreibung} bis auf die Nichtberücksichtigung der Rüstkosten.
 \begin{align}
     \text{min} \quad \sum_{t=1}^{n+m-1} &c_t \\
@@ -345,15 +356,15 @@ Die asymptotische Laufzeit liegt hier ebenfalls in $\mathcal{O}(n^2m)$.
 Diese Heuristik wendet den Algorithmus von Gilmore und Gomory auf beliebige Instanzen an.
 Es können zwei Fälle eintreten:
 \begin{enumerate}
-    \item Unter den dominierenden Maschinen $D$ gibt es zwei, die benachbart sind, also $\exists i\in\{1,\ldots,m\}$ mit $i,i+1\in D$.
+    \item Unter den dominierenden Maschinen $D$ gibt es zwei, die benachbart sind, also $\exists i\in\{1,\ldots,m-1\}$ mit $i,i+1\in D$.
     \item Es gibt keine benachbarten dominierenden Maschinen.
 \end{enumerate}
 Wenn Fall (2) eintritt, werden alle $m$ Maschinen als dominierend angesehen, da dies für den Algorithmus keine Einschränkung darstellt.
 Nun werden zwei benachbarte dominierende Maschinen gewählt.
 O.B.d.A seien dies die Maschinen $M_1$ und $M_2$. Seien 
 \begin{align} 
-    d_{\min} &\coloneqq \min_{\substack{i\in \{1,2\} \\ j\in J}} p_{ij} \\
-    e_{\max} &\coloneqq \max_{\substack{i\not\in \{1,2\} \\ j\in J}} p_{ij} \\
+    d_{\min} &\coloneqq \min_{\substack{i\in \{1,2\} \\ j\in N}} p_{ij} \\
+    e_{\max} &\coloneqq \max_{\substack{i\not\in \{1,2\} \\ j\in N}} p_{ij} \\
     K &\coloneqq \frac{e_{\max}}{d_{\min}} \text{,}
 \end{align}
 wobei $d_{\min}=0$ und daraus folgend $K=\infty$ erlaubt sind. 
@@ -504,16 +515,16 @@ Sollte ein Counter einmal negativ werden, gibt es keine zulässige Ressourcenzut
 Es ist nicht bekannt, ob das Problem, zu entscheiden, ob es bei gegebenem $\pi$ und beliebigen Ressourcenmengen ein zulässiges Mapping $f$ gibt, 
 $\mathcal{NP}$-vollständig ist oder ob es einen polynomiellen Algorithmus gibt.
 
-Es besteht allerdings die Vermutung, dass es bei konstantem $m$ einen polynomiellen Algorithmus in $n$ gibt. Ein Indiz für diese Vermutung liefert folgendes MIP:
+Es besteht allerdings die Vermutung, dass es bei konstantem $m$ einen polynomiellen Algorithmus in $n$ gibt. Ein Indiz für diese Vermutung liefert das nachfolgende MIP.
+O.B.d.A. sei hier $\pi_i=i$, d.h. Job $i$ ist an Position $i$.
+Die Binärvariablen $x_{ir}$ geben hier an, ob dem Job $i\in N$ die Ressource $r\in\rho_i$ zugeteilt wird.
+In diesem Fall ist $x_{ir}=1$ und sonst $x_{ir}=0$.
 \begin{align}
     \text{max} \quad &0 \label{zulmip:obj} \\
     \text{s.t.}\quad \sum_{r\in\rho_i} x_{ir} &= 1 & i\in N \label{zulmip:1} \\
     x_{ir} + x_{jr} &\leq 1 & i\in N, j=i+1,\ldots,i+m-1 \, ,r\in\rho_i\cap\rho_j \label{zulmip:2} \\
     x_{ir} &\in \{0,1\} & i\in N, r\in\rho_i
 \end{align}
-O.B.d.A. sei hier $\pi_i=i$, d.h. Job $i$ ist an Position $i$.
-Die Binärvariablen $x_{ir}$ geben hier an, ob dem Job $i$ die Ressource $r$ zugeteilt wird.
-In diesem Fall ist $x_{ir}=1$ und sonst $x_{ir}=0$.
 Die erste Nebenbedingung (\ref{zulmip:1}) bewirkt, dass jedem Job genau eine Ressource zugewiesen wird.
 Durch die zweite Nebenbedingung (\ref{zulmip:2}) kann jede Ressource jeweils nur einmal an $m$ aufeinander folgende Jobs vergeben werden.
 Eine Zielfunktion ist nicht notwendig, da die Zulässigkeit nur durch die Nebenbedingungen entschieden wird.
@@ -528,7 +539,7 @@ Für ein $k$-Tupel von Jobs, die alle in einem Abschnitt von $\pi$ der Länge $m
 \end{align}
 Für $k=2$ ist diese Nebenbedingung identisch mit (\ref{zulmip:2}).
 Die Anzahl dieser Nebenbedingungen lässt sich durch $\mathcal{O}(n(m-1)!|R|)$ abschätzen, was bei konstantem $m$ polynomiell ist.
-Werden sie für $k=3,\ldots,m$ zu obigem MIP hinzugefügt, so war bei allen bislang getesteten Instanzen die Relaxation bereits ganzzahlig.
+Werden sie für $k=3,\ldots,m$ zu obigem MIP hinzugefügt, so war bei allen bislang getesteten 100 Instanzen die Relaxation bereits ganzzahlig.
 Ein Beweis, dass dies tatsächlich bei allen Instanzen der Fall ist, ist noch nicht gelungen.
 Gelingt er, ist bewiesen, dass es in polynomieller Zeit (bei konstantem $m$) möglich ist, zu entscheiden, ob es für eine gegebene Jobreihenfolge $\pi$ und 
 gegebene (beliebige) Ressourcenteilmengen $\rho_i$ möglich ist, allen Jobs eine Ressource zuzuweisen.
@@ -536,14 +547,16 @@ gegebene (beliebige) Ressourcenteilmengen $\rho_i$ möglich ist, allen Jobs eine
 
 \subsection{Optimierung der Ressourcenzuweisung}
 \label{subsec:OptimierungDerRessourcenzuweisung}
-Da unbekannt ist, ob das Finden \textit{irgendeiner} Ressourcenzuweisung $\mathcal{NP}$-schwer ist,
+Da unbekannt ist, ob das Finden \textit{irgendeiner} zulässigen Ressourcenzuweisung $\mathcal{NP}$-schwer ist,
 ist es natürlich ebenfalls unbekannt, ob das Finden einer \textit{optimalen} Ressourcenzuweisung $\mathcal{NP}$-schwer ist.
 
 Eine Ausnahme bildet der Fall von disjunkten Ressourcenteilmengen $\rho_i$.
 Immer, wenn zwei Jobs aus einer Familie im Abstand $m$ aufeinander folgen, kann ihnen dieselbe Ressource zugewiesen werden.
 Wenn zwei Jobs im Abstand $m$ nicht zur selben Familie gehören, gibt es auch keine Möglichkeit, Rüstkosten zu vermeiden oder zu verringern.
 
-Für den allgemeinen Fall lässt sich das MIP aus Unterabschnitt \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen} erweitern:
+Für den allgemeinen Fall lässt sich das MIP aus Unterabschnitt \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen} erweitern.
+Hinzu kommen Binärvariablen $y_{ir}$, für die gilt: $y_{ir}=1$ genau dann, wenn den Jobs an den Positionen $i$ und $i-m$ die selbe Ressource $r$ zugeteilt ist.
+Auch hier sei wieder o.B.d.A. $\pi_i=i$.
 \begin{align}
     \text{max} \quad \sum_{i=m}^n\sum_{r\in\rho_i\cap\rho_{i-m}} &y_{ir} \label{optmip:obj} \\
     \text{s.t.}\quad \sum_{r\in\rho_i} x_{ir} &= 1 & i\in N \label{optmip:1} \\
@@ -553,10 +566,8 @@ Für den allgemeinen Fall lässt sich das MIP aus Unterabschnitt \ref{subsubsec:
     x_{ir} &\in \{0,1\} & i\in N, r\in\rho_i \\
     y_{ir} &\in \{0,1\} & i=m,\ldots,n \, ,r\in\rho_i\cap\rho_{i-m}
 \end{align}
-Auch hier sei wieder o.B.d.A. $\pi_i=i$.
-Für die Binärvariablen $y_{ir}$ gilt $y_{ir}=1$ genau dann, wenn den Jobs an den Positionen $i$ und $i-m$ die selbe Ressource $r$ zugeteilt ist.
-Diese Eigenschaft wird durch die Nebenbedingungen (\ref{optmip:3}) und (\ref{optmip:4}) erzwungen.
-In der Zielfunktion (\ref{optmip:obj}) wird daher die Anzahl der $y$-Variablen, die auf $1$ gesetzt sind, maximiert, da so die wenigsten Rüstkosten auftreten.
+Durch die Nebenbedingungen (\ref{optmip:3}) und (\ref{optmip:4}) wird erzwungen, dass die $y_{ir}$ die oben beschriebenen Werte annehmen.
+In der Zielfunktion (\ref{optmip:obj}) wird die Anzahl der $y$-Variablen, die auf $1$ gesetzt sind, maximiert, da so die wenigsten Rüstkosten auftreten.
 Dieses MIP liefert genau wie jenes aus \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen} in weniger als einer Sekunde auch für sehr große Instanzen eine Lösung.
 %Dieser Umstand lässt vermuten, dass auch das Optimierungsproblem der Ressourcenzuteilung in polynomieller Zeit lösbar ist.
 
@@ -598,10 +609,10 @@ So wird sichergestellt, dass die durch das Mapping $f$ vorgeschriebenen Ressourc
 
 In Abschnitt \ref{sec:Ressourcenzuweisung} wird erklärt, wie ein optimales Mapping $f$ mit möglichst wenigen Rüstkosten mit einem Binpacking-Ansatz erstellt werden kann.
 Anschließend wird in Abschnitt \ref{sec:AnordnungDerJobgruppen} beschrieben, wie basierend auf dem gegebenen Mapping $f$ eine Reihenfolge $\pi$ erstellt wird,
-so dass die Summe der Zykluszeiten ($C_{\max}$) minimal ist.
+so dass die Summe der Zykluszeiten und Rüstkosten ($C_{\max}$) minimal ist.
 
 In den meisten nachfolgend genannten Verfahren wird nur der Spezialfall mit konstanten Rüstkosten ($s_{fg}=s$),
-disjunkten Ressourcenmengen ($\rho_i\cap\rho_j=\emptyset$) und zwei dominierenden Maschinen betrachtet.
+disjunkten Ressourcenmengen $\rho_i$ und zwei dominierenden Maschinen betrachtet.
 
 
 \section{Ressourcenzuweisung}
@@ -611,10 +622,7 @@ Dabei wird davon ausgegangen, dass Rüstkosten einzig durch einen Ressourcenwech
 In Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} wird auf den Spezialfall $s_{fg}=s$, der mit einem Binpackingansatz gelöst werden kann,
 eingegangen.
 
-In realen Anwendungsfällen ist es häufig nicht der Fall, dass bei $n$ zu produzierenden Jobs alle $n$ Jobs unterschiedlich sind,
-d.h. unterschiedliche Prozesszeiten und Ressourcen haben.
-Stattdessen bietet ein Produzent eine gewisse Anzahl unterschiedlicher Güter an und ein Käufer gibt mehrere identische Güter auf einmal in Auftrag.
-Im Folgenden ist daher von \textit{Jobgruppen} die Rede, wobei eine Jobgruppe $g$ aus $n_g\in\mathbb{N}$ identischen Jobs besteht.
+Im Folgenden ist von \textit{Jobgruppen} die Rede, wobei eine Jobgruppe $g$ aus $n_g\in\mathbb{N}$ identischen Jobs besteht.
 $n_g$ ist also die Größe einer Jobgruppe $g$.
 Die Anzahl der Jobgruppen wird mit $\tilde{n}$ bezeichnet.
 Für die Gesamtanzahl an Jobs gilt dann $n = \sum_{g=1}^{\tilde{n}} n_g$.
@@ -634,8 +642,7 @@ Insgesamt muss dann nur $(\tilde{n}-m)$-mal ein Ressourcenwechsel stattfinden
 (beim Einlegen der ersten $m$ Jobs muss keine Ressource gewechselt werden, evtl. treten aber initiale Rüstkosten auf, was in dieser Arbeit aber nicht beachtet wird).
 Dabei soll nur der Spezialfall mit disjunkten Ressourcenmengen und konstanten Rüstkosten ($s_{fg}=s$) betrachtet werden.
 
-O.B.d.A. sei $n$ ein Vielfaches von $m$, denn andernfalls kann eine weitere "`Dummy"'-Jobgruppe $g_d$ konstruiert werden,
-deren Jobs die Prozesszeiten $0$ haben und die genau so groß ist, dass $n+n_{g_d}$ ein Vielfaches von $m$ ist.
+Zur Vereinfachung wird angenommen, dass $n$ ein Vielfaches von $m$ ist. 
 Bei $\tilde{n}$ gegebenen Jobgruppen mit den Größen $n_g, \, g=1,\ldots,\tilde{n}$ ist das Ziel,
 die Jobgruppen in $m$ gleichgroße Teilmengen zu unterteilen, möglichst ohne eine der Jobgruppen zu teilen.
 Dieses Problem lässt sich als Binpacking-Instanz betrachten, wobei entschieden werden muss, ob $\tilde{n}$ Items 
@@ -660,7 +667,7 @@ wobei dann eine der Jobgruppen in ihm auch geteilt werden muss wie in Abbildung 
 Sollte auch hier keine Lösung möglich sein, muss eine weitere Jobgruppe geteilt werden.
 Dazu wird wiederum eine neue Binpacking-Instanz erzeugt.
 Abbildung \ref{abb:binpart} zeigt, wie die Bingrößen in den weiteren Instanzen aussehen.
-Es handelt sich dabei um die \textit{ungeordnete Zahlenpartition} von $m$.
+Es handelt sich dabei um die \textit{ungeordneten Zahlenpartitionen} von $m$.
 Spätestens bei der Binpacking-Instanz, die nur noch einen Bin enthält mit der Größe $n$, gibt es eine Lösung,
 bei der dann $m-1$ Jobgruppen aufgeteilt werden müssen, so dass $m-1$ weitere Ressourcenwechsel und damit Rüstkosten auftreten.
 \begin{figure}
@@ -704,7 +711,7 @@ bei der dann $m-1$ Jobgruppen aufgeteilt werden müssen, so dass $m-1$ weitere R
     \end{center}
     \caption{
         \label{abb:binpart}
-        Ungeordnete Zahlenpartition von $8$ bezüglich $m'$ gruppiert und sortiert.
+        Ungeordnete Zahlenpartitionen von $8$ bezüglich $m'$ gruppiert und sortiert.
         Jede Zeile stellt die Anzahl der Bins und deren Größe bei möglichen Binpacking-Instanzen dar.
         Die zweite Zeile beispielsweise stellt den Status der Instanz in Abbildung \ref{abb:2binbsp} dar.
     }
@@ -810,6 +817,7 @@ für die es mehr als eine Ressource gibt (vgl. Abbildung \ref{abb:resnp}), denn 
     Für die Jobgruppen $1$ bis $n$ gibt es eine Ressource und für die Jobgruppe $n+1$ gibt es zwei Ressourcen.
     Die Jobgruppen müssen also so angeordnet werden, dass die Gruppe $n+1$ geteilt wird.
     Die resultierenden $1$-Bins haben dann jeweils die Größe $\frac{A}{2}+1$ und enthalten jeweils eine Jobgruppe der Größe $1$, die aus Gruppe $n+1$ hervorgehen.
+    Wir zeigen: $J$ hat genau dann eine Lösung, wenn auch $J'$ eine hat.
 
     "`$\Rightarrow$"': $J$ habe eine Lösung, nämlich eine Teilmenge $T\subseteq\{1,\ldots,n\}$ mit $\sum_{i\in T}a_i = \frac{A}{2}$.
     Dann hat auch $J'$ eine Lösung: Alle $g\in T$ werden dem ersten $1$-Bin zugewiesen und alle $g\in\{1,\ldots,n\}\setminus T$ dem zweiten.
@@ -831,7 +839,7 @@ Es wird also mindestens eine Jobgruppe $g$ geteilt, obwohl es nur eine Ressource
 Zunächst kann versucht werden, das Binpacking und darauf aufbauend das Anordnen der Jobgruppen in den $k$-Bins zu wiederholen.
 Evtl. besitzt eine Binpacking-Instanz mehrere Lösungen.
 Dort werden dann ggf. andere Jobgruppen geteilt, so dass es evtl. keine möglichen Unzulässigkeiten mehr gibt.
-Falls keine der Lösungen des Binpackings bessere ist, kann die nächsten Zahlenpartition von $m$ getestet werden.
+Falls keine der Lösungen des Binpackings besser ist, kann die nächsten Zahlenpartition von $m$ getestet werden.
 Je nachdem, ob in der nächsten Zahlenpartition $m'$ verringert wird (vgl. Abbildung \ref{abb:binpart}),
 wird dadurch allerdings eine weitere Jobgruppenteilung und damit ein weiteres Mal Rüstkosten in Kauf genommen.
 

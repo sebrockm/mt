@@ -6,7 +6,7 @@ then
     exit
 fi
 
-f=order_n$1_$RANDOM.txt
+f=order_n$1.txt
 
 echo $1 > $f
 echo "" >> $f
@@ -14,7 +14,7 @@ echo "" >> $f
 sum=0
 for i in $(seq 1 $(($1-1)))
 do
-    tmp=$(($RANDOM%$(($1*5))+1)) 
+    tmp=$(($RANDOM%$((10*$1))+1)) 
     sum=$(($sum+$tmp))
     echo $tmp >> $f
 done

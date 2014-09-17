@@ -20,16 +20,34 @@
 \tableofcontents
 
 \chapter{Einleitung}
+Bei synchronen Flow-Shop-Problemen handelt es sich um Produktions\-planungs\-probleme,
+bei denen die Jobs sich immer nur synchron zur nächsten Maschine bewegen können.
+Im Gegensatz zum klassischen (asynchronen) Flow-Shop, bei dem die Jobs immer sofort nach Fertigstellung an einer Maschine zur nächsten gelangen können,
+können die Jobs beim synchronen Flow-Shop erst dann zur nächsten Maschine gelangen, wenn auch alle anderen Maschinen mit der Bearbeitung ihres jeweiligen Jobs fertig sind.
+Die Komplexität synchroner Flow-Shop-Probleme wurde zuerst von Karabati und Sayin \cite{karabati} diskutiert.
+Soylu et. al \cite{soylu} stellten einen Branch-and-Bound-Algorithmus vor, der die gesamte Fertigstellungsdauer minimiert, und liefern einen (fehlerhaften) Beweis, 
+dass dieses Problem drei Maschinen $\mathcal{NP}$-schwer ist.
+Waldherr und Knust korrigieren diesen Beweis in einem bis zum Zeitpunkt dieser Masterarbeit noch nicht veröffentlichten Paper \cite{preprint}.
+Darüber hinaus betrachten sie einige Spezialfälle des synchronen Flow-Shops mit einer geringen Anzahl an dominierenden Maschinen.
+Dominierende Maschinen zeichnen sich dadurch aus, dass ihre Prozesszeiten für alle Jobs mindestens so groß sind wie bei den übrigen Maschinen.
+
+Das Konzept der dominierenden Maschinen aus der Arbeit von Waldherr und Knust basiert auf einer konkreten praktischen Anwendung von synchronen Flow-Shop-Problemen.
+Es handelt sich dabei um die Kesseböhmer GmbH, ansässig in Bad Essen.
+In einer Fallstudie \cite{casestudy} haben Waldherr und Knust das bei Kesseböhmer gegebene Optimierungsproblem genauer untersucht.
+Es handelt sich dabei um einen synchronen Flow-Shop, wobei die zu produzierenden Jobs Ressourcen benötigen und die Produktionsanlage beim Einlegen eines Jobs
+ggf. umgerüstet werden muss, was Rüstkosten verursacht.
+U.a. durch dieses Praxisbeispiel ist auch diese Masterarbeit motiviert.
+
 \section{Problembeschreibung}
 \label{sec:Problembeschreibung}
-Bei synchronen Flow-Shop-Problemen handelt es sich um Produktions\-planungs\-probleme,
-bei denen die zu produzierenden Güter (Jobs) z.B. auf einer zyklisch angeordneten Produktionsanlage
-produziert werden. Die Produktionsanlage be\-steht aus $m$ Stationen, die sich mit der Anlage drehen.
-Außen, um die Anlage herum, befinden sich $m$ fortlaufend nummerierte fixierte Maschinen $M_1,\ldots,M_m$, die die einzelnen Produktionsschritte durchführen.
+Die Produktionsanlage be\-steht aus $m$ Stationen, in die die Jobs eingelegt werden.
+Die Anlage bewegt die Stationen und die in ihnen befindlichen Jobs der Reihenfolge nach zu den Maschinen $M_1,\ldots,M_m$,
+die außen, um die Anlage herum, aufgestellt sind und die einzelnen Produktionsschritte durchführen.
 Dabei handelt es sich bei Maschine $M_1$ um das Einlegen des Jobs in die Anlage und nach der letzten Maschine $M_m$ wird das fertige Produkt entnommen.
-Durch Rotation der Anlage werden die Stationen mit den auf ihnen befindlichen Jobs zur jeweils nächsten Maschine transportiert.
-Die Reihenfolge, in der alle Jobs die Maschinen durchlaufen müssen ist also fest vorgegeben.
-In Abbildung \ref{abb:Anlage} ist eine solche zyklische Anlage dargestellt.
+Die Stationen stehen derart miteinander in Verbindung, dass sie sich immer nur gemeinsam fortbewegen können.
+Die Anlage kann beispielsweise kreisförmig aufgebaut sein, wie in Abbildung \ref{abb:Anlage} dargestellt.
+Aus diesem Grund wird die Fortbewegung der Stationen mit den Jobs zur jeweils nächsten Maschine als \textit{Rotation} bezeichnet,
+auch wenn die Anlage nicht zwangsweise zyklische Gestalt haben muss.
 \begin{figure}[h]
     \begin{center}
         \begin{tabular}{cc}
@@ -241,6 +259,7 @@ Je nachdem, ob die Rüstkosten die Zykluszeiten dominieren oder umgekehrt, ist A
 
 
 \chapter{Der erste Dekompositionsansatz}
+\label{chap:DerErsteDekompositionsansatz}
 Beim ersten Dekompositionsansatz wird zunächst eine (möglichst gute) Jobreihenfolge $\pi$ bestimmt.
 Dabei werden Ressourcen und Rüstkosten außer Acht gelassen. 
 Es wird also zunächst ausschließlich die Summe der Zykluszeiten optimiert. Anschließend wird ein Mapping $f$ aufgestellt,
@@ -456,7 +475,7 @@ Ressourcen zuzuweisen. An diese Zuweisung werden zwei Anforderungen gestellt:
         Dieses Problem wird in Unterabschnitt \ref{subsec:OptimierungDerRessourcenzuweisung} diskutiert.
 \end{enumerate}
 Es ist natürlich möglich, dass bei gegebenem $\pi$ keine zulässige Zuweisung von Ressourcen möglich ist.
-In diesem Fall muss $\pi$ nachträglich geändert werden, worauf in Unterabschnitt \ref{UnzulaessigeReihenfolgen} eingegangen wird.
+In diesem Fall muss $\pi$ nachträglich geändert werden, worauf in Unterabschnitt \ref{sec:UnzulaessigeReihenfolgen} eingegangen wird.
 
 \subsection{Zulässigkeit der Zuweisung}
 \label{subsec:ZulaessigkeitDerZuweisung}
@@ -572,7 +591,7 @@ Dieses MIP liefert genau wie jenes aus \ref{subsubsec:ZulaessigkeitBeiBeliebigen
 %Dieser Umstand lässt vermuten, dass auch das Optimierungsproblem der Ressourcenzuteilung in polynomieller Zeit lösbar ist.
 
 \section{Unzulässige Reihenfolgen}
-\label{UnzulaessigeReihenfolgen}
+\label{sec:UnzulaessigeReihenfolgen}
 Für den Fall, dass für eine gegebene Reihenfolge $\pi$ kein zulässiges Mapping $f$ erstellt werden kann, muss $\pi$ nachträglich verändert werden.
 
 %\subsection{Nachbarschaftssuche}
@@ -717,10 +736,13 @@ bei der dann $m-1$ Jobgruppen aufgeteilt werden müssen, so dass $m-1$ weitere R
     }
 \end{figure}
 
-Das Binpacking-Problem ist zwar $\mathcal{NP}$-vollständig, da aber sowohl die Anzahl der Bins $m$ 
-als auch die Anzahl der Items bzw. Jobgruppen $\tilde{n}$ meist relativ klein sind (meist deutlich kleiner als die Anzahl Jobs $n$),
-lässt sich das Problem, die Jobgruppen den Bins zuzuordnen und ggf. geeignete Jobgruppen zu finden, die aufgeteilt werden müssen, 
-trotzdem in hinnehmbarer Zeit mit dem nachfolgenden MIP lösen. 
+Da das Binpacking-Problem in der hier dargebotenen Form nur schwach $\mathcal{NP}$-vollständig in der Anzahl der Jobgruppen $\tilde{n}$ ist,
+lässt es sich trotzdem (theoretisch) polynomiell in der Eingabegröße $n$ lösen.
+Im Rahmen dieser Arbeit wurde das nachfolgende MIP aufgestellt, um die Jobgruppen den Bins zuzuordnen.
+%Das Binpacking-Problem ist zwar $\mathcal{NP}$-vollständig, da aber sowohl die Anzahl der Bins $m$ 
+%als auch die Anzahl der Items bzw. Jobgruppen $\tilde{n}$ meist relativ klein sind (meist deutlich kleiner als die Anzahl Jobs $n$),
+%lässt sich das Problem, die Jobgruppen den Bins zuzuordnen und ggf. geeignete Jobgruppen zu finden, die aufgeteilt werden müssen, 
+%trotzdem in hinnehmbarer Zeit mit dem nachfolgenden MIP lösen. 
 Für die Binärvariablen $x_{gj}$ gilt: $x_{gj}=1$ genau dann, wenn Jobgruppe $g$ Bin $j$ zugeordnet wird.
 Die erste Nebenbedingung fordert, dass jede Jobgruppe in genau einem Bin ist 
 und die zweite Nebenbedingung verlangt, dass jeder Bin exakt gefüllt ist.
@@ -1128,7 +1150,7 @@ Die Summe dieser Zykluszeiten zwischen zwei benachbarten Bins $b$ und $c$ wird m
     dann ist $C_{bc}$ minimal.
 \end{satz}
 \begin{proof}
-    \textit{hmm...}
+    ...
 \end{proof}
 Wenn die Jobgruppen in zwei benachbarten Bins so angeordnet sind, dass $C_{bc}$ minimal ist, wird dieser Wert mit $C_{bc}^*$ bezeichnet.
 Dieses Optimum zwischen zwei Bins ist auf die Anordnung aller $m$ Bins übertragen aber nur ein lokales:
@@ -1138,7 +1160,8 @@ dass diese Anordnung auch bezüglich des anderen Nachbarn optimal ist.
 In den folgenden Absätzen werden einige Anwendungen dieses lokalen Optimierens vorgestellt.
 
 \subsubsection{Bestimmung einer unteren Schranke}
-Eine Anwendungsmöglichkeit der lokal optimalen Bins ist die Berechnung einer unteren Schranke für die Summe dier Zykluszeiten im zweiten Dekompositionsansatz.
+\label{subsubsec:BestimmungEinerUnterenSchranke}
+Eine Anwendungsmöglichkeit der lokal optimalen Bins ist die Berechnung einer unteren Schranke für die Summe der Zykluszeiten im zweiten Dekompositionsansatz.
 Eine mögliche untere Schranke lässt sich wie folgt berechnen:
 \[LB_{\sum c_t} = \frac{1}{2} \sum_{b=1}^m \left( \min_{a\neq b} C_{ab}^* + \min_{c\neq b} C_{bc}^* \right) \]
 Es werden also für jeden Bin $b$ sein optimaler linker Nachbar $a$ und sein optimaler rechter Nachbar $c$ gesucht.
@@ -1148,6 +1171,7 @@ Zusammen mit den auftretenden Rüstkosten, die nach der Zuweisung der Jobgruppen
 ist dies eine untere Schranke für die Zielfunktion $C_{\max}$.
 
 \subsubsection{Heuristik für initiale Binreihenfolge}
+\label{subsubsec:HeuristikFuerInitialeBinreihenfolge}
 Eine andere mögliche Anwendung der lokal optimalen Bins ist, eine initiale Binreihenfolge (bzw. eine initiale Zuweisung der Bins zu den Stationen)
 auf heuristischem Wege zu finden, mit der dann das MIP mit fixierten Bins arbeiten kann.
 Als erster Schritt wird unter allen möglichen $C_{bc}^*$-Werten (für alle Bins $b,c$) das Minimum gesucht.
@@ -1160,6 +1184,16 @@ Falls der Abstand der dominierenden Maschinen $d_{\mathit{dom}}$($=$Abstand bena
 gibt es unter den Stationen disjunkte Gruppen, die untereinander nicht durch Nachbarschaft erreicht werden können.
 Beispielsweise bilden bei $m=8$ und $d_{\mathit{dom}}=2$ die Stationen $1,3,5,7$ und $2,4,6,8$ solche disjunkten Gruppen.
 In diesem Fall muss das obige Verfahren für jede dieser Gruppen separat durchgeführt werden.
+
+\subsubsection{Heuristik zum Anordnen der Jobgruppen in den Bins}
+\label{subsubsec:HzAdJidB}
+Die lokal optimalen Bins können auch benutzt werden, um auf heuristischem Wege die Jobgruppen in den Bins bei gegebener Binreihenfolge anzuordnen.
+Dazu werden jeweils vier direkt benachbarte Bins $a,b,c,d$ gesucht ($a$ ist linker Nachbar von $b$, $b$ ist linker Nachbar von $c$ und $c$ ist linker Nachbar von $d$).
+Seien $C_{ab},C_{bc}$ und $C_{cd}$ die aktuellen Summen der Zykluszeiten zwischen diesen Bins.
+Nun werden die Jobgruppen in $b$ und $c$ so sortiert, dass $C_{bc}=C_{bc}^*$ wird.
+Dadurch ändern sich auch die Zykluszeiten zwischen $a$ und $b$ zu $C'_{ab}$ und die zwischen $c$ und $d$ zu $C'_{cd}$.
+Wenn $C'_{ab}+C_{bc}^*+C'_{cd} < C_{ab}+C_{bc}+C_{cd}$ ist, wird die Änderung übernommen, andernfalls verworfen.
+Dieses Vorgehen wird so lange wiederholt, bis keine benachbarten Bins $a,b,c,d$ mehr gefunden werden, die auf diese Weise optimiert werden können.
 
 
 \subsection{Nachbarschaftssuche}
@@ -1178,21 +1212,53 @@ In jeder Iteration wird mit einer Wahrscheinlichkeit von $\frac{m}{\tilde{n}+m}$
 (mit ebenfalls zufälligen $b,j,k$).
 Auf diese Weise wird je nach Verhältnis zwischen der Anzahl der Jobgruppen ($\tilde{n}$) und der Bins ($m$) der entsprechende Operator häufiger benutzt.
 
-Im Gegensatz zu den beiden MIPs ist dieser heuristische Lösungsansatz nicht darauf angewiesen, dass nur zwei Maschinen dominierend sind.
+Im Gegensatz zu den beiden MIPs sind Lösungsansätze, die auf diesen Nachbarschaftsoperatoren basieren, nicht darauf angewiesen, 
+dass nur zwei Maschinen dominierend sind. Ebenso müssen die Rüstkosten nicht konstant sein, wie von den MIPs verlangt, sondern können beliebig sein.
+
+
+\section{Algorithmenvarianten}
+\label{sec:Algorithmenvarianten}
+Im ersten Abschnitt dieses Kapitels (\ref{sec:Ressourcenzuweisung}) wurde ein Verfahren vorgestellt, 
+das die Jobgruppen $m$ Bins zuordnet und im Fall der Teilung einer Jobgruppe auf Zulässigkeit achtet,
+um so die minimale Anzahl an Rüstkosten zu verursachen.
+Dieser Schritt ist essenziell für den zweiten Dekompositionsansatz, da sämtliche Verfahren, die zweiten Abschnitt \ref{sec:AnordnungDerJobgruppen} vorgestellt wurden,
+auf dieser Zuordnung operieren und sie nachträglich nicht mehr ändern.
+Da die Verfahren in Abschnitt \ref{sec:AnordnungDerJobgruppen} aber sehr vielfältig sind, 
+werden hier noch einmal alle Varianten der Zuordnung der Bins an die Stationen und der Anordnung der Jobgruppen in den Bins zusammengefasst:
+\begin{enumerate}
+    \item Wende ausschließlich das MIP mit fixierten Bins an für eine Zeit $t$.%\textit{Güte der Lösung hängt stark von der initialen Zuweisung der Bins an die Stationen ab.}
+    \item Wende das MIP mit freien Bins für eine Zeit $t_1$ an und lese die bis dahin berechnete Zuordnung der Bins an die Stationen aus.
+        Wende das MIP mit fixierten Bins mit dieser Zuordnung für eine Zeit $t_2$ an.
+    \item Wende die Heuristik für eine initiale Binreihenfolge (\ref{subsubsec:HeuristikFuerInitialeBinreihenfolge}) an.
+        Wende das MIP mit fixierten Bins mit dieser Zuordnung für eine Zeit $t$ an.
+    \item Wende das MIP mit freien Bins für eine Zeit $t$ an und lese die bis dahin berechnete Zuordnung der Bins an die Stationen aus.
+        Wende die Heuristik zum Anordnen der Jobgruppen in den Bins (\ref{subsubsec:HzAdJidB}) an auf diese Zuordnung an.
+    \item Wende die Heuristik für eine initiale Binreihenfolge (\ref{subsubsec:HeuristikFuerInitialeBinreihenfolge}) an.
+        Wende die Heuristik zum Anordnen der Jobgruppen in den Bins (\ref{subsubsec:HzAdJidB}) an auf diese Zuordnung an.
+    \item Wende den Simulated-Annealing-Ansatz (\ref{subsec:Nachbarschaftssuche}) an.
+\end{enumerate}
+Diese Ansätze werden in Kapitel \ref{chap:RechenergebnisseUndVergleiche} evaluiert.
+
 
 
 \chapter{Rechenergebnisse und Vergleiche}
 \label{chap:RechenergebnisseUndVergleiche}
+In diesem Kapitel werden Rechenergebnisse vorgestellt und miteinander verglichen.
+Es wurden sowohl generierte Instanzen getestet als auch reale.
+Getestet wurde auf einem PC mit Intel(R) Xeon(R) CPU E3-1230 v3, 8 Kerne @ 3.30GHz, und 16GB RAM unter Ubuntu 13.10.
+Die MIPs wurden mit ZIMPL \cite{Koch2004} und CPLEX v12.6 gelöst.
+Die übrigen Algorithmen wurden in C++ implementiert und mit dem GCC v4.8.1 mit O2-Optimierung kompiliert.
 
-\section{...}
+In Abschnitt \ref{subsec:VergleichDerHeuristiken} werden die in Abschnitt \ref{subsec:HeuristischeVerfahren} vorgestellten Heuristiken evaluiert
+und mit drei Heuristiken verglichen, die Soylu et. al in ihrem Paper \cite{soylu} präsentieren.
 
-\subsection{Vergleich der Heuristiken}
+In Abschnitt \ref{sec:VergleichDerDekompositionsansaetze} werden die beiden Dekompositionsansätze miteinander verglichen.
+
+
+\section{Vergleich der Heuristiken}
 \label{subsec:VergleichDerHeuristiken}
 In diesem Abschnitt werden die Rechenergebnisse der Heuristiken aus Unterabschnitt \ref{subsec:HeuristischeVerfahren} vorgestellt und miteinander verglichen.
 Es wurden drei Testreihen mit zufälligen Instanzen erzeugt, jeweils mit $m=8$ und $n=50,100,150,\ldots,5000$.
-Getestet wurde auf einem PC mit Intel(R) Xeon(R) CPU E3-1230 v3, 8 Kerne @ 3.30GHz, und 16GB RAM unter Ubuntu 13.10.
-Die MIPs wurden mit ZIMPL \cite{Koch2004} und CPLEX v12.6 gelöst.
-Die übrigen Heuristiken wurden in C++ implementiert und mit dem GCC v4.8.1 mit O2-Optimierung kompiliert.
 
 In der ersten Testreihe sind die Maschinen $M_3,M_4,M_5$ dominierend.
 Ihre Prozesszeiten wurden gleichverteilt aus dem Intervall $[10,100]$ gewählt.
@@ -1319,6 +1385,149 @@ oft bis an die Ergebnisse der Gilmore-Gomory- und der Non-Full-Schedule-Heuristi
 Das bedeutet, dass die Resultate dieser beiden Heuristiken nahezu optimal sind.
 Andererseits sind die oberen Schranken von CPLEX vergleichsweise weit von den Resultaten der Heuristiken entfernt.
 Als Ausblick könnten diese Heuristiken daher in CPLEX integriert werden, um die oberen Schranken zu verbessern.
+
+
+\section{Vergleich der Dekompositionsansätze}
+\label{sec:VergleichDerDekompositionsansaetze} 
+In diesem Abschnitt werden die beiden Dekompositionsansätze aus den Kapiteln \ref{chap:DerErsteDekompositionsansatz} und \ref{chap:DerZweiteDekompositionsansatz}
+miteinander verglichen. Ziel ist es, eine Aussage darüber zu treffen, in welchen Situationen welcher Ansatz die besseren Ergebnisse liefert.
+Da der zeite Dekompositionsansatz sich weitestgehend auf den Fall beschränkt, dass es zwei dominierende Maschinen gibt,
+Rüstkosten konstant sind ($s_{fg}=s$) und die Ressourcenmengen der Jobgruppen disjunkt sind, werden hier auch nur solche Instanzen betrachtet.
+Außerdem liegt diese Situation auch bei dem betrachteten Praxisfall des Küchenherstellers vor, der einige reale Instanzen zur Verfügung gestellt hat.
+
+Im Fall von zwei benachbarten dominierenden Maschinen liefert der Algorithmus von Gilmore und Gomory eine optimale Lösung für den ersten Schritt des ersten
+Dekompositionsansatzes, das Erstellen einer Jobreihenfolge $\pi$ ohne die Ressourcen und Rüstkosten zu berücksichtigen.
+Man könnte daher dem Irrtum auferliegen, dass die übrigen Heuristiken aus Abschnitt \ref{subsec:HeuristischeVerfahren} oder auch die Heuristiken von Soylu et. al \cite{soylu}
+hier nicht betrachtet werden müssen. Allerdings folgt danach noch der zweite Schritt, in dem $\pi$ auf Zulässigkeit bezüglich verfügbarer Ressourcen überprüft wird
+und ggf. nachträglich noch geändert wird.
+
+In den folgenden Unterabschnitten werden zwei Testreihen betrachtet: In \ref{subsec:RealeInstanzen} werden Instanzen betrachtet, 
+die von dem Küchenhersteller zur Verfügung gestellt wurden und daher direkten Praxisbezug haben.
+In Unterabschnitt \ref{subsec:GenerierteInstanzen} werden zufällig erzeugte Instanzen betrachtet.
+
+\subsection{Reale Instanzen}
+\label{subsec:RealeInstanzen}
+Die hier betrachteten Instanzen stammen aus einer realen Anwendung.
+Die Instanzen haben eine Größe von 37-68 Jobgruppen, wobei jede Jobgruppe zwischen 1 und 1400 Jobs umfasst. Besonders große Jobgruppen sind dabei selten.
+Die meisten Jobgruppen bestehen aus weniger als 100 Jobs.
+Es gibt $m=8$ Maschinen, von denen zwei benachbarte dominierend sind.
+Die Prozesszeiten auf den dominierenden Maschinen liegen zwischen $0{,}5$ und $2$ und für jede Jobgruppe gibt es zwischen 1 und 15 geeignete Ressourcen.
+
+\subsubsection{Resultate des ersten Dekompositionsansatzes}
+\label{subsubsec:ResultateDKA1}
+Zunächst soll der erste Dekompositionsansatz betrachtet werden.
+Dabei werden erst die unterschiedlichen Heuristiken angewandt und anschließend wird $\pi$ wie in Abschnitt \label{sec:UnzulaessigeReihenfolgen} beschrieben korrigiert.
+In Abbildung \ref{abb:kbplot} sind in Abhängigkeit von der Anzahl der Jobs $n$ die Summen der Zykluszeiten aufgetragen, \textit{nachdem} $\pi$ korrigiert worden ist.
+Falls das Resultat einer Heuristik nicht so abgewandelt werden konnte, dass eine gültige Ressourcenzuweisung möglich ist, 
+ist an der entsprechenden Stelle in der Kurve eine Lücke gelassen.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/kbplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbplot}
+        Summe der Zykluszeiten, nachdem $\pi$ mit der jeweiligen Heuristik erzeugt und anschließend ggf. korrigiert wurde.
+    }
+\end{figure}
+Wie zu sehen ist, sind die Resultate der Heuristiken durch die Korrektur nahezu identisch, obwohl die Heuristiken teilweise von sehr unterschiedlicher Güte sind
+(vgl. Abschnitt \ref{subsec:VergleichDerHeuristiken}).
+Allerdings treten einige Lücken in den Kurven auf, also nicht korrigierbare Ergebnisse (durch die Nähe der Kurven schwer zu erkennen).
+
+In Abbildung \ref{abb:kbcoplot} sind die zugehörigen Rüstkosten aufgetragen, die nach der Korrektur noch in $\pi$ auftreten.
+Lücken bedeuten wieder, dass keine Korrekur möglich war.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/kbcoplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbcoplot}
+        Anzahl der Rüstkosten, die auftreten, nachdem $\pi$ mit der jeweiligen Heuristik erzeugt und anschließend ggf. korrigiert wurde.
+    }
+\end{figure}
+Es wird hier lediglich die \textit{Anzahl} der Rüstkosten (d.h. Situationen, in denen eine Ressource gewechselt werden muss) betrachtet, 
+nicht aber die tatsächliche Dauer in Zeiteinheiten. Diese kann aber leicht ermittelt werden aus der Größe der Rüstkosten ($s_{fg}=s$).
+Es ist zu sehen, dass gerade die Verfahren, die normalerweise sehr gute Ergebnisse liefern (z.B. Gilmore Gomory\footnote{
+Wegen der zwei benachbarten dominierenden Maschinen ist die Gilmore-Gomory-Heuristik hier ein exaktes Verfahren.} oder Simulated Annealing)
+hier besonders schlecht abschneiden, während die zweite Heuristik von Soylu et. al hier (nach der Korrekur) vergleichsweise gute Resultate liefert.
+Besonders auffällig ist, dass offenbar (bei allen Heuristiken) in fast jedem Zyklus die Ressource gewechselt werden muss.
+Bei einer Instanzgröße von beispielsweise $n\approx 3000$ treten selbst bei dem dort besten Ergebnis (Soylu H2) ca. 2000 Ressoucenwechsel auf.
+
+Es kann daher an dieser Stelle bereits vermutet werden, dass der erste Dekompositionsansatz (wenn überhaupt) nur bei sehr kleinen Rüstkosten $s$
+besser ist als der zweite.
+
+\subsubsection{Resultate des zweiten Dekompositionsansatzes}
+\label{subsubsec:ResultateDKA2}
+Beim zweiten Dekompositionsansatz muss zunächst die Zuordnung der Jobgruppen zu den Bins erfolgen.
+Unmittelbar danach steht fest, wie oft eine Ressource gewechselt werden muss. 
+Für den Fall, dass keine Jobgruppe geteilt wird, sind es genau $\tilde{n}-m$ Ressourcenwechsel, wenn eine Jobgruppe geteilt wird, sind es $\tilde{n}-m+1$, usw.
+Da maximal $m-1$ Jobgruppen geteilt werden, können höchstens $\tilde{n}-1$ Rüstkosten auftreten, was sehr viel weniger ist als beim ersten Dekompositionsansatz
+(s. Unterabschnitt \ref{subsubsec:ResultateDKA1}).
+Die Laufzeiten des Binpackings für diese Instanzen betrugen jeweils unter 100 Millisekunden.
+
+In Abbildung \ref{abb:kbplotn} sind die Resultate (Summe der Zykluszeiten) der einzelnen Algorithmenvarianten (s. Abschnitt \ref{sec:Algorithmenvarianten}) aufgetragen
+bezogen auf die Anzahl der Jobs $n$.
+Außerdem ist mit LB eine untere Schranke angegeben, die wie in Unterabschnitt \ref{subsubsec:BestimmungEinerUnterenSchranke} beschrieben berechnet wurde.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotn.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbplotn}
+        Summe der Zykluszeiten der einzelnen Algoritmenvarianten.
+        Das MIP mit fixierten Bins (MIP fix) wurde in den jeweiligen Varianten 20 Minuten laufen gelassen
+        und das mit freien Bins (MIP var) 10 Minuten.
+    }
+\end{figure}
+Die Varianten liefern offenbar sehr ähnliche Ergebnisse, wobei keine Regelmäßigkeit zu erkennen ist, in welchen Situationen welche Variante am besten ist.
+Es muss allerdings beachtet werden, dass einige Varianten dieses Ergebnis in sehr viel kürzerer Zeit erzielen als andere.
+Die Laufzeit einer Algorithmenvariante wird im Wesentlichen durch die involvierten MIPs bestimmt.
+Alle Verfahren, die nicht auf MIPs basieren terminierten jeweils in weniger als einer Sekunde.
+
+In Abbildung \ref{abb:kbplotabsn} sind dieselben Daten aufgetragen, allerdings als Differenz zur unteren Schranke.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotabsn.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbplotabsn}
+        Differenzen zwischen den Algorithmenvarianten und der unteren Schranke (LB).
+    }
+\end{figure}
+Dort ist zu erkennen, dass die untere Schranke und die Resultate der Algorithmenvarianten sich je nach Instanzgröße um ca. 500 bis 1500 unterscheiden.
+Wie zu erwarten war, ist dieser Abstand nicht optimal, aber auch nicht außerordentlich groß.
+Es ist außerdem in Abbildung \ref{abb:kbplotabsn} zu erkennen (besser als in \ref{abb:kbplotn}), dass in vielen Fällen das Simulated Annealing die besten Resultate liefert.
+Auch ist interessant, dass es einige wenige Fälle gibt, in denen das MIP mit fixierten Bins, also ohne verherige Optimierung der Binreihenfolge, die beste Lösung liefert.
+Das kann dadurch erklärt werden, dass per Zufall die initiale Binreihenfolge sehr gut sein kann und sogar besser als durch die Heuristik oder das MIP mit freien Bins 
+(das in diesem Kontext auch eine Heuristik ist) ermittelte Reihenfolgen.
+
+
+\subsubsection{Vergleich}
+Um die Resultate der beiden Dekompositionsansätze besser miteinander vergleichen zu können, wurde für die Kurven in den Abbildungen \ref{abb:kbplot} und \ref{abb:kbplotn}
+jeweils eine Regressionsgerade berechnet, die in Abbildung \ref{abb:linreg} zu sehen sind.
+Außerdem ist dort die Differenz dieser beiden Geraden aufgetragen.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/linreg.pdf}
+    \end{center}
+    \caption{
+        \label{abb:linreg}
+        Regressionsgeraden für Kurven des ersten Dekompositionsansatzes (DKA1) aus Abbildung \ref{abb:kbplot} und 
+        des zweiten Dekompositionsansatzes (DKA2) aus Abbildung \ref{abb:kbplotn}
+        und die Differenz der beiden Geraden.
+    }
+\end{figure}
+Wie zu sehen ist, liegt diese Differenz ca. zwischen 0 und 1000.
+Das heißt je nach Instanzgröße ist der erste Dekompositionsansatz bezüglich der Summe der Zykluszeiten $\sum_{t=1}^{n-m+1}c_t$ um bis zu 1000 Zeiteinheiten besser.
+Andererseits wurde schon auf den immensen Unterschied der Rüstkosten hingewiesen: 
+Beim ersten Dekompositionsansatz sind abhängig von der Instanzgröße bis zu ca. 8000 Ressourcenwechsel notwendig,
+während es beim zweiten Dekompositionsansatz höchstens $\tilde{n}-1$ sind, was bei diesen Instanzen maximal 67 sind.
+Welcher Ansatz besser ist, hängt von der Höhe der Rüstkosten $s$ ab.
+Bei $s\approx 0{,}12$ liefern beide Ansätze ähnliche Ergebnisse für $n\approx 10000$. 
+Ist $s$ größer, ist der zweite Dekompositionsansatz im Vorteil.
+
+\subsection{Generierte Instanzen}
+\label{subsec:GenerierteInstanzen}
+
 
 
 

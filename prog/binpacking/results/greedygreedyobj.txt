@@ -52,6 +52,7 @@
 ../../instances/bininstances/orders_reparsed/orderpool_1104_parsed.txt 7716.9	
 ../../instances/bininstances/orders_reparsed/orderpool_1106_parsed.txt 7077.68	
 ../../instances/bininstances/orders_reparsed/orderpool_1107_parsed.txt 6142.74	
+
 ../../instances/bininstances/rand_orders/order_n10.txt 685.71	
 ../../instances/bininstances/rand_orders/order_n11.txt 872.46	
 ../../instances/bininstances/rand_orders/order_n12.txt 

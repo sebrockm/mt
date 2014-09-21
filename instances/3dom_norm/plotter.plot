@@ -11,4 +11,7 @@ plot "results.txt" using 1:(($2!=0?$2:1/0)-$7) title "CPLEX LB" with lines, \
     "results.txt" using 1:($5-$7) title "Simulated Annealing" with lines, \
     "results.txt" using 1:($7-$7) title "Non-Full-Schedule" linecolor rgb "black" with lines, \
     "results.txt" using 1:($9-$7) title "DE-Non-Full-Schedule" with lines, \
-    "results.txt" using 1:($11-$7) title "GG-Heuristik" linecolor rgb "orange" with lines
+    "results.txt" using 1:($11-$7) title "GG-Heuristik" linecolor rgb "orange" with lines, \
+    "results.txt" using 1:($13-$7) title "Soylu H1" with lines, \
+    "results.txt" using 1:($15-$7) title "Soylu H2" with lines, \
+    "results.txt" using 1:($17-$7) title "Soylu H3" with lines

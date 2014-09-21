@@ -1391,7 +1391,7 @@ Als Ausblick könnten diese Heuristiken daher in CPLEX integriert werden, um die
 \label{sec:VergleichDerDekompositionsansaetze} 
 In diesem Abschnitt werden die beiden Dekompositionsansätze aus den Kapiteln \ref{chap:DerErsteDekompositionsansatz} und \ref{chap:DerZweiteDekompositionsansatz}
 miteinander verglichen. Ziel ist es, eine Aussage darüber zu treffen, in welchen Situationen welcher Ansatz die besseren Ergebnisse liefert.
-Da der zeite Dekompositionsansatz sich weitestgehend auf den Fall beschränkt, dass es zwei dominierende Maschinen gibt,
+Da der zweite Dekompositionsansatz sich weitestgehend auf den Fall beschränkt, dass es zwei dominierende Maschinen gibt,
 Rüstkosten konstant sind ($s_{fg}=s$) und die Ressourcenmengen der Jobgruppen disjunkt sind, werden hier auch nur solche Instanzen betrachtet.
 Außerdem liegt diese Situation auch bei dem betrachteten Praxisfall des Küchenherstellers vor, der einige reale Instanzen zur Verfügung gestellt hat.
 
@@ -1434,7 +1434,7 @@ Wie zu sehen ist, sind die Resultate der Heuristiken durch die Korrektur nahezu 
 Allerdings treten einige Lücken in den Kurven auf, also nicht korrigierbare Ergebnisse (durch die Nähe der Kurven schwer zu erkennen).
 
 In Abbildung \ref{abb:kbcoplot} sind die zugehörigen Rüstkosten aufgetragen, die nach der Korrektur noch in $\pi$ auftreten.
-Lücken bedeuten wieder, dass keine Korrekur möglich war.
+Lücken bedeuten wieder, dass keine Korrektur möglich war.
 \begin{figure}
     \begin{center}
         \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/kbcoplot.pdf}
@@ -1448,7 +1448,7 @@ Es wird hier lediglich die \textit{Anzahl} der Rüstkosten (d.h. Situationen, in
 nicht aber die tatsächliche Dauer in Zeiteinheiten. Diese kann aber leicht ermittelt werden aus der Größe der Rüstkosten ($s_{fg}=s$).
 Es ist zu sehen, dass gerade die Verfahren, die normalerweise sehr gute Ergebnisse liefern (z.B. Gilmore Gomory\footnote{
 Wegen der zwei benachbarten dominierenden Maschinen ist die Gilmore-Gomory-Heuristik hier ein exaktes Verfahren.} oder Simulated Annealing)
-hier besonders schlecht abschneiden, während die zweite Heuristik von Soylu et. al hier (nach der Korrekur) vergleichsweise gute Resultate liefert.
+hier besonders schlecht abschneiden, während die zweite Heuristik von Soylu et. al hier (nach der Korrektur) vergleichsweise gute Resultate liefert.
 Besonders auffällig ist, dass offenbar (bei allen Heuristiken) in fast jedem Zyklus die Ressource gewechselt werden muss.
 Bei einer Instanzgröße von beispielsweise $n\approx 3000$ treten selbst bei dem dort besten Ergebnis (Soylu H2) ca. 2000 Ressoucenwechsel auf.
 
@@ -1473,7 +1473,7 @@ Außerdem ist mit LB eine untere Schranke angegeben, die wie in Unterabschnitt \
     \end{center}
     \caption{
         \label{abb:kbplotn}
-        Summe der Zykluszeiten der einzelnen Algoritmenvarianten.
+        Summe der Zykluszeiten der einzelnen Algorithmenvarianten.
         Das MIP mit fixierten Bins (MIP fix) wurde in den jeweiligen Varianten 20 Minuten laufen gelassen
         und das mit freien Bins (MIP var) 10 Minuten.
     }
@@ -1496,7 +1496,7 @@ In Abbildung \ref{abb:kbplotabsn} sind dieselben Daten aufgetragen, allerdings a
 Dort ist zu erkennen, dass die untere Schranke und die Resultate der Algorithmenvarianten sich je nach Instanzgröße um ca. 500 bis 1500 unterscheiden.
 Wie zu erwarten war, ist dieser Abstand nicht optimal, aber auch nicht außerordentlich groß.
 Es ist außerdem in Abbildung \ref{abb:kbplotabsn} zu erkennen (besser als in \ref{abb:kbplotn}), dass in vielen Fällen das Simulated Annealing die besten Resultate liefert.
-Auch ist interessant, dass es einige wenige Fälle gibt, in denen das MIP mit fixierten Bins, also ohne verherige Optimierung der Binreihenfolge, die beste Lösung liefert.
+Auch ist interessant, dass es einige wenige Fälle gibt, in denen das MIP mit fixierten Bins, also ohne vorherige Optimierung der Binreihenfolge, die beste Lösung liefert.
 Das kann dadurch erklärt werden, dass per Zufall die initiale Binreihenfolge sehr gut sein kann und sogar besser als durch die Heuristik oder das MIP mit freien Bins 
 (das in diesem Kontext auch eine Heuristik ist) ermittelte Reihenfolgen.
 
@@ -1525,9 +1525,16 @@ Welcher Ansatz besser ist, hängt von der Höhe der Rüstkosten $s$ ab.
 Bei $s\approx 0{,}12$ liefern beide Ansätze ähnliche Ergebnisse für $n\approx 10000$. 
 Ist $s$ größer, ist der zweite Dekompositionsansatz im Vorteil.
 
+\textit{Wie groß ist $s$ bei Kesseböhmer?}
+
 \subsection{Generierte Instanzen}
 \label{subsec:GenerierteInstanzen}
+Zusätzlich zu den realen Datensätzen wurden zufällige Instanzen generiert, die im folgenden bezüglich der beiden Dekompositionsansätze evaluiert werden.
+Diese Testreihe besteht aus 30 Instanzen mit $\tilde{n}=10,11,\ldots,40$ Jobgruppen.
+Die Größen der Jobgruppen wurden gleichverteilt aus dem Intervall $[1,5\tilde{n}]$ gewählt.
+Die Prozesszeiten auf den beiden dominierenden Maschinen liegen gleichverteilt zwischen $0{,}5$ und $2$.
 
+\textit{Leider noch keine Grafiken. Der Rest wird ähnlich aufgebaut wie der vorherige Unterabschnitt.}
 
 
 

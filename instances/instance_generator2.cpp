@@ -56,6 +56,9 @@ public:
         :n(-1),
         is_file_output(false)
     {
+        if(argc <= 3)
+            print_usage(argv[0]);
+
         for(int i = 1; i < argc; i++)
         {
             try

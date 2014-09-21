@@ -258,16 +258,16 @@ int main(int argc, char** argv)
     cerr << "read " << argv[1] << endl;
 
 
-    cout << jobs.size() << "\t\t";
+    //cout << jobs.size() << "\t\t";
 
     //cplex only for small instances
     auto t1 = chrono::high_resolution_clock::now();
-    auto p = jobs.size() <= 1000 && argc == 2 ? do_cplex(argv[1]) : make_pair(0., 0.);
+    //auto p = jobs.size() <= 1000 && argc == 2 ? do_cplex(argv[1]) : make_pair(0., 0.);
     auto t2 = chrono::high_resolution_clock::now();
 
     if(argc == 2)
     {
-        cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
+        //cout <<  p.first << "\t" << p.second << "\t" << (chrono::duration_cast<chrono::duration<double>>(t2-t1)).count() << "\t\t";
         if(jobs.size() <= 1000)
             cerr << "done cplex" << endl;
     }
@@ -323,7 +323,7 @@ int main(int argc, char** argv)
 
     //gg with 3,4 dom machines
     t1 = chrono::high_resolution_clock::now();
-    sch.jobs = gg_heuristik(jobs, 3, 4);
+    sch.jobs = gg_heuristik(jobs, 0, 1);
     if(argc == 4)
         res = assign_resources(sch.jobs, res_map);
     t2 = chrono::high_resolution_clock::now();

@@ -110,7 +110,7 @@ int search_for_swap_pos(const vector<job>& pi, const vector<vector<int>> avail, 
 {
     int group_id = pi[pos].group_id;
 
-    int swap_pos = -1; //found osition to swap with
+    int swap_pos = -1; //found position to swap with
     int cost = numeric_limits<int>::max(); //cost that this swap would cause
     int n = pi.size();
     int m = pi[0].size();
@@ -147,7 +147,7 @@ int search_for_swap_pos(const vector<job>& pi, const vector<vector<int>> avail, 
 }
 
 
-//returns wether a feasible assignement of resources could be found
+//returns whether a feasible assignement of resources could be found
 //maybe pi is changed 
 bool assign_resources(vector<job>& pi, const vector<int>& resource_map)
 {

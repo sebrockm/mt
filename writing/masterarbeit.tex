@@ -23,17 +23,17 @@
 Bei synchronen Flow-Shop-Problemen handelt es sich um Produktions\-planungs\-probleme,
 bei denen die Jobs sich immer nur synchron zur nächsten Maschine bewegen können.
 Im Gegensatz zum klassischen (asynchronen) Flow-Shop, bei dem die Jobs immer sofort nach Fertigstellung an einer Maschine zur nächsten gelangen können,
-können die Jobs beim synchronen Flow-Shop erst dann zur nächsten Maschine gelangen, wenn auch alle anderen Maschinen mit der Bearbeitung ihres jeweiligen Jobs fertig sind.
+müssen die Jobs beim synchronen Flow-Shop so lange warten, bis auch alle anderen Maschinen mit der Bearbeitung ihres jeweiligen Jobs fertig sind.
 Die Komplexität synchroner Flow-Shop-Probleme wurde zuerst von Karabati und Sayin \cite{karabati} diskutiert.
-Soylu et. al \cite{soylu} stellten einen Branch-and-Bound-Algorithmus vor, der die gesamte Fertigstellungsdauer minimiert, und liefern einen (fehlerhaften) Beweis, 
-dass dieses Problem drei Maschinen $\mathcal{NP}$-schwer ist.
+Soylu et al. \cite{soylu} stellten einen Branch-and-Bound-Algorithmus vor, der die gesamte Fertigstellungsdauer minimiert, und liefern einen (fehlerhaften) Beweis, 
+dass dieses Problem mit drei Maschinen $\mathcal{NP}$-schwer ist.
 Waldherr und Knust korrigieren diesen Beweis in einem bis zum Zeitpunkt dieser Masterarbeit noch nicht veröffentlichten Paper \cite{preprint}.
 Darüber hinaus betrachten sie einige Spezialfälle des synchronen Flow-Shops mit einer geringen Anzahl an dominierenden Maschinen.
 Dominierende Maschinen zeichnen sich dadurch aus, dass ihre Prozesszeiten für alle Jobs mindestens so groß sind wie bei den übrigen Maschinen.
 
-Das Konzept der dominierenden Maschinen aus der Arbeit von Waldherr und Knust basiert auf einer konkreten praktischen Anwendung von synchronen Flow-Shop-Problemen.
-Es handelt sich dabei um die Kesseböhmer GmbH, ansässig in Bad Essen.
-In einer Fallstudie \cite{casestudy} haben Waldherr und Knust das bei Kesseböhmer gegebene Optimierungsproblem genauer untersucht.
+Das Konzept der dominierenden Maschinen aus der Arbeit von Waldherr und Knust basiert auf einer konkreten praktischen Anwendung von synchronen Flow-Shop-Pro\-ble\-men.
+Es handelt sich dabei um einen in Bad Essen ansässigen Küchenhersteller.
+In einer Fallstudie \cite{casestudy} haben Waldherr und Knust das bei diesem Küchenhersteller gegebene Optimierungsproblem genauer untersucht.
 Es handelt sich dabei um einen synchronen Flow-Shop, wobei die zu produzierenden Jobs Ressourcen benötigen und die Produktionsanlage beim Einlegen eines Jobs
 ggf. umgerüstet werden muss, was Rüstkosten verursacht.
 U.a. durch dieses Praxisbeispiel ist auch diese Masterarbeit motiviert.
@@ -99,7 +99,7 @@ Ein Plan für eine Beispielinstanz mit $n=5$ und $m=3$ ist in Abbildung \ref{abb
 Ziel ist es, eine Permutation $\pi$ der Jobs zu erstellen, die die gesamte Produktionsdauer minimiert.
 Diese Zielfunktion wird mit $C_{\max}$ bezeichnet.
 Die Beispielinstanz, deren Plan in Abbildung \ref{abb:Bsp} zu sehen ist, ist in Abbildung \ref{abb:gantt} als Gantt-Diagramm aufgetragen.
-Oben sind die Jobs in der initialen Reihenfolge (1-2-3-4-5) und unten in einer bezüglich $C_{\max}$ optimalen Reihenfolge.
+Oben sind die Jobs in der initialen Reihenfolge (1-2-3-4-5) und unten in einer bezüglich $C_{\max}$ optimalen Reihenfolge (2-1-5-3-4).
 Die Zykluszeiten $c_t$ mit $1\leq t\leq n+m-1$ berechnen sich wie folgt:
 \[ c_t = \max_{i=\max\{1,t-n+1\}}^{\min\{t,m\}} p_{i\pi_{t-i+1}} \]
 Die Zielfunktion lässt sich also durch $C_{\max} = \sum_{t=1}^{n+m-1} c_t$ berechnen.
@@ -111,10 +111,11 @@ ist.
 Die Prozesszeiten aller Jobs auf dominierenden Maschinen sind also immer mindestens so groß wie die Prozesszeiten auf den restlichen Maschinen.
 Treten dominierende Maschinen auf, müssen für die Berechnung der Zykluszeiten die Prozesszeiten auf den übrigen Maschinen also nicht betrachtet werden.
 Dominierende Maschinen treten in der Praxis häufig auf. 
-Bei Kesseböhmer sind z.B. zwei von acht Maschinen dominierend.
+Bei dem Küchenhersteller aus Bad Essen sind z.B. zwei von acht Maschinen dominierend.
 Diese beiden Maschinen sind dort außerdem benachbart, weshalb dieser Fall in dieser Masterarbeit besonders intensiv behandelt wird. 
 
-Zusätzlich benötigen die Jobs unter Umständen Ressourcen aus einer Menge $R$, um in die Stationen eingelegt werden zu können. Diese Ressourcen können erst nach
+Zusätzlich benötigen die Jobs unter Umständen Ressourcen (z.B. Paletten oder Klebeformen) aus einer Menge $R$, 
+um in die Stationen eingelegt werden zu können. Diese Ressourcen können erst nach
 Fertigstellung eines Jobs, also nachdem er nach Maschine $M_m$ aus der Anlage genommen wurde, wiederverwendet werden.
 Sie sind allerdings nur in begrenzter Zahl vorhanden und im Allgemeinen ist nicht jede Ressource für jeden Job geeignet.
 Für $j\in N$ sei $\rho_j\subseteq R$ die Menge der Ressourcen, die für $j$ geeignet ist.
@@ -134,11 +135,17 @@ Für die Ressourcen können folgende Situationen auftreten:
     \item Die $\rho_j$ sind beliebige Teilmengen von $R$.
 \end{enumerate}%
 Der erste Fall ist trivial, da niemals eine Ressource gewechselt werden muss.
+Dies entspricht der Situation ohne Ressourcen und Rüstkosten.
 In dieser Masterarbeit liegt der Fokus auf dem zweiten Fall.
 Er ist dadurch motiviert, dass es in realen Anwendungsfällen häufig nicht der Fall ist, dass bei $n$ zu produzierenden Jobs alle $n$ Jobs unterschiedlich sind,
 d.h. unterschiedliche Prozesszeiten und Ressourcen haben.
 Stattdessen bietet ein Produzent eine gewisse Anzahl unterschiedlicher Güter an und ein Käufer gibt mehrere identische Güter auf einmal in Auftrag.
 Diese identischen Jobs können dann als \textit{Jobgruppen} bezeichnet werden, für die es eine Menge an nur für sie geeigneten Ressourcen gibt.
+Der dritte Fall ist vom Prinzip her vergleichbar mit einem Generalschlüssel, der in mehrere Schlüssellöcher passt,
+wobei es für einzelne Schlüssellöcher auch speziell nur dafür passende Schlüssel gibt, die in die anderen Schlüssellöcher nicht passen.
+Ressourcen können in ähnlicher Weise durch geringe Unterschiede für viele Jobs auf einmal oder nur für einzelne geeignet sein.
+Der vierte Fall ist der allgemeinste und deckt alle anderen mit ab.
+Er wird in dieser Arbeit nur nur kurz betrachtet (vgl. Abschnitt \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen}).
 
 Neben dem Wechsel von Ressourcen, der zusätzliche Zeit in Anspruch nimmt, können auch andere Formen von \textit{Rüstkosten}
 auftreten. Z.B. kann es sein, dass an einer Station zunächst einige Umstellungen vorgenommen werden müssen, bevor der
@@ -178,7 +185,7 @@ formulieren, wobei hier die Rüstkosten direkt mit den Jobs statt mit den Famili
     }
 \end{figure}
 In Abbildung \ref{abb:BspRes} ist eine mögliche Rüstkostentabelle für das Beispiel aus Abbildung \ref{abb:Bsp} gegeben.
-Die initiale Reihenfolge (1-2-3-4-5) und eine optimale sind in Abbildung \ref{abb:ganttres} als Gantt-Diagramm dargestellt.
+Die initiale Reihenfolge (1-2-3-4-5) und eine optimale (4-2-3-1-5) sind in Abbildung \ref{abb:ganttres} als Gantt-Diagramm dargestellt.
 \begin{figure}
     \begin{center}
         \includegraphics[width=\textwidth]{graphics/bspresinit.pdf}
@@ -203,9 +210,9 @@ das jedem Job $j\in N$ eine Ressource $r\in\rho_j$ zuweist und folgenden Ansprü
 
 Im Folgenden wird ein Mixed Integer Linear Program (MIP) vorgestellt, dass das Gesamtproblem löst, allerdings ohne die Verfügbarkeit von Ressourcen zu beachten.
 Dabei ist $N$ die Indexmenge der Jobs, also $N=\{1,\ldots,n\}$ und $T=\{1,\ldots,n+m-1\}$ ist die Indexmenge der Zykluszeiten.
-Die Binärvariablen $x_{jk}$ geben an, an welcher Position $k$
-sich Job $j$ befindet. Es gilt $x_{jk}=1$ genau dann, wenn $j$ an Position $k$ ist. 
-Die Binärvariablen $y_{jh}$ haben genau dann den Wert $1$, wenn Job $j$ genau $m$ Positionen vor Job $h$ in $\pi$ liegt.
+Die Binärvariablen $x_{jk}$ geben für $j,k\in N$ an, an welcher Position $k$ in $\pi$
+sich Job $j$ befindet. Es gilt $x_{jk}=1$ genau dann, wenn $j$ an Position $k$ ist ($\pi_k=j$). 
+Die Binärvariablen $y_{jh}$ ($j,h\in N$) haben genau dann den Wert $1$, wenn Job $j$ genau $m$ Positionen vor Job $h$ in $\pi$ liegt ($\exists i:\pi_{i-m}=j \land \pi_i=h$).
 Damit können in der Zielfunktion die Rüstkosten $s_{jh}$ aufsummiert werden, die beim Übergang von $j$ zu $h$ auftreten:
 \begin{align}
     \text{min} \quad \sum_{t=1}^{n+m-1} &c_t + \sum_{j=1}^n \sum_{h=1}^n s_{jh} y_{jh} \label{allmip:obj}\\
@@ -218,7 +225,7 @@ Damit können in der Zielfunktion die Rüstkosten $s_{jh}$ aufsummiert werden, d
     y_{jh} &\in \{0,1\} & j,h\in N
 \end{align}
 Die Nebenbedingungen (\ref{allmip:1}) und (\ref{allmip:2})
-stellen sicher, dass sich jeder Job an genau einer Position befindet und 
+stellen sicher, dass sich jeder Job an genau einer Position in $\pi$ befindet und 
 dass sich an jeder Position genau ein Job befindet.
 In Nebenbedingung (\ref{allmip:3}) werden die Zykluszeiten bestimmt.
 In (\ref{allmip:4}) werden die $y_{jh}$ auf $1$ gesetzt, wenn $x_{j,k-m}$ und $x_{hk}$ auf $1$ gesetzt sind.
@@ -233,7 +240,7 @@ synchrone Flow-Shop-Probleme mit Ressourcen und Rüstkosten eine gute Alternativ
 
 
 \section{Motivation für Dekompositionsansätze}
-In \cite{preprint} wurde gezeigt, dass synchroner Flow-Shop ohne Ressourcen und Rüstkosten $\mathcal{NP}$-schwer ist für $m>2$.
+In \cite{preprint} wird gezeigt, dass synchrone Flow-Shop-Probleme ohne Ressourcen und Rüstkosten $\mathcal{NP}$-schwer sind für $m>2$.
 Versuche, dieses Problem -- oder auch einige Spezialfälle davon -- mit ganzzahliger linearer Programmierung optimal zu lösen, waren nur für sehr kleine Instanzen mit
 $n<30$ in hinnehmbarer Zeit erfolgreich, was weit hinter praktischen Anforderungen zurückliegt (vgl. Abschnitt \ref{subsec:LineareProgrammierung}).
 Aufgrund der Komplexität des Gesamtproblems (vgl. das MIP aus Abschnitt \ref{sec:Problembeschreibung}) sollen in dieser Arbeit zwei Dekompositionsansätze verfolgt werden,
@@ -327,6 +334,7 @@ Aufgrund der $\mathcal{NP}$-Schwere der Optimierung von $C_{\max}$ im allgemeine
 bei Instanzen realer Größe werden hier einige heuristische Ansätze zur Berechnung von $\pi$ vorgestellt.
 
 \subsubsection{Non-Full-Schedule-Heuristik}
+\label{subsubsec:NonFullScheduleHeuristik}
 Diese Heuristik ist eine konstruktive Greedy-Heuristik, die Schritt für Schritt einen Job an $\pi$ anhängt, beginnend mit einer leeren Reihenfolge.
 Sie arbeitet ähnlich wie die Nearest-Neighbor-Heuristik beim TSP.
 In jeder Iteration werden alle noch verbleibenden Jobs bewertet und der Job mit der besten Bewertung wird an $\pi$ angehängt.
@@ -451,16 +459,42 @@ Es wurde mit unterschiedlichen Temperaturen experimentiert.
 Es wurden 
 \begin{itemize}
     \item $t_i = \alpha t_{i-1}$ für unterschiedliche $\alpha\in]0,1[$ und 
-    \item $t_i = \frac{c}{i}$, 
-    \item $t_i = \frac{c}{\log i}$ und 
-    \item $t_i = c \frac{|\cos\frac{i}{30}|}{i}$
+    \item $t_i = \frac{k}{i}$, 
+    \item $t_i = \frac{k}{\log i}$ und 
+    \item $t_i = k \frac{|\cos\frac{i}{30}|}{i}$
 \end{itemize}
-jeweils für unterschiedliche $c\in\mathbb{R}_+$ getestet. Die besten Resultate lieferte $t_i = 50\frac{|\cos\frac{i}{30}|}{i}$.
+jeweils für unterschiedliche $k\in\mathbb{R}_+$ getestet. Die besten Resultate lieferte $t_i = 50\frac{|\cos\frac{i}{30}|}{i}$.
 Durch den Cosinus schwankt die Temperatur, so dass abwechselnd verschlechternde Lösungen erlaubt bzw. nicht erlaubt werden.
 Das Verfahren terminiert, sobald in 1000 aufeinander folgenden Iterationen keine neue beste Lösung gefunden werden konnte.
 
 Dieser Simulated Annealing Algorithmus lieferte in Tests meist etwas bessere Ergebnisse als die übrigen Heuristiken.
 Die Heuristiken werden in Kapitel \ref{chap:RechenergebnisseUndVergleiche} verglichen.
+
+\subsubsection{Heuristiken von Soylu et al.}
+Die oben beschriebenen Heuristiken werden in Kapitel \ref{chap:RechenergebnisseUndVergleiche} nicht nur untereinander verglichen, 
+sondern auch mit drei Heuristiken von Soylu et al. \cite{soylu}, die hier kurz beschrieben werden.
+
+\paragraph{$H_1$}
+Diese Heuristik erstellt $m$ unterschiedliche Jobreihenfolgen und wählt anschließend die beste aus.
+Die $k$-te dieser $m$ Reihenfolgen wird erstellt, indem für die Zyklen $k,\ldots,n+k-1$ die Anzahl der Jobs betrachtet wird,
+die sich in diesem Zyklus in der Anlage befinden (diese Anzahl beträgt nur in den ersten und letzten $m-1$ Zyklen \textit{nicht} $m$).
+Anschließend werden die Jobs den Zyklen so zugewiesen, dass der Job mit der $i$-t kleinsten Prozesszeit im Zyklus mit der $i$-t kleinsten Anzahl an Jobs liegt.
+Es werden also $m-1$ Jobs einer wohldefinierten Position in $\pi$ zugewiesen (nämlich den Zyklen, in denen weniger als $m$ Jobs in der Anlage sind) 
+und die übrigen $n-m$ Jobs werden wahllos eingefügt, da alle übrigen Zyklen $m$ Jobs enthalten und somit bezüglich dieser Metrik nicht unterscheidbar sind.
+
+\paragraph{$H_2$}
+Hier wird in einer Iteration ein Job in die anfangs leere Reihenfolge eingefügt.
+Es wird unter allen noch nicht eingefügten Jobs jeweils derjenige ausgesucht, der die größte Prozesszeit hat.
+Dieser Job wird dann so in die Reihenfolge eingefügt, dass diese Prozesszeit ein den Zyklus fällt, dessen Zykluszeit bislang am größten war.
+Sollte das nicht möglich sein, wird stattdessen die zweitgrößte Zykluszeit gewählt usw.
+Auf diese Weise werden alle Jobs eingefügt nacheinander eingefügt. 
+Der erste Job, der die größte aller Prozesszeiten hat, wird so eingefügt, dass diese Prozesszeit in Zyklus $m$ liegt.
+
+\paragraph{$H_3$}
+Diese Heuristik ähnelt der Non-Full-Schedule-Heuristik (vgl. Abschnitt \ref{subsubsec:NonFullScheduleHeuristik}).
+Der Unterschied besteht darin, dass zu der Summe der $c_+$-Werte noch die Prozesszeit auf der letzten Maschine des jeweiligen Jobs mit aufaddiert wird
+und diese Gesamtsumme dann als Einfügekriterium dient.
+Sollte es mehrere gleichwertige Jobs geben, wird kein zweites Kriterium zur Rate gezogen, sondern zufällig einer ausgewählt.
 
 
 \section{Zuweisung von Ressourcen}
@@ -495,8 +529,7 @@ Da dieser Fall aber natürlich auch ein Spezialfall der beliebigen Teilmengen is
 \label{subsubsec:ZulaessigkeitBeiDisjunktenRessourcenmengen}
 Bei disjunkten Ressourcenmengen können die Jobs in Gruppen unterteilt werden, 
 so dass zu jeder Jobgruppe eine für sie exklusive Menge an zulässigen Ressourcen zur Verfügung steht.
-Für die Zulässigkeit reicht es aus, statt der Ressourcenmengen $\rho_i$ nur deren Größen $|\rho_i|$ zu betrachten
-(bei der Optimierung der Zuteilung ist diese Vereinfachung nicht sinnvoll).
+Für die Zulässigkeit reicht es aus, statt der Ressourcenmengen $\rho_i$ nur deren Größen $|\rho_i|$ zu betrachten.
 Mit einem Greedy-Algorithmus kann eine gegebene Reihenfolge $\pi$ dann auf Zulässigkeit überprüft werden:
 Der Algorithmus durchläuft $\pi$ von vorne nach hinten.
 Jede Jobgruppe erhält einen Counter, der mitzählt, wie viele Ressourcen momentan für sie zur Verfügung stehen.
@@ -574,7 +607,8 @@ Immer, wenn zwei Jobs aus einer Familie im Abstand $m$ aufeinander folgen, kann 
 Wenn zwei Jobs im Abstand $m$ nicht zur selben Familie gehören, gibt es auch keine Möglichkeit, Rüstkosten zu vermeiden oder zu verringern.
 
 Für den allgemeinen Fall lässt sich das MIP aus Unterabschnitt \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen} erweitern.
-Hinzu kommen Binärvariablen $y_{ir}$, für die gilt: $y_{ir}=1$ genau dann, wenn den Jobs an den Positionen $i$ und $i-m$ die selbe Ressource $r$ zugeteilt ist.
+Hinzu kommen für $i\in \{m+1,\ldots,n\}$ und $r\in\rho_i\cap\rho_{i-m}$ Binärvariablen $y_{ir}$, für die gilt: 
+$y_{ir}=1$ genau dann, wenn den Jobs an den Positionen $i$ und $i-m$ in $\pi$ die selbe Ressource $r$ zugeteilt ist.
 Auch hier sei wieder o.B.d.A. $\pi_i=i$.
 \begin{align}
     \text{max} \quad \sum_{i=m}^n\sum_{r\in\rho_i\cap\rho_{i-m}} &y_{ir} \label{optmip:obj} \\
@@ -597,16 +631,19 @@ Für den Fall, dass für eine gegebene Reihenfolge $\pi$ kein zulässiges Mappin
 %\subsection{Nachbarschaftssuche}
 Eine Nachbarschaftssuche ist eine Möglichkeit zur nachträglichen Änderung von $\pi$:
 Mit einer Vertauschung zweier Jobs kann $\pi$ unter Umständen so abgeändert werden, dass doch ein zulässiges Mapping existiert.
-Der Greedy-Algorithmus aus Unterabschnitt \ref{subsubsec:ZulaessigkeitBeiDisjunktenRessourcenmengen} kann so abgewandelt werden,
-dass er, sobald einer der Counter negativ wird, nicht terminiert, sondern weiter Ressourcen zuweist, auch wenn dies eigentlich gar nicht geht.
-Sei $j$ ein Job, dessen Counter negativ geworden ist.
-Ziel ist es, einen anderen Job $k$ zu finden mit der Eigenschaft, dass die Counter von $j$ und $k$ jeweils noch mindesten $1$ betragen würden, 
-wenn man ihre Positionen vertauschen würde,
-und dass auch keiner der Counter der umliegenden Jobs von $j$ und $k$ durch eine Vertauschung negativ werden würde.
-Falls mehrere solcher $k$ existieren, wird derjenige ausgewählt, dessen Vertauschung mit $j$ die geringste Verschlechterung von $C_{\max}$ verursacht.
-Die Counter der umgebenen Jobs müssen nach der Vertauschung aktualisiert werden.
-Dieses Vorgehen wird so lange wiederholt, bis es keine negativen Counter mehr gibt.
-Falls kein solcher Job $k$ existiert, kann die Zulässigkeit von $\pi$ mit dieser Methode nicht erlangt werden.
+Es wird dazu eine Matrix erstellt, deren Einträge $r_{ij}$ angeben, wie viele Ressourcen für Job $j$ an Position $i$ in $\pi$ zur Verfügung stehen
+(d.h. sich nicht gerade in der Anlage befinden).
+Initial ist $r_{ij}=|\rho_j|$ für alle Positionen $i$.
+Indem für alle Positionen $i$ die $m$ zuletzt eingelegten Jobs $j$ ermittelt werden (also die an den Positionen $i-m+1,\ldots,i$),
+können jeweils die Einträge $r_{ij}$ um $1$ verringert werden.
+Sobald einer der Einträge negativ wird, bedeutet das, dass eine Ressource zugewiesen wurde, obwohl sie an dieser Position $i$ nicht mehr verfügbar ist.
+Es kann dann ein Job $j'$ an einer anderen Position in $\pi$ gesucht werden, dessen Ressource an Position $i$ noch verfügbar ist.
+Dafür muss $r_{ij'}>0$ sein.
+Wenn solch ein Job existiert, wird er mit dem Job an Position $i$ getauscht und die Matrix wird angepasst.
+Falls mehrere solcher Jobs existieren, wird derjenige ausgewählt, durch dessen Tausch sich die Summe der Zykluszeiten am wenigsten verschlechtert.\footnote{
+Es ist nicht ausgeschlossen, dass sich die Summe der Zykluszeiten dadurch sogar verbessert.}
+Sollte kein solcher Job gefunden werden, terminiert die Nachbarschaftssuche mit dem Ergebnis, dass kein zulässiges Mapping gefunden werden konnte.
+Dabei ist zu beachten, dass dieser Algorithmus nicht garantiert, ein zulässiges Mapping zu finden, falls eines existiert.
 
 
 %\subsection{Idle-Jobs}
@@ -631,7 +668,8 @@ Anschließend wird in Abschnitt \ref{sec:AnordnungDerJobgruppen} beschrieben, wi
 so dass die Summe der Zykluszeiten und Rüstkosten ($C_{\max}$) minimal ist.
 
 In den meisten nachfolgend genannten Verfahren wird nur der Spezialfall mit konstanten Rüstkosten ($s_{fg}=s$),
-disjunkten Ressourcenmengen $\rho_i$ und zwei dominierenden Maschinen betrachtet.
+disjunkten Ressourcenmengen $\rho_i$ und zwei dominierenden Maschinen betrachtet
+vor dem Hintergrund des gegebenen Praxisbeispiels des Küchenherstellers.
 
 
 \section{Ressourcenzuweisung}
@@ -639,9 +677,10 @@ disjunkten Ressourcenmengen $\rho_i$ und zwei dominierenden Maschinen betrachtet
 In diesem Abschnitt wird die Konstruktion des Mappings $f$ erläutert.
 Dabei wird davon ausgegangen, dass Rüstkosten einzig durch einen Ressourcenwechsel verursacht werden.
 In Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} wird auf den Spezialfall $s_{fg}=s$, der mit einem Binpackingansatz gelöst werden kann,
-eingegangen.
+eingegangen. Allgemeinere Fälle der Ressourcenzuweisung beim zweiten Dekompositionsansatz werden in dieser Arbeit nicht gesondert betrachtet.
 
-Im Folgenden ist von \textit{Jobgruppen} die Rede, wobei eine Jobgruppe $g$ aus $n_g\in\mathbb{N}$ identischen Jobs besteht.
+Wie in Abschnitt \ref{sec:Problembeschreibung} erläutert, ist im Folgenden von \textit{Jobgruppen} die Rede, 
+wobei eine Jobgruppe $g$ aus $n_g\in\mathbb{N}$ identischen Jobs besteht.
 $n_g$ ist also die Größe einer Jobgruppe $g$.
 Die Anzahl der Jobgruppen wird mit $\tilde{n}$ bezeichnet.
 Für die Gesamtanzahl an Jobs gilt dann $n = \sum_{g=1}^{\tilde{n}} n_g$.
@@ -1000,8 +1039,8 @@ $\tilde{N}_b^*\subset \tilde{N}$ bezeichnet die Menge der Jobgruppen im Nachbarb
 $p_{1i}$ und $p_{2i}$ sind die Prozesszeiten von Jobgruppe $i$ auf der ersten bzw. zweiten dominierenden Maschine.
 Für je zwei Jobgruppen $i,j\in N_b$, die im selben Bin $b$ liegen, gibt es
 zwei Binärvariablen $x_{ij},x_{ji}$. Es ist $x_{ij}=1$ genau dann, wenn 
-Jobgruppe $i$ vor $j$ auf dem Bin liegt. Dabei muss $i$ nicht notwendiger
-Weise direkt vor $j$ liegen, sondern an beliebiger Position davor.
+Jobgruppe $i$ vor $j$ in dem Bin liegt. Dabei muss $i$ nicht notwendiger
+Weise direkt vor $j$ liegen, sondern an beliebiger Stelle davor.
 Mithilfe der $x_{ij}$ lassen sich die Startpositionen $s_i$ bestimmen, mit denen wiederum die Überlappungen $o_{ij}$ wie oben beschrieben berechnet werden:
 \begin{align}
     \text{min}\quad &\sum_{b\in B}\sum_{\substack{i\in \tilde{N_b}\\j\in \tilde{N}_b^*}} 
@@ -1139,20 +1178,57 @@ auszulesen (diese ist in den $\beta_{bd}$-Variablen kodiert), um anschließend m
 
 
 \subsubsection{Optimum zwischen zwei Bins}
-Betrachtet man zwei beliebige Bins $b$ und $c$ auf benachbarten Stationen, ist es möglich, 
-all jene Zyklen $t$ zu betrachten, in denen ein Job aus $b$ auf der zweiten dominierenden Maschine ist und ein Job aus $c$ auf der ersten.
+Betrachtet man zwei beliebige Bins $a$ und $b$ auf benachbarten Stationen, ist es möglich, 
+all jene Zyklen $t$ zu betrachten, in denen ein Job aus $a$ auf der zweiten dominierenden Maschine ist und ein Job aus $b$ auf der ersten.
 Die zugehörigen Zykluszeiten $c_t$ werden dann durch die Prozesszeiten dieser Jobs auf den beiden dominierenden Maschinen definiert.%evtl ein Bild?
-Die Summe dieser Zykluszeiten zwischen zwei benachbarten Bins $b$ und $c$ wird mit $C_{bc}$ bezeichnet.
+Die Summe dieser Zykluszeiten zwischen zwei benachbarten Bins $a$ und $b$ wird mit $C_{ab}$ bezeichnet.
 \begin{satz}
-    Seien $b$ und $c$ zwei Bins auf benachbarten Stationen.
-    Wenn die Jobgruppen in $b$ absteigend nach ihren Prozesszeiten auf der zweiten dominierenden Maschine angeordnet werden
-    und die Jobgruppen in $c$ absteigend nach ihren Prozesszeiten auf der ersten dominierenden Maschine,
-    dann ist $C_{bc}$ minimal.
+    Seien $a$ und $b$ zwei Bins auf benachbarten Stationen.
+    Wenn die Jobgruppen in $a$ absteigend nach ihren Prozesszeiten auf der zweiten dominierenden Maschine angeordnet werden
+    und die Jobgruppen in $b$ absteigend nach ihren Prozesszeiten auf der ersten dominierenden Maschine,
+    dann ist $C_{ab}$ minimal.
 \end{satz}
 \begin{proof}
-    ...
+    Für den Beweis werden nicht die Jobgruppen, sondern die einzelnen Jobs betrachtet, was aber für die zu betrachtende Sortierung keinen Unterschied macht.
+    Sei $C_{ab}^*$ die Summe der Zykluszeiten zwischen $a$ und $b$, wenn diese wie gefordert sortiert sind.
+    Wir nehmen an, es gäbe eine andere Anordnung der Jobs mit $C_{ab} < C_{ab}^*$ und führen dies zu einem Widerspruch.
+    Da die gegeben Sortierung in der anderen Anordnung nicht vorliegt, muss es dort in $a$ oder $b$ zwei benachbarte Jobs entgegen dieser Sortierung geben.
+    Seien $j_1^a$ und $j_2^a$ diese Jobs und o.B.d.A. seien sie in Bin $a$.
+    Die Jobs die an gleicher Position in Bin $b$ sind, werden mit $j_1^b$ und $j_2^b$ bezeichnet.
+    Falls auch $j_1^b$ und $j_2^b$ entgegen dieser Sortierung angeordnet sind, 
+    vertauschen wir sowohl $j_1^a$ mit $j_2^a$ als auch $j_1^b$ mit $j_2^b$ und ändern dadurch $C_{ab}$ nicht.
+    Insbesondere hat sich $C_{ab}$ nicht verschlechtert, dadurch, dass wir uns der gewünschten Reihenfolge der Jobs in den Bins annähern.
+
+    Andernfalls, wenn $j_1^b$ und $j_2^b$ bereits in der gewünschten Reihenfolge sind,
+    verwenden wir zur besseren Lesbarkeit die Abkürzungen 
+    $p_{1a}\coloneqq p_{2j_1^a}, p_{2a}\coloneqq p_{2j_2^a}, p_{1b}\coloneqq p_{1j_1^b}$ und $p_{2b}\coloneqq p_{1j_2^b}$.
+    Es gilt also nach Annahme $p_{1a} < p_{2a}$ und $p_{1b}\geq p_{2b}$.
+    Die entsprechenden beiden Zykluszeiten werden über $c_{t_1}=\max\{p_{1a},p_{1b}\}$ und $c_{t_2}=\max\{p_{2a},p_{2b}\}$ berechnet.
+    Werden nun $j_1^a$ und $j_2^a$ vertauscht, ändert sich der Wert von $C_{ab}$ zu
+    \[ C'_{ab} = C_{ab} - \max\{p_{1a},p_{1b}\} - \max\{p_{2a},p_{2b}\} + \max\{p_{2a},p_{1b}\} + \max\{p_{1a},p_{2b}\} \text{.}\]
+    Wir betrachten nun zwei Fälle:
+    \begin{enumerate}
+        \item $p_{1a}\geq p_{1b}$: Es ist dann $p_{2b}\leq p_{1b}\leq p_{1a} < p_{2a}$ und somit
+            \[ C'_{ab} = C_{ab} - p_{1a} - p_{2a} + p_{2a} + p_{1a} = C_{ab} \text{.} \]
+            $C_{ab}$ verschlechtert sich in diesem Fall also nicht.
+        \item $p_{1a} < p_{1b}$: In diesem Fall unterscheiden wir wieder zwei Fälle:
+            \begin{enumerate}
+                \item $p_{2a}\leq p_{2b}$: Es ist dann $p_{1a} < p_{2a}\leq p_{2b}\leq p_{1b}$ und somit
+                    \[ C'_{ab} = C_{ab} - p_{1b} - p_{2b} + p_{1b} + p_{2b} = C_{ab} \text{.} \]
+                    $C_{ab}$ verschlechtert sich in diesem Fall also ebenfalls nicht.
+                \item $p_{2a} > p_{2b}$: Es ist dann $p_{1b},p_{2a} \geq p_{1a},p_{2b}$ und somit
+                \begin{align}
+                C'_{ab} &= C_{ab} - p_{1b} - p_{2a} + \max\{p_{2a},p_{1b}\} + \max\{p_{1a},p_{2b}\} \notag \\
+                        &= C_{ab} - \min\{p_{1b},p_{2a}\} + \max\{p_{1a},p_{2b}\} \notag \\
+                        &\leq C_{ab} \text{.} \notag
+                \end{align}
+                Also verschlechtert sich $C_{ab}$ auch hier nicht.
+            \end{enumerate}
+    \end{enumerate}
+    Insgesamt verschlechtert sich $C_{ab}$ also niemals, während die Jobs in den Bins absteigend nach ihren Prozesszeiten sortiert werden.
+    Das ist ein Widerspruch zu der Annahme, dass die ursprüngliche Anordnung besser war als die sortierte ($C_{ab} < C_{ab}^*$).
 \end{proof}
-Wenn die Jobgruppen in zwei benachbarten Bins so angeordnet sind, dass $C_{bc}$ minimal ist, wird dieser Wert mit $C_{bc}^*$ bezeichnet.
+Wie auch schon im Beweis geschehen, wird die Bezeichnung $C_{ab}^*$ für ein minimales $C_{ab}^*$ verwendet.
 Dieses Optimum zwischen zwei Bins ist auf die Anordnung aller $m$ Bins übertragen aber nur ein lokales:
 Wird ein Bin bezüglich eines seiner Nachbarn in dieser Weise angeordnet, ist es im Allgemeinen nicht der Fall,
 dass diese Anordnung auch bezüglich des anderen Nachbarn optimal ist.
@@ -1165,7 +1241,7 @@ Eine Anwendungsmöglichkeit der lokal optimalen Bins ist die Berechnung einer un
 Eine mögliche untere Schranke lässt sich wie folgt berechnen:
 \[LB_{\sum c_t} = \frac{1}{2} \sum_{b=1}^m \left( \min_{a\neq b} C_{ab}^* + \min_{c\neq b} C_{bc}^* \right) \]
 Es werden also für jeden Bin $b$ sein optimaler linker Nachbar $a$ und sein optimaler rechter Nachbar $c$ gesucht.
-Da in der Summe all dieser $C_{bc}^*$-Werte jeder Bin zweimal (einmal als linker und einmal als rechter Nachbar) auftaucht,
+Da in der Summe all dieser $C_{ab}^*$-Werte jeder Bin zweimal (einmal als linker und einmal als rechter Nachbar) auftaucht,
 wird diese Summe noch halbiert.
 Zusammen mit den auftretenden Rüstkosten, die nach der Zuweisung der Jobgruppen an die Bins feststehen (vgl. Abschnitt \ref{sec:Ressourcenzuweisung}),
 ist dies eine untere Schranke für die Zielfunktion $C_{\max}$.
@@ -1174,10 +1250,10 @@ ist dies eine untere Schranke für die Zielfunktion $C_{\max}$.
 \label{subsubsec:HeuristikFuerInitialeBinreihenfolge}
 Eine andere mögliche Anwendung der lokal optimalen Bins ist, eine initiale Binreihenfolge (bzw. eine initiale Zuweisung der Bins zu den Stationen)
 auf heuristischem Wege zu finden, mit der dann das MIP mit fixierten Bins arbeiten kann.
-Als erster Schritt wird unter allen möglichen $C_{bc}^*$-Werten (für alle Bins $b,c$) das Minimum gesucht.
-Die zugehörigen Bins $b$ und $c$ werden der ersten Station und der Nachbarstation der ersten Station zugewiesen.
-Anschließend wird unter allen noch nicht zugewiesenen Bins derjenige Bin $d$ gesucht, der den besten $C_{cd}^*$-Wert aufweist.
-Da $d$ ein "`vielversprechender"' Nachbar für $c$ ist, wird er der Nachbarstation von $c$ zugewiesen.
+Als erster Schritt wird unter allen möglichen $C_{ab}^*$-Werten (für alle Bins $a,b$) das Minimum gesucht.
+Die zugehörigen Bins $a$ und $b$ werden der ersten Station und der Nachbarstation der ersten Station zugewiesen.
+Anschließend wird unter allen noch nicht zugewiesenen Bins derjenige Bin $c$ gesucht, der den besten $C_{bc}^*$-Wert aufweist.
+Da $c$ ein "`vielversprechender"' Nachbar für $b$ ist, wird er der Nachbarstation von $b$ zugewiesen.
 Dieses Vorgehen wird so lange wiederholt, bis jeder Bin einer Station zugewiesen ist.
 
 Falls der Abstand der dominierenden Maschinen $d_{\mathit{dom}}$($=$Abstand benachbarter Stationen) und die Anzahl der Maschinen $m$ nicht teilerfremd sind,
@@ -1237,6 +1313,8 @@ werden hier noch einmal alle Varianten der Zuordnung der Bins an die Stationen u
         Wende die Heuristik zum Anordnen der Jobgruppen in den Bins (\ref{subsubsec:HzAdJidB}) an auf diese Zuordnung an.
     \item Wende den Simulated-Annealing-Ansatz (\ref{subsec:Nachbarschaftssuche}) an.
 \end{enumerate}
+Bis auf das Simulated-Annealing bestehen alle Ansätze aus zwei Stufen: 
+In der ersten Stufe werden die Bins untereinander angeordnet und in der zweiten Stufe werden die Jobgruppen in den Bins angeordnet.
 Diese Ansätze werden in Kapitel \ref{chap:RechenergebnisseUndVergleiche} evaluiert.
 
 
@@ -1250,7 +1328,7 @@ Die MIPs wurden mit ZIMPL \cite{Koch2004} und CPLEX v12.6 gelöst.
 Die übrigen Algorithmen wurden in C++ implementiert und mit dem GCC v4.8.1 mit O2-Optimierung kompiliert.
 
 In Abschnitt \ref{subsec:VergleichDerHeuristiken} werden die in Abschnitt \ref{subsec:HeuristischeVerfahren} vorgestellten Heuristiken evaluiert
-und mit drei Heuristiken verglichen, die Soylu et. al in ihrem Paper \cite{soylu} präsentieren.
+und mit drei Heuristiken verglichen, die Soylu et al. in ihrem Paper \cite{soylu} präsentieren.
 
 In Abschnitt \ref{sec:VergleichDerDekompositionsansaetze} werden die beiden Dekompositionsansätze miteinander verglichen.
 
@@ -1397,7 +1475,7 @@ Außerdem liegt diese Situation auch bei dem betrachteten Praxisfall des Küchen
 
 Im Fall von zwei benachbarten dominierenden Maschinen liefert der Algorithmus von Gilmore und Gomory eine optimale Lösung für den ersten Schritt des ersten
 Dekompositionsansatzes, das Erstellen einer Jobreihenfolge $\pi$ ohne die Ressourcen und Rüstkosten zu berücksichtigen.
-Man könnte daher dem Irrtum auferliegen, dass die übrigen Heuristiken aus Abschnitt \ref{subsec:HeuristischeVerfahren} oder auch die Heuristiken von Soylu et. al \cite{soylu}
+Man könnte daher dem Irrtum auferliegen, dass die übrigen Heuristiken aus Abschnitt \ref{subsec:HeuristischeVerfahren} oder auch die Heuristiken von Soylu et al. \cite{soylu}
 hier nicht betrachtet werden müssen. Allerdings folgt danach noch der zweite Schritt, in dem $\pi$ auf Zulässigkeit bezüglich verfügbarer Ressourcen überprüft wird
 und ggf. nachträglich noch geändert wird.
 
@@ -1448,7 +1526,7 @@ Es wird hier lediglich die \textit{Anzahl} der Rüstkosten (d.h. Situationen, in
 nicht aber die tatsächliche Dauer in Zeiteinheiten. Diese kann aber leicht ermittelt werden aus der Größe der Rüstkosten ($s_{fg}=s$).
 Es ist zu sehen, dass gerade die Verfahren, die normalerweise sehr gute Ergebnisse liefern (z.B. Gilmore Gomory\footnote{
 Wegen der zwei benachbarten dominierenden Maschinen ist die Gilmore-Gomory-Heuristik hier ein exaktes Verfahren.} oder Simulated Annealing)
-hier besonders schlecht abschneiden, während die zweite Heuristik von Soylu et. al hier (nach der Korrektur) vergleichsweise gute Resultate liefert.
+hier besonders schlecht abschneiden, während die zweite Heuristik von Soylu et al. hier (nach der Korrektur) vergleichsweise gute Resultate liefert.
 Besonders auffällig ist, dass offenbar (bei allen Heuristiken) in fast jedem Zyklus die Ressource gewechselt werden muss.
 Bei einer Instanzgröße von beispielsweise $n\approx 3000$ treten selbst bei dem dort besten Ergebnis (Soylu H2) ca. 2000 Ressoucenwechsel auf.
 

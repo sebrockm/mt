@@ -1297,7 +1297,7 @@ dass nur zwei Maschinen dominierend sind. Ebenso müssen die Rüstkosten nicht k
 Im ersten Abschnitt dieses Kapitels (\ref{sec:Ressourcenzuweisung}) wurde ein Verfahren vorgestellt, 
 das die Jobgruppen $m$ Bins zuordnet und im Fall der Teilung einer Jobgruppe auf Zulässigkeit achtet,
 um so die minimale Anzahl an Rüstkosten zu verursachen.
-Dieser Schritt ist essenziell für den zweiten Dekompositionsansatz, da sämtliche Verfahren, die zweiten Abschnitt \ref{sec:AnordnungDerJobgruppen} vorgestellt wurden,
+Dieser Schritt ist essenziell für den zweiten Dekompositionsansatz, da sämtliche Verfahren, die im zweiten Abschnitt \ref{sec:AnordnungDerJobgruppen} vorgestellt wurden,
 auf dieser Zuordnung operieren und sie nachträglich nicht mehr ändern.
 Da die Verfahren in Abschnitt \ref{sec:AnordnungDerJobgruppen} aber sehr vielfältig sind, 
 werden hier noch einmal alle Varianten der Zuordnung der Bins an die Stationen und der Anordnung der Jobgruppen in den Bins zusammengefasst:
@@ -1336,7 +1336,10 @@ In Abschnitt \ref{sec:VergleichDerDekompositionsansaetze} werden die beiden Deko
 \section{Vergleich der Heuristiken}
 \label{subsec:VergleichDerHeuristiken}
 In diesem Abschnitt werden die Rechenergebnisse der Heuristiken aus Unterabschnitt \ref{subsec:HeuristischeVerfahren} vorgestellt und miteinander verglichen.
-Es wurden drei Testreihen mit zufälligen Instanzen erzeugt, jeweils mit $m=8$ und $n=50,100,150,\ldots,5000$.
+Es wurden vier eigene Testreihen mit zufälligen Instanzen erzeugt und auch eine Testreihe wie in \cite{soylu} beschrieben. 
+
+\subsection{Eigene Testinstanzen}
+Die vier hier vorgestellten Testreihen wurden mit $m=8$ Maschinen und $n=50,100,150,\ldots,5000$ Jobs erzeugt.
 
 In der ersten Testreihe sind die Maschinen $M_3,M_4,M_5$ dominierend.
 Ihre Prozesszeiten wurden gleichverteilt aus dem Intervall $[10,100]$ gewählt.
@@ -1351,11 +1354,14 @@ In Abbildung \ref{abb:3dom} sind die Resultate aufgetragen.
     \end{center}
     \caption{
         \label{abb:3dom}
-        Absolute (oben) und relative (unten) Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken
+        Resultate der Heuristiken für die Summe der Zykluszeiten (oben) 
+        und relative Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken (unten) 
         bei drei dominierenden Maschinen (gleichverteilte Prozesszeiten).
     }
 \end{figure}
-Aufgetragen sind jeweils die absoluten Differenzen $C_{\max,h}-C_{\max,nfs}$ der übrigen Heuristiken ($h$) zur Non-Full-Schedule-Heuristik ($nfs$).
+Oben sind die Summe der Zykluszeiten in Abhängigkeit von der Instanzgröße $n$ aufgetragen.
+Da die Resultate sehr ähnlich sind, so dass die Kurven teilweise sehr dicht beieinander liegen, 
+sind unten jeweils die relativen Differenzen $\frac{C_{\max,h}-C_{\max,nfs}}{C_{\max,nfs}}$ der übrigen Heuristiken ($h$) zur Non-Full-Schedule-Heuristik ($nfs$) aufgetragen.
 CPLEX LB und UB bezeichnen die untere und obere Schranke, die CPLEX nach 30 Minuten errechnet hat.
 Dabei ist die obere Schranke der Zielfunktionswert einer tatsächlich errechneten Lösung und kann daher als Heuristik verwendet werden.
 Zu sehen ist, dass die Lösungen des MIPs bei sehr kleinen Instanzen ($n<300$) nach einer halben Stunde Rechenzeit vergleichbar mit den Lösungen der übrigen Heuristiken sind.
@@ -1372,20 +1378,24 @@ Aus diesen Gründen wurde das MIP auch nur bis zu Instanzgrößen von $n=1500$ b
     }
 \end{figure}
 
-Außerdem ist zu erkennen, dass die Double Ended Non-Full-Schedule-Heuristik fast identische Resultate liefert im Vergleich zur Non-Full-Schedule-Heuristik
-und dass die Gilmore-Gomory-Heuristik hier relativ schlechte Resultate liefert und mit Simulated Annealing die besten Lösungen erzeugt werden.
+Außerdem ist zu erkennen, dass die Double Ended Non-Full-Schedule-Heuristik fast identische Resultate liefert im Vergleich zur Non-Full-Schedule-Heuristik.
+$H_3$ von Soylu ist meist etwas besser als als diese beiden.
+Die Gilmore-Gomory-Heuristik liefert hier relativ schlechte Resultate.
+Schlechter sind nur $H_2$ von Soylu und mit einigem Abstand $H_3$.
+Mit Simulated Annealing konnten hier offenbar die besten Lösungen erzeugt werden.
 Der Plot der relativen Abweichungen zeigt außerdem, dass diese Abweichungen offenbar nahezu konstant sind zwischen den Heuristiken (nicht beim MIP) 
 und nicht von der Instanzgröße abhängen.
 Einzig die relative Abweichung des Simulated Annealings scheint mit zunehmender Instanzgröße leicht abzunehmen.
 
 In Abbildung \ref{abb:3domtime} sind die Zeiten aufgetragen, die die Heuristiken benötigten, um die in Abbildung \ref{abb:3dom} dargestellten Resultate zu berechnen.
-Deutlich zu erkennen ist der quadratische Anstieg der beiden Non-Full-Schedule-Heuristiken, wobei die Double Ended Variante etwas langsamer ist,
-da pro Iteration immer zwei Jobs statt nur einem gesucht werden.
+Deutlich zu erkennen ist der quadratische Anstieg der beiden Non-Full-Schedule-Heuristiken und Soylus $H_3$, wobei die Double Ended Variante etwas langsamer ist,
+da pro Iteration immer zwei Jobs statt nur einem gesucht werden, und $H_3$ etwas schneller, da kein zweites Vergleichskriterium angewandt wird.
 Außerdem treten in der Kurve der Double Ended Non-Full-Schedule-Heuristik teilweise kleine Ausreißer nach oben auf.
 Eine plausible Begründung hierfür konnte nicht gefunden werden.
 Die Kurve des Simulated Annealings ist, wie zu erwarten war, sehr chaotisch, was durch die nicht deterministische Funktionsweise des Algorithmus erklärt werden kann:
 Die Laufzeit hängt stark vom Zufall ab und nur zweitrangig von der Instanzgröße.
-Am schnellsten ist die Gilmore-Gomory-Heuristik, die dafür aber auch vergleichsweise schlechte Resultate liefert.
+Am schnellsten sind die Gilmore-Gomory-Heuristik und $H_1$, die dafür aber beide vergleichsweise schlechte Resultate liefern.
+$H_2$ hingegen ist mit Abstand am langsamsten trotz der eher schlechten Resultate.
 
 Die zweite Testreihe unterscheidet sich nur dadurch von der ersten, dass die Prozesszeiten der dominierenden Maschinen nicht gleichverteilt aus dem Intervall
 $[10,100]$ ausgewählt wurden, sondern normalverteilt mit einem Erwartungswert von $\mu=50$ und einer Standardabweichung von $\sigma=20$.
@@ -1399,7 +1409,8 @@ Die Resultate sind analog zur ersten Testreihe in Abbildung \ref{abb:3domnorm} d
     \end{center}
     \caption{
         \label{abb:3domnorm}
-        Absolute (oben) und relative (unten) Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken
+        Resultate der Heuristiken für die Summe der Zykluszeiten (oben) 
+        und relative Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken (unten) 
         bei drei dominierenden Maschinen (normalverteilte Prozesszeiten).
     }
 \end{figure}
@@ -1419,12 +1430,15 @@ Die Kurven in Abbildung \ref{abb:3domnorm} unterscheiden sich im Verlauf kaum vo
 Allerdings sind diese Kurven im Vergleich zur ersten Testreihe in etwa um den Faktor $2$ gestaucht.
 Die Resultate der Heuristiken unterscheiden sich hier also weniger.
 Das muss daran liegen, dass die Prozesszeiten (da sie normalverteilt sind) weniger unterschiedlich sind.
-Die beiden Non-Full-Schedule-Heuristiken ziehen daraus einen Vorteil, da sie nach eben diesem Prinzip vorgehen, möglichst ähnliche Prozesszeiten zu finden.
+Die beiden Non-Full-Schedule-Heuristiken, $H_2$ und $H_3$ ziehen daraus einen Vorteil, da sie nach eben diesem Prinzip vorgehen, möglichst ähnliche Prozesszeiten zu finden.
 Auch die Gilmore-Gomory-Heuristik profitiert davon, da beim (theoretischen) Wiederhochskalieren der Prozesszeiten der dritten dominierenden Maschine 
 nur vergleichsweise wenige Zykluszeiten mit vergrößert werden müssen.
-Und auch CPLEX kommt bei diesen Daten offenbar ebenfalls schneller zu besseren Schranken.
+Auch CPLEX kommt bei diesen Daten offenbar ebenfalls schneller zu besseren Schranken.
+Selbst $H_1$ liefert bessere Ergebnisse, obwohl die Jobs hier im Wesentlichen (bis auf $m$ Jobs) zufällig angeordnet sind.
+Durch die Normalverteilung ist es selbst bei zufälligen Reihenfolgen wahrscheinlich, dass in einem Zyklus ähnliche Prozesszeiten sind.
 
-Die dritte und letzte Testreihe wurde mit einem identischen Verfahren wie die zweite Testreihe generiert.
+
+Die dritte Testreihe wurde mit einem identischen Verfahren wie die zweite Testreihe generiert.
 Allerdings wurde der Erwartungswert der Prozesszeiten auf Maschine $M_3$ auf $\mu=30$ festgesetzt, also um $20$ weniger gegenüber $M_4$ und $M_5$.
 Ziel sollte es sein, dass $M_4$ und $M_5$ nicht dominierend sind, sondern nur eine geringe Semidominanz haben, 
 so dass die Vorzüge der Gilmore-Gomory-Heuristik zum Tragen kommen.
@@ -1437,7 +1451,8 @@ so dass die Vorzüge der Gilmore-Gomory-Heuristik zum Tragen kommen.
     \end{center}
     \caption{
         \label{abb:2quasidom}
-        Absolute (oben) und relative (unten) Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken
+        Resultate der Heuristiken für die Summe der Zykluszeiten (oben) 
+        und relative Unterschiede zwischen der Non-Full-Schedule-Heuristik und den übrigen Heuristiken (unten) 
         bei zwei semidominierenden Maschinen (normalverteilte Prozesszeiten).
     }
 \end{figure}
@@ -1462,8 +1477,103 @@ Bemerkenswert ist außerdem, dass die untere Schranke, die von CPLEX für Instan
 oft bis an die Ergebnisse der Gilmore-Gomory- und der Non-Full-Schedule-Heuristik heranreicht.
 Das bedeutet, dass die Resultate dieser beiden Heuristiken nahezu optimal sind.
 Andererseits sind die oberen Schranken von CPLEX vergleichsweise weit von den Resultaten der Heuristiken entfernt.
-Als Ausblick könnten diese Heuristiken daher in CPLEX integriert werden, um die oberen Schranken zu verbessern.
+%Als Ausblick könnten diese Heuristiken daher in CPLEX integriert werden, um die oberen Schranken zu verbessern.
 
+Die vierte Testreihe wurde genau wie die erste generiert, allerdings mit nur zwei dominierenden Maschinen $M_3$ und $M_4$.
+Da in diesem Fall die Gilmore-Gomory-Heuristik ein optimales Ergebnis liefert, wurde das MIP nicht auf diese Instanzen angewandt.
+Ziel dieser Testreihe ist es, die Güte der Heuristiken anhand eines optimalen Vergleichswertes bestimmen zu können.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/2dom/plot.pdf}
+    \end{center}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/2dom/plotrel.pdf}
+    \end{center}
+    \caption{
+        \label{abb:2dom}
+        Resultate der Heuristiken für die Summe der Zykluszeiten (oben) 
+        und relative Unterschiede zwischen der Gilmore-Gomory-Heuristik und den übrigen Heuristiken (unten) 
+        bei zwei dominierenden Maschinen (gleichverteilte Prozesszeiten).
+    }
+\end{figure}
+In Abbildung \ref{abb:2dom} sind analog zu den anderen Testreihen die Ergebnisse aufgetragen.
+Wie zu sehen ist, liefert Simulated Annealing (abgesehen von Gilmore Gomory) die besten Ergebnisse mit nur etwa $2{,}5\%$ Abweichung vom Optimum.
+Danach folgen fast gleich auf die beiden Non-Full-Schedule-Heuristiken und $H_3$.
+Bei vielen Instanzen liefern $H_3$ und die Non-Full-Schedule-Heuristik sogar identische Resultate, 
+während die Double Ended Non-Full-Schedule-Heuristik minimal schlechter ist.
+Bis Instanzgrößen von $n=500$ ist sie allerdings besser als die anderen beiden.
+Weit abgeschlagen sind $H_1$ und $H_2$.
+Da die einzelnen Heuristiken unterschiedlich viel Nutzen aus dem Umstand ziehen, dass es zwei benachbarte dominierende Maschinen gibt,
+sind die Resultate dieser Testreihe allerdings nur bedingt auf andere Instanzen mit mehr als zwei dominierenden Maschinen übertragbar.
+
+\subsection{Instanzen von Soylu et al.}
+In ihrem Paper \cite{soylu} generieren Soylu et al. ebenfalls einige Instanzen, mit denen sie ihre Heuristiken testen.
+Da diese mit $n\leq 50$ eine sehr viel kleinere Größe haben als die bislang hier getesteten Instanzen, 
+ist es sinnvoll einige davon im Rahmen dieser Arbeit zu generieren und die Heuristiken auch mit anhand dieser zu evaluieren.
+Es wurden Instanzen mit $n=20,25,30,35$ Jobs generiert, die auf $\tilde{n}=2,3,\ldots,\frac{n}{5}$ Jobgruppen aufgeteilt sind.
+Dabei hat jeweils eine Jobgruppe die Größe $n_g=\frac{n}{2}$ und die übrigen Jobs werden gleichmäßig auf die anderen Jobgruppen aufgeteilt.
+Es gibt $m=2,3,4$ Maschinen und die Prozesszeiten $p_{ij}$ werden gleichverteilt aus dem Intervall $[1,10]$ gewählt.
+In den Abbildungen \ref{abb:soylutest2}, \ref{abb:soylutest3} und \ref{abb:soylutest4} sind die Resultate aller Heuristiken für diese Instanzen aufgetragen.
+An der Beschriftung der horizontalen Achse können die Eigenschaften der Instanz abgelesen werden.
+Dabei ist $r$ Bezeichnung von Soylu et al. für die Anzahl der Jobgruppen ($\tilde{n}$).
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/soylu/plotm2.pdf}
+    \end{center}
+    \caption{
+        \label{abb:soylutest2}
+        Resultate der Heuristiken auf den Instanzen von Soylu et al. mit $m=2$.
+    }
+\end{figure}
+Für $m=2$ ist in Abbildung \ref{abb:soylutest2} zu sehen, dass Simulated Annealing immer die optimale Lösung gefunden hat, was daran zu erkennen ist,
+dass die Kurven für Simulated Annealing und Gilmore Gomory sich vollständig überlagern (Gilmore Gomory ist bei $m=2$ optimal).
+Alle übrigen Heuristiken liefern stehts sehr ähnliche Ergebnisse, wobei häufig $H_1$ oder $H_2$ am schlechtesten ist.
+Interessant ist, dass jeweils bei Instanzen mit $r=\tilde{n}=2$ alle Heuristiken eine optimale Lösung finden.
+Das kann dadurch erklärt werden, dass es bei zwei Maschinen und zwei Jobgruppen nicht viele sich wesentlich unterscheidende Möglichkeiten gibt, diese anzuordnen.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/soylu/plotm3.pdf}
+    \end{center}
+    \caption{
+        \label{abb:soylutest3}
+        Resultate der Heuristiken auf den Instanzen von Soylu et al. mit $m=3$.
+    }
+\end{figure}
+Auch bei Instanzen mit $m=3$ in Abbildung \ref{abb:soylutest3} liefern alle Heuristiken bei $r=\tilde{n}=2$ die gleichen Resultate.
+Wie auch bei $m=2$ liefert Simulated Annealing immer die besten Lösungen.
+Es kann allerdings nicht überprüft werden, ob diese optimal sind, da die Gilmore-Gomory-Heuristik hier keine optimalen Vergleichswerte liefern kann.
+Da aber diese Instanzen mit $n\leq 35$ genauso klein sind wie die in Abbildung \ref{abb:soylutest2}, kann vermutet werden,
+dass die Ergebnisse des Simulated Annealings auch hier nahezu optimal sind.
+$H_1$ und $H_2$ schneiden auch hier häufig sehr schlecht ab. 
+$H_3$ hingegen liefert bei Instanzen mit $r=\tilde{n}=4$ die zweitbeste Lösung und ist dort besser als die beiden Non-Full-Schedule-Heuristiken 
+(diese liefern fast immer das gleiche Ergebnis, weshalb sich die Graphen überlagern und kaum zu unterscheiden sind)
+obwohl diese nach einem ähnlichen Prinzip arbeiten.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../instances/soylu/plotm4.pdf}
+    \end{center}
+    \caption{
+        \label{abb:soylutest4}
+        Resultate der Heuristiken auf den Instanzen von Soylu et al. mit $m=4$.
+    }
+\end{figure}
+Bei Instanzen mit $m=4$ (s. Abbildung \ref{abb:soylutest4}) liefern alle Heuristiken deutlich verschiedene Ergebnisse.
+Bis auf drei Ausnahmen bei $r=\tilde{n}=2$ ist wieder Simulated Annealing am besten.
+Oft schneidet hier die Gilmore-Gomory-Heuristik besonders schlecht ab, da sie bei wenigen dominierenden Maschinen am besten ist.
+Besonders gute Resultate liefert hier neben Simulated Annealing die Double Ended Non-Full-Schedule-Heuristik und ist im Gegensatz zu den Instanzen mit $m=2$ und $m=3$ nicht 
+fast identisch mit der Non-Full-Schedule-Heuristik und $H_3$.
+
+\subsection{Zusammenfassung}
+Unter allen Heuristiken ist Simulated Annealing oft am besten, während $H_1$ und $H_2$ von Soylu et al. oft sehr schlecht abschneiden.
+Das gilt sowohl für die selbst generierten Instanzen als auch für die von Soylu et al.
+Die Gilmore-Gomory-Heuristik liefert nur dann gute Ergebnisse, wenn zwei benachbarte Maschinen dominierend sind (dann sind die Ergebnisse optimal)
+oder semidominant. Sind diese Voraussetzungen nicht gegeben, sind auch keine guten Ergebnisse von der Gilmore-Gomory-Heuristik zu erwarten.
+Die Double Ended Non-Full-Schedule-Heuristik, die Non-Full-Schedule-Heuristik und $H_3$ von Soylu et al. gehen sehr ähnlich vor, 
+was sich auch in ihren Resultaten widerspiegelt.
+Für jede der drei gibt es Instanzen, bei denen sie besser sind als die anderen beiden, so dass nur schwer vorausgesagt werden kann, welche wann am besten ist.
 
 \section{Vergleich der Dekompositionsansätze}
 \label{sec:VergleichDerDekompositionsansaetze} 

@@ -17,7 +17,92 @@
 
 \begin{document}
 
+
+\thispagestyle{empty}
+
+\begin{center}
+
+    %\rule{0mm}{3cm}
+
+    \vspace{3cm}
+
+    \includegraphics[width=.8\textwidth]{uos.png}
+
+    \vspace{1cm}
+
+    {\huge\textbf{Synchrone Flow-Shop-Probleme mit Ressourcen und Rüstkosten}}
+
+    \vspace{2ex}
+
+    \vspace{1cm}
+
+
+
+    \vspace{2ex}
+
+    {\Large\textsc{Sebastian Brockmeyer}}
+
+    \vspace{3cm}
+
+    {\Large\textsc{M A S T E R A R B E I T}}
+
+    \vspace{2cm}
+
+    {\Large{September 2014}}
+
+    \vspace{1cm}
+
+    {Gutachter:}
+
+    \vspace{2ex}
+
+    {\Large{Prof. Dr. Sigrid Knust \\ Dipl.-Math. Stefan Waldherr}}
+
+\end{center}
+
+\chapter*{Vorwort}
+Ich möchte in erster Linie meinen beiden Betreuern und Gutachtern, Prof. Dr. Sigrid Knust und Stefan Waldherr,
+für ihre außerordentlich umfangreiche Unterstützung beim Erstellen dieser Arbeit danken.
+Es ist nicht leicht, sich vorzustellen, wie die Betreuung einer Abschlussarbeit noch besser ablaufen kann.
+Darüber hinaus möchte ich meiner Freundin ganz herzlich dafür danken,
+dass sie vor allem in den letzten Tagen des Schreibens einen Großteil der häuslichen Pflichten auf sich genommen hat,
+um mir ein relativ ungestörtes Arbeiten zu ermöglichen.
+Diese Leistung gehört noch mehr gewürdigt, wenn man bedenkt, dass in dieser Zeit ein Umzug vorbereitet werden musste
+und sie fast den gesamten Hausrat allein in Umzugskartons verstaut hat.
+
+\chapter*{Kurzfassung}
+Bei synchronen Flow-Shop-Problemen handelt es sich um Produktions\-planungs\-probleme, 
+bei denen die Jobs immer nur synchron zur nächsten Maschine gelangen können.
+D.h. ein Job kann erst dann zur nachfolgenden Maschine gelangen, wenn nicht nur diese, 
+sondern auch alle anderen Maschinen mit ihrem jeweiligen Arbeitsschritt abgeschlossen haben.
+Ziel ist es, die Jobs so anzuordnen, dass die gesamte Bearbeitungszeit minimiert wird.
+Dazu werden einige Heuristiken entwickelt und mit bestehenden Verfahren verglichen.
+
+Zusätzlich können die Jobs Ressourcen benötigen, die nur in begrenzter Menge vorhanden sind, aber wieder freigegeben werden, 
+wenn der jeweilige Job die letzte Maschine passiert hat. 
+Es kostet zusätzliche Zeit (Rüstkosten), wenn eine Ressource nach der Fertigstellung eines Jobs ausgetauscht werden muss.
+In dieser Masterarbeit wird das Problem mit zwei Dekompositionsansätzen in mehreren Schritten gelöst. 
+Dabei wird ein Spezialfall des Problems, der bei einem Küchenhersteller auftritt, besonders intensiv behandelt. 
+Es werden sowohl exakte als auch heuristische Verfahren entwickelt und anschließend evaluiert.
+
+\chapter*{Abstract}
+Synchronous flow shop problems are production planning problems,
+where the jobs can only get synchronously to the next machine.
+I.e. a job cannot get to the following machine until then all machines, not only that one,
+have completed their jobs.
+The goal is to arrange the jobs in such a way that the makespan is minimized.
+On that point, several heuristics are developed and compared to existing procedures.
+
+Additionally, the jobs might need resources with only limited amounts at disposal, but they are reusable 
+as soon as the respective job passed the last machine.
+It takes additional setup time whenever a resource has to be exchanged after a job's completion.
+In this master thesis the problem is solved in several steps with two decomposition approches.
+A special case of this problem arising at a kitchen manufacturer is discussed in particular.
+Both, exact and heuristic procedures are developed and, finally, discussed.
+
+
 \tableofcontents
+
 
 \chapter{Einleitung}
 Bei synchronen Flow-Shop-Problemen handelt es sich um Produktions\-planungs\-probleme,
@@ -145,7 +230,7 @@ Der dritte Fall ist vom Prinzip her vergleichbar mit einem Generalschlüssel, de
 wobei es für einzelne Schlüssellöcher auch speziell nur dafür passende Schlüssel gibt, die in die anderen Schlüssellöcher nicht passen.
 Ressourcen können in ähnlicher Weise durch geringe Unterschiede für viele Jobs auf einmal oder nur für einzelne geeignet sein.
 Der vierte Fall ist der allgemeinste und deckt alle anderen mit ab.
-Er wird in dieser Arbeit nur nur kurz betrachtet (vgl. Abschnitt \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen}).
+Er wird in dieser Arbeit nur kurz betrachtet (vgl. Abschnitt \ref{subsubsec:ZulaessigkeitBeiBeliebigenRessourcenteilmengen}).
 
 Neben dem Wechsel von Ressourcen, der zusätzliche Zeit in Anspruch nimmt, können auch andere Formen von \textit{Rüstkosten}
 auftreten. Z.B. kann es sein, dass an einer Station zunächst einige Umstellungen vorgenommen werden müssen, bevor der
@@ -256,7 +341,7 @@ Beide Ansätze liefern natürlich im Allgemeinen keine optimalen Lösungen, da j
 obwohl die optimale Lösung von beiden zusammen abhängig ist.
 Außerdem sind selbst die aus den Ansätzen resultierenden Teilprobleme teilweise noch $\mathcal{NP}$-schwer.
 Beispielsweise ist bei Ansatz (1) das Berechnen einer $C_{\max}$-optimalen Reihenfolge $\pi$ im Allgemeinen $\mathcal{NP}$-schwer. 
-In dem Spezialfall, dass es nur eine dominierende Maschine gibt, ist es trivial, da $C_{\max}$ bei jeder Reihenfolge identisch ist,
+In dem Spezialfall, dass es nur eine dominierende Maschine gibt, ist es trivial, da $C_{\max}$ bei jeder Reihenfolge identisch ist.
 Wenn es genau zwei benachbarte dominierende Maschinen gibt,
 ist es mit dem Algorithmus von Gilmore und Gomory \cite{gg} in Polynomialzeit lösbar.
 Bei der anschließenden Zuweisung von Ressourcen ist noch unbekannt, ob ein polynomieller Algorithmus existiert.
@@ -277,7 +362,7 @@ In Abschnitt \ref{sec:BerechnenEinerJobreihenfolge} werden einige exakte und heu
 Berechnung einer bezüglich der Zykluszeiten optimalen Reihenfolge $\pi$ vorgestellt, was im Allgemeinen $\mathcal{NP}$-schwer ist.
 Anschließend werden in Abschnitt \ref{sec:ZuweisungVonRessourcen} Verfahren vorgestellt, die ein möglichst gutes Mapping $f$ erzeugen.
 Dabei wird darauf eingegangen, ob mit der gegebenen Reihenfolge $\pi$ und den gegebenen Ressourcen
-überhaupt eine zulässige Lösung möglich ist, und, wie dann ggf. die Zulässigkeit durch nachträgliche Änderungen an $\pi$
+überhaupt eine zulässige Lösung möglich ist und wie dann ggf. die Zulässigkeit durch nachträgliche Änderungen an $\pi$
 erzeugt werden kann.
 
 \section{Berechnen einer Jobreihenfolge}
@@ -485,16 +570,16 @@ und die übrigen $n-m$ Jobs werden wahllos eingefügt, da alle übrigen Zyklen $
 \paragraph{$H_2$}
 Hier wird in einer Iteration ein Job in die anfangs leere Reihenfolge eingefügt.
 Es wird unter allen noch nicht eingefügten Jobs jeweils derjenige ausgesucht, der die größte Prozesszeit hat.
-Dieser Job wird dann so in die Reihenfolge eingefügt, dass diese Prozesszeit ein den Zyklus fällt, dessen Zykluszeit bislang am größten war.
+Dieser Job wird dann so in die Reihenfolge eingefügt, dass diese Prozesszeit in den Zyklus fällt, dessen Zykluszeit bislang am größten war.
 Sollte das nicht möglich sein, wird stattdessen die zweitgrößte Zykluszeit gewählt usw.
-Auf diese Weise werden alle Jobs eingefügt nacheinander eingefügt. 
+Auf diese Weise werden alle Jobs nacheinander eingefügt. 
 Der erste Job, der die größte aller Prozesszeiten hat, wird so eingefügt, dass diese Prozesszeit in Zyklus $m$ liegt.
 
 \paragraph{$H_3$}
 Diese Heuristik ähnelt der Non-Full-Schedule-Heuristik (vgl. Abschnitt \ref{subsubsec:NonFullScheduleHeuristik}).
 Der Unterschied besteht darin, dass zu der Summe der $c_+$-Werte noch die Prozesszeit auf der letzten Maschine des jeweiligen Jobs mit aufaddiert wird
 und diese Gesamtsumme dann als Einfügekriterium dient.
-Sollte es mehrere gleichwertige Jobs geben, wird kein zweites Kriterium zur Rate gezogen, sondern zufällig einer ausgewählt.
+Sollte es mehrere gleichwertige Jobs geben, wird kein zweites Kriterium zu Rate gezogen, sondern zufällig einer ausgewählt.
 
 
 \section{Zuweisung von Ressourcen}
@@ -634,7 +719,7 @@ Mit einer Vertauschung zweier Jobs kann $\pi$ unter Umständen so abgeändert we
 Es wird dazu eine Matrix erstellt, deren Einträge $r_{ij}$ angeben, wie viele Ressourcen für Job $j$ an Position $i$ in $\pi$ zur Verfügung stehen
 (d.h. sich nicht gerade in der Anlage befinden).
 Initial ist $r_{ij}=|\rho_j|$ für alle Positionen $i$.
-Indem für alle Positionen $i$ die $m$ zuletzt eingelegten Jobs $j$ ermittelt werden (also die an den Positionen $i-m+1,\ldots,i$),
+Indem für alle $i$ die $m$ zuletzt eingelegten Jobs $j$ ermittelt werden (also die an den Positionen $i-m+1,\ldots,i$),
 können jeweils die Einträge $r_{ij}$ um $1$ verringert werden.
 Sobald einer der Einträge negativ wird, bedeutet das, dass eine Ressource zugewiesen wurde, obwohl sie an dieser Position $i$ nicht mehr verfügbar ist.
 Es kann dann ein Job $j'$ an einer anderen Position in $\pi$ gesucht werden, dessen Ressource an Position $i$ noch verfügbar ist.
@@ -676,7 +761,7 @@ vor dem Hintergrund des gegebenen Praxisbeispiels des Küchenherstellers.
 \label{sec:Ressourcenzuweisung}
 In diesem Abschnitt wird die Konstruktion des Mappings $f$ erläutert.
 Dabei wird davon ausgegangen, dass Rüstkosten einzig durch einen Ressourcenwechsel verursacht werden.
-In Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} wird auf den Spezialfall $s_{fg}=s$, der mit einem Binpackingansatz gelöst werden kann,
+In Unterabschnitt \ref{subsec:RessourcenzuweisungMitBinpacking} wird auf den Spezialfall $s_{fg}=s$, der mit einem Binpacking-Ansatz gelöst werden kann,
 eingegangen. Allgemeinere Fälle der Ressourcenzuweisung beim zweiten Dekompositionsansatz werden in dieser Arbeit nicht gesondert betrachtet.
 
 Wie in Abschnitt \ref{sec:Problembeschreibung} erläutert, ist im Folgenden von \textit{Jobgruppen} die Rede, 
@@ -1322,14 +1407,13 @@ Diese Ansätze werden in Kapitel \ref{chap:RechenergebnisseUndVergleiche} evalui
 \chapter{Rechenergebnisse und Vergleiche}
 \label{chap:RechenergebnisseUndVergleiche}
 In diesem Kapitel werden Rechenergebnisse vorgestellt und miteinander verglichen.
-Es wurden sowohl generierte Instanzen getestet als auch reale.
+Es wurden sowohl selbst generierte Instanzen getestet als auch solche aus der Praxis eines Küchenherstellers.
 Getestet wurde auf einem PC mit Intel(R) Xeon(R) CPU E3-1230 v3, 8 Kerne @ 3.30GHz, und 16GB RAM unter Ubuntu 13.10.
 Die MIPs wurden mit ZIMPL \cite{Koch2004} und CPLEX v12.6 gelöst.
 Die übrigen Algorithmen wurden in C++ implementiert und mit dem GCC v4.8.1 mit O2-Optimierung kompiliert.
 
 In Abschnitt \ref{subsec:VergleichDerHeuristiken} werden die in Abschnitt \ref{subsec:HeuristischeVerfahren} vorgestellten Heuristiken evaluiert
 und mit drei Heuristiken verglichen, die Soylu et al. in ihrem Paper \cite{soylu} präsentieren.
-
 In Abschnitt \ref{sec:VergleichDerDekompositionsansaetze} werden die beiden Dekompositionsansätze miteinander verglichen.
 
 
@@ -1339,8 +1423,11 @@ In diesem Abschnitt werden die Rechenergebnisse der Heuristiken aus Unterabschni
 Es wurden vier eigene Testreihen mit zufälligen Instanzen erzeugt und auch eine Testreihe wie in \cite{soylu} beschrieben. 
 
 \subsection{Eigene Testinstanzen}
-Die vier hier vorgestellten Testreihen wurden mit $m=8$ Maschinen und $n=50,100,150,\ldots,5000$ Jobs erzeugt.
-
+Die vier hier vorgestellten Testreihen haben folgende Parameter: 
+\begin{itemize}
+    \item $m=8$ Maschinen und 
+    \item $n=50,100,150,\ldots,5000$ Jobs.
+\end{itemize}
 In der ersten Testreihe sind die Maschinen $M_3,M_4,M_5$ dominierend.
 Ihre Prozesszeiten wurden gleichverteilt aus dem Intervall $[10,100]$ gewählt.
 Die Prozesszeiten der übrigen Maschinen wurden aus dem Intervall $[0,9]$ gleichverteilt gewählt.
@@ -1585,9 +1672,8 @@ Außerdem liegt diese Situation auch bei dem betrachteten Praxisfall des Küchen
 
 Im Fall von zwei benachbarten dominierenden Maschinen liefert der Algorithmus von Gilmore und Gomory eine optimale Lösung für den ersten Schritt des ersten
 Dekompositionsansatzes, das Erstellen einer Jobreihenfolge $\pi$ ohne die Ressourcen und Rüstkosten zu berücksichtigen.
-Man könnte daher dem Irrtum auferliegen, dass die übrigen Heuristiken aus Abschnitt \ref{subsec:HeuristischeVerfahren} oder auch die Heuristiken von Soylu et al. \cite{soylu}
-hier nicht betrachtet werden müssen. Allerdings folgt danach noch der zweite Schritt, in dem $\pi$ auf Zulässigkeit bezüglich verfügbarer Ressourcen überprüft wird
-und ggf. nachträglich noch geändert wird.
+Da danach noch der zweite Schritt folgt, in dem $\pi$ auf Zulässigkeit bezüglich verfügbarer Ressourcen überprüft wird
+und ggf. nachträglich noch geändert wird, ist es trotzdem sinnvoll, auch die Heuristiken aus Abschnitt \ref{subsec:HeuristischeVerfahren} anzuwenden.
 
 In den folgenden Unterabschnitten werden zwei Testreihen betrachtet: In \ref{subsec:RealeInstanzen} werden Instanzen betrachtet, 
 die von dem Küchenhersteller zur Verfügung gestellt wurden und daher direkten Praxisbezug haben.
@@ -1598,14 +1684,32 @@ In Unterabschnitt \ref{subsec:GenerierteInstanzen} werden zufällig erzeugte Ins
 Die hier betrachteten Instanzen stammen aus einer realen Anwendung.
 Die Instanzen haben eine Größe von 37-68 Jobgruppen, wobei jede Jobgruppe zwischen 1 und 1400 Jobs umfasst. Besonders große Jobgruppen sind dabei selten.
 Die meisten Jobgruppen bestehen aus weniger als 100 Jobs.
+Die Zeit für einen Ressourcenwechsel beträgt $s_{fg}=s=5$.
 Es gibt $m=8$ Maschinen, von denen zwei benachbarte dominierend sind.
-Die Prozesszeiten auf den dominierenden Maschinen liegen zwischen $0{,}5$ und $2$ und für jede Jobgruppe gibt es zwischen 1 und 15 geeignete Ressourcen.
+Die Prozesszeiten auf den dominierenden Maschinen liegen zwischen $0{,}5$ und $2$ Minuten und für jede Jobgruppe gibt es zwischen 1 und 15 geeignete Ressourcen.
+Da es sich bei einer der beiden Maschinen in diesem Praxisfall um eine menschliche Arbeitskraft handelt, 
+durften die Prozesszeiten dieser "`Maschine"' nicht herausgegeben werden.
+Daher ist für beide Maschinen jeweils die gleiche Prozesszeit angegeben.
+Um dies auszugleichen, wurde für jede Jobgruppe die Prozesszeit einer zufälligen Maschine um einen zufälligen Wert zwischen $0$ und $0{,}5$ Minuten verringert.
+Die Daten sind also nicht mehr zu $100\%$ original.
 
 \subsubsection{Resultate des ersten Dekompositionsansatzes}
 \label{subsubsec:ResultateDKA1}
 Zunächst soll der erste Dekompositionsansatz betrachtet werden.
 Dabei werden erst die unterschiedlichen Heuristiken angewandt und anschließend wird $\pi$ wie in Abschnitt \label{sec:UnzulaessigeReihenfolgen} beschrieben korrigiert.
-In Abbildung \ref{abb:kbplot} sind in Abhängigkeit von der Anzahl der Jobs $n$ die Summen der Zykluszeiten aufgetragen, \textit{nachdem} $\pi$ korrigiert worden ist.
+In Abbildung \ref{abb:kbheurplot} ist zu sehen, wie gut der von den Heuristiken erzeugte (noch nicht korrigierte) Wert für $C_{\max}$ in Abhängigkeit von $n$ ist.
+Gilmore-Gomory liefert die optimale Lösung, die Lösungen von Simulated Annealing sind nahezu optimal und am schlechtesten schneidet $H_1$ ab.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/kbheurplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbheurplot}
+        Summe der Zykluszeiten, wenn $\pi$ mit der jeweiligen Heuristik erzeugt wurde.
+    }
+\end{figure}
+
+In Abbildung \ref{abb:kbplot} sind die Summen der Zykluszeiten aufgetragen, \textit{nachdem} $\pi$ korrigiert worden ist.
 Falls das Resultat einer Heuristik nicht so abgewandelt werden konnte, dass eine gültige Ressourcenzuweisung möglich ist, 
 ist an der entsprechenden Stelle in der Kurve eine Lücke gelassen.
 \begin{figure}
@@ -1617,9 +1721,25 @@ ist an der entsprechenden Stelle in der Kurve eine Lücke gelassen.
         Summe der Zykluszeiten, nachdem $\pi$ mit der jeweiligen Heuristik erzeugt und anschließend ggf. korrigiert wurde.
     }
 \end{figure}
-Wie zu sehen ist, sind die Resultate der Heuristiken durch die Korrektur nahezu identisch, obwohl die Heuristiken teilweise von sehr unterschiedlicher Güte sind
-(vgl. Abschnitt \ref{subsec:VergleichDerHeuristiken}).
+Wie zu sehen ist, sind die Resultate der Heuristiken nach der Korrektur nahezu identisch, obwohl die Heuristiken teilweise von sehr unterschiedlicher Güte sind
+(s. Abbildung \ref{abb:kbheurplot}).
 Allerdings treten einige Lücken in den Kurven auf, also nicht korrigierbare Ergebnisse (durch die Nähe der Kurven schwer zu erkennen).
+Zum Vergleich sind in Abbildung \ref{abb:kbdiffplot} die Differenzen aufgetragen zwischen den Resultaten nach und vor der Korrektur.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/kbdiffplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbdiffplot}
+        Differenzen zwischen den Resultaten nach und vor der Korrektur.
+    }
+\end{figure}
+Wie dort zu erkennen ist, werden die Resultate vieler Heuristiken durch die Korrektur nicht verschlechtert, sondern teils sogar erheblich verbessert.
+Dieses Phänomen tritt vor allem bei den Heuristiken auf, deren Resultate vorher eher schlecht waren. 
+Das kann dadurch erklärt werden, dass bei der Korrektur im Falle der Wahlmöglichkeit immer solche Jobs getauscht werden,
+durch die die Summe der Zykluszeiten möglichst wenig verschlechtert -- oder eben sogar verbessert -- wird.
+Das wiederum bedeutet, dass bei den Ergebnissen der jeweiligen Heuristiken (auch ohne Ressourcen und Rüstkosten zu betrachten)
+teils noch enormes Verbesserungspotential besteht, das allein durch Iterative Improvement mit einer Vertausch-Nachbarschaft abgerufen werden kann.
 
 In Abbildung \ref{abb:kbcoplot} sind die zugehörigen Rüstkosten aufgetragen, die nach der Korrektur noch in $\pi$ auftreten.
 Lücken bedeuten wieder, dass keine Korrektur möglich war.
@@ -1629,32 +1749,41 @@ Lücken bedeuten wieder, dass keine Korrektur möglich war.
     \end{center}
     \caption{
         \label{abb:kbcoplot}
-        Anzahl der Rüstkosten, die auftreten, nachdem $\pi$ mit der jeweiligen Heuristik erzeugt und anschließend ggf. korrigiert wurde.
+        Summer der Rüstkosten, die auftreten, nachdem $\pi$ mit der jeweiligen Heuristik erzeugt und anschließend ggf. korrigiert wurde.
+        Jeder Ressourcenwechsel verursacht Rüstkosten in Höhe von $5$ Minuten.
     }
 \end{figure}
-Es wird hier lediglich die \textit{Anzahl} der Rüstkosten (d.h. Situationen, in denen eine Ressource gewechselt werden muss) betrachtet, 
-nicht aber die tatsächliche Dauer in Zeiteinheiten. Diese kann aber leicht ermittelt werden aus der Größe der Rüstkosten ($s_{fg}=s$).
 Es ist zu sehen, dass gerade die Verfahren, die normalerweise sehr gute Ergebnisse liefern (z.B. Gilmore Gomory\footnote{
 Wegen der zwei benachbarten dominierenden Maschinen ist die Gilmore-Gomory-Heuristik hier ein exaktes Verfahren.} oder Simulated Annealing)
-hier besonders schlecht abschneiden, während die zweite Heuristik von Soylu et al. hier (nach der Korrektur) vergleichsweise gute Resultate liefert.
+hier besonders schlecht abschneiden, während $H_2$ hier (nach der Korrektur) vergleichsweise gute Resultate liefert.
 Besonders auffällig ist, dass offenbar (bei allen Heuristiken) in fast jedem Zyklus die Ressource gewechselt werden muss.
-Bei einer Instanzgröße von beispielsweise $n\approx 3000$ treten selbst bei dem dort besten Ergebnis (Soylu H2) ca. 2000 Ressoucenwechsel auf.
-
-Es kann daher an dieser Stelle bereits vermutet werden, dass der erste Dekompositionsansatz (wenn überhaupt) nur bei sehr kleinen Rüstkosten $s$
-besser ist als der zweite.
+Bei einer Instanzgröße von beispielsweise $n\approx 3000$ treten selbst bei dem dort besten Ergebnis ($H_2$) ca. 2000 Ressoucenwechsel auf.
+Es fällt weiter auf, dass die Summe der Rüstkosten immer sehr viel größer ist als die zugehörige Summe der Zykluszeiten.
 
 \subsubsection{Resultate des zweiten Dekompositionsansatzes}
 \label{subsubsec:ResultateDKA2}
 Beim zweiten Dekompositionsansatz muss zunächst die Zuordnung der Jobgruppen zu den Bins erfolgen.
 Unmittelbar danach steht fest, wie oft eine Ressource gewechselt werden muss. 
 Für den Fall, dass keine Jobgruppe geteilt wird, sind es genau $\tilde{n}-m$ Ressourcenwechsel, wenn eine Jobgruppe geteilt wird, sind es $\tilde{n}-m+1$, usw.
-Da maximal $m-1$ Jobgruppen geteilt werden, können höchstens $\tilde{n}-1$ Rüstkosten auftreten, was sehr viel weniger ist als beim ersten Dekompositionsansatz
-(s. Unterabschnitt \ref{subsubsec:ResultateDKA1}).
+Da maximal $m-1$ Jobgruppen geteilt werden, können höchstens $\tilde{n}-1$ Ressourcenwechsel auftreten, was sehr viel weniger ist als beim ersten Dekompositionsansatz.
 Die Laufzeiten des Binpackings für diese Instanzen betrugen jeweils unter 100 Millisekunden.
+Die Summe der Rüstkosten ist in Abhängigkeit von $n$ in Abbildung \ref{abb:kbplotsetupsn} abgebildet.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotsetupsn.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbplotsetupsn}
+        Summe der Rüstkosten.
+    }
+\end{figure}
+Durchschnittlich mussten $1{,}113$ Jobgruppen geteilt werden und nur bei einer Instanz mussten $3$ Jobgruppen geteilt werden.
 
 In Abbildung \ref{abb:kbplotn} sind die Resultate (Summe der Zykluszeiten) der einzelnen Algorithmenvarianten (s. Abschnitt \ref{sec:Algorithmenvarianten}) aufgetragen
 bezogen auf die Anzahl der Jobs $n$.
 Außerdem ist mit LB eine untere Schranke angegeben, die wie in Unterabschnitt \ref{subsubsec:BestimmungEinerUnterenSchranke} beschrieben berechnet wurde.
+Bis auf des Simulated Annealing bestehen alle Varianten aus zwei Stufen: 
+In der ersten Stufe werden die Bins den Stationen zugewiesen und in der zweiten werden die Jobgruppen in den Bins angeordnet.
 \begin{figure}
     \begin{center}
         \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotn.pdf}
@@ -1671,64 +1800,274 @@ Es muss allerdings beachtet werden, dass einige Varianten dieses Ergebnis in seh
 Die Laufzeit einer Algorithmenvariante wird im Wesentlichen durch die involvierten MIPs bestimmt.
 Alle Verfahren, die nicht auf MIPs basieren terminierten jeweils in weniger als einer Sekunde.
 
-In Abbildung \ref{abb:kbplotabsn} sind dieselben Daten aufgetragen, allerdings als Differenz zur unteren Schranke.
+In Abbildung \ref{abb:kbplotreln} sind dieselben Daten aufgetragen, allerdings als relative Differenz zur unteren Schranke.
 \begin{figure}
     \begin{center}
-        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotabsn.pdf}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotreln.pdf}
     \end{center}
     \caption{
-        \label{abb:kbplotabsn}
-        Differenzen zwischen den Algorithmenvarianten und der unteren Schranke (LB).
+        \label{abb:kbplotreln}
+        Unterschied zwischen den Algorithmenvarianten und der unteren Schranke (LB) in \%.
     }
 \end{figure}
-Dort ist zu erkennen, dass die untere Schranke und die Resultate der Algorithmenvarianten sich je nach Instanzgröße um ca. 500 bis 1500 unterscheiden.
+Dort ist zu erkennen, dass die untere Schranke und die Resultate der Algorithmenvarianten sich je nach Instanzgröße um ca. $5\%$ bis $25\%$ unterscheiden.
 Wie zu erwarten war, ist dieser Abstand nicht optimal, aber auch nicht außerordentlich groß.
-Es ist außerdem in Abbildung \ref{abb:kbplotabsn} zu erkennen (besser als in \ref{abb:kbplotn}), dass in vielen Fällen das Simulated Annealing die besten Resultate liefert.
+Es ist außerdem in Abbildung \ref{abb:kbplotreln} zu erkennen (besser als in \ref{abb:kbplotn}), dass in vielen Fällen Simulated Annealing die besten Resultate liefert.
 Auch ist interessant, dass es einige wenige Fälle gibt, in denen das MIP mit fixierten Bins, also ohne vorherige Optimierung der Binreihenfolge, die beste Lösung liefert.
 Das kann dadurch erklärt werden, dass per Zufall die initiale Binreihenfolge sehr gut sein kann und sogar besser als durch die Heuristik oder das MIP mit freien Bins 
 (das in diesem Kontext auch eine Heuristik ist) ermittelte Reihenfolgen.
 
-
-\subsubsection{Vergleich}
-Um die Resultate der beiden Dekompositionsansätze besser miteinander vergleichen zu können, wurde für die Kurven in den Abbildungen \ref{abb:kbplot} und \ref{abb:kbplotn}
-jeweils eine Regressionsgerade berechnet, die in Abbildung \ref{abb:linreg} zu sehen sind.
-Außerdem ist dort die Differenz dieser beiden Geraden aufgetragen.
 \begin{figure}
     \begin{center}
-        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/linreg.pdf}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotmipdiffn.pdf}
     \end{center}
     \caption{
-        \label{abb:linreg}
-        Regressionsgeraden für Kurven des ersten Dekompositionsansatzes (DKA1) aus Abbildung \ref{abb:kbplot} und 
-        des zweiten Dekompositionsansatzes (DKA2) aus Abbildung \ref{abb:kbplotn}
-        und die Differenz der beiden Geraden.
+        \label{abb:kbplotmipdiffn}
+        Vergleich der Algorithmenvarianten mit dem MIP mit freien Bins in erster Stufe.
     }
 \end{figure}
-Wie zu sehen ist, liegt diese Differenz ca. zwischen 0 und 1000.
-Das heißt je nach Instanzgröße ist der erste Dekompositionsansatz bezüglich der Summe der Zykluszeiten $\sum_{t=1}^{n-m+1}c_t$ um bis zu 1000 Zeiteinheiten besser.
-Andererseits wurde schon auf den immensen Unterschied der Rüstkosten hingewiesen: 
-Beim ersten Dekompositionsansatz sind abhängig von der Instanzgröße bis zu ca. 8000 Ressourcenwechsel notwendig,
-während es beim zweiten Dekompositionsansatz höchstens $\tilde{n}-1$ sind, was bei diesen Instanzen maximal 67 sind.
-Welcher Ansatz besser ist, hängt von der Höhe der Rüstkosten $s$ ab.
-Bei $s\approx 0{,}12$ liefern beide Ansätze ähnliche Ergebnisse für $n\approx 10000$. 
-Ist $s$ größer, ist der zweite Dekompositionsansatz im Vorteil.
+Die beiden Algorithmenvarianten mit dem MIP mit freien Bins in der ersten Stufe benutzen dies jeweils nur, um eine Binreihenfolge zu generieren.
+Die bis dahin gefundene beste Lösung des MIPs wird verworfen.
+Es kommt daher vor, dass diese verworfene Lösung besser ist als die anschließend von der jeweils zweiten Stufe gefundene.
+In Abbildung \ref{abb:kbplotmipdiffn} ist zu sehen, um wie viel das MIP mit fixierten Bins und die Heuristik 
+eine durch das MIP mit freien Bins berechnete Lösung noch verbessern.
+Negative Werte bedeuten, dass die zweite Stufe nicht in der Lage war, den Stand des MIPs mit freien Bins basierend auf dessen Binreihenfolge wieder zu erreichen.
+Wie zu sehen ist, sind negative Werte häufiger als positive, was nicht erwartet wurde, 
+da Tests dieser Algorithmenvarianten vielversprechend schienen.
+Außerdem ist zu sehen, dass die Heuristik mit einer Laufzeit von unter einer Sekunde nur unwesentlich schlechtere und teilweise sogar bessere Ergebnisse liefert als 
+das MIP mit fixierten Bins in 20 Minuten.
 
-\textit{Wie groß ist $s$ bei Kesseböhmer?}
+\subsubsection{Vergleich}
+In Abbildung \ref{abb:kbcmaxplot} ist die Summe aus Zykluszeiten und Rüstkosten, also $C_{\max}$, des ersten Dekompositionsansatzes aufgetragen.
+Da die Summe der Rüstkosten die der Zykluszeiten klar dominiert, weisen diese Kurven eine hohe Ähnlichkeit zu denen aus Abbildung \ref{abb:kbcoplot} auf,
+sie sind im Wesentlichen lediglich nach oben verschoben.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/kbcmaxplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbcmaxplot}
+        Gesamtresultate der einzelnen Heuristiken im ersten Dekompositionsansatz.
+    }
+\end{figure}
+
+In Abbildung \ref{abb:kbplotcmaxn} ist $C_{\max}$ für den zweiten Dekompositionsansatz aufgetragen.
+Da die Rüstkosten verglichen mit den Zykluszeiten minimal sind, sehen die Abbildungen \ref{abb:kbplotcmaxn} und \ref{abb:kbplotn} sehr ähnlich aus.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/kbplotcmaxn.pdf}
+    \end{center}
+    \caption{
+        \label{abb:kbplotcmaxn}
+        Gesamtresultate der einzelnen Algorithmenvarianten im zweiten Dekompositionsansatz.
+    }
+\end{figure}
+
+Der Unterschied zwischen beiden Dekompositionsansätzen ist enorm.
+Die Ansätze unterscheiden sich in etwa um den Faktor $4$.
+Dieser große Unterschied war allerdings zu erwarten, da bei diesen Instanzen die Rüstkosten mit $s=5$ die Prozesszeiten mit $p_{ij}\in [0,2]$ dominieren.
+Bei $s\approx 0{,}12$ würden beide Ansätze ähnliche Resultate liefern.
+
 
 \subsection{Generierte Instanzen}
 \label{subsec:GenerierteInstanzen}
-Zusätzlich zu den realen Datensätzen wurden zufällige Instanzen generiert, die im folgenden bezüglich der beiden Dekompositionsansätze evaluiert werden.
+Zusätzlich zu den Datensätzen des Küchenherstellers wurden zufällige Instanzen generiert, die im folgenden bezüglich der beiden Dekompositionsansätze evaluiert werden.
 Diese Testreihe besteht aus 30 Instanzen mit $\tilde{n}=10,11,\ldots,40$ Jobgruppen.
-Die Größen der Jobgruppen wurden gleichverteilt aus dem Intervall $[1,5\tilde{n}]$ gewählt.
+Die Größen der Jobgruppen wurden jeweils gleichverteilt aus dem Intervall $[1,5\tilde{n}]$ gewählt und die Anzahl der zulässigen Ressourcen aus $[1,10]$.
 Die Prozesszeiten auf den beiden dominierenden Maschinen liegen gleichverteilt zwischen $0{,}5$ und $2$.
+Da jeder Wert für $\tilde{n}$ nur einmal vorkommt, wird auf den horizontalen Achsen der hier präsentierten Diagramme die Anzahl der Jobgruppen aufgetragen
+statt wie in Unterabschnitt \ref{subsec:RealeInstanzen} die Anzahl der Jobs.
 
-\textit{Leider noch keine Grafiken. Der Rest wird ähnlich aufgebaut wie der vorherige Unterabschnitt.}
+\subsubsection{Resultate des ersten Dekompositionsansatzes}
+Die Resultate der Heuristiken, die eine initiale Jobreihenfolge $\pi$ generieren, sind in Abbildung \ref{abb:heurplot} dargestellt.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/heurplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:heurplot}
+        Resultate der einzelnen Heuristiken vor der Korrektur.
+    }
+\end{figure}
+Wie zu erwarten war, ist die Gilmore-Gomory-Heuristik (die hier optimale Ergebnisse liefert) am besten, Simulated Annealing am zweitbesten und $H_1$ am schlechtesten.
+Allerdings sind die Unterschiede etwas geringer als bei den realen Instanzen (vgl. Abbildung \ref{abb:kbheurplot}).
 
+In Abbildung \ref{abb:plot} sind die Resultate nach der Korrektur dargestellt.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/plot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:plot}
+        Resultate der einzelnen Heuristiken nach der Korrektur.
+    }
+\end{figure}
+Es fällt sofort auf, dass bei sehr vielen Instanzen keine zulässige Ressourcenzuweisung gefunden werden konnte (zu erkennen an den Lücken in den Graphen).
+Während bei den realen Instanzen (vgl. Abbildung \ref{abb:kbplot}) aber immer mindestens eine Heuristik eine Reihenfolge generiert hat, 
+für die eine zulässige Ressourcenzuweisung gefunden werden konnte, gibt es hier einige Instanzen, bei denen dies keine Heuristik schafft.
+%TODO Dass aber für all diese Instanzen eine zulässige Zuweisung existiert, beweisen die Resultate des zweiten Dekompositionsansatzes (vgl. Abbildung \ref{abb:...}
+Davon abgesehen sind die Lösungen wieder sehr ähnlich.
+Die Differenz zwischen den Resultaten nach und vor der Korrektur sind in Abbildung \ref{abb:diffplot} zu sehen.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/diffplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:diffplot}
+        Differenz zwischen den Resultaten nach und vor der Korrektur.
+    }
+\end{figure}
+Auch bei diesen Instanzen wird die Lösung einiger Heuristiken durch die Korrektur sogar noch verbessert.
+Die Rüstkosten, die nach der Korrektur der jeweiligen Heuristik verursacht werden, sind in Abbildung \ref{abb:coplot} dargestellt.
+Da die Rüstkosten $s$ nicht vorgegeben sind, sind dort nur die Anzahl der Ressourcenwechsel und nicht die Höhe der Rüstkosten selbst zu sehen.
+Außerdem ist in diesem Fall auf der horizontalen Achse die Anzahl der Jobs und nicht der Jobgruppen aufgetragen, 
+da diese eine bessere Relation zu den Ressourcenwechseln bietet.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/heuristics/plots/coplot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:coplot}
+        Anzahl der Umrüstvorgänge, die auftreten, wenn $\pi$ mit der jeweiligen Heuristik erzeugt und anschließend korrigiert wurde.
+    }
+\end{figure}
+%TODO siehe Vergleich
+Wie zu sehen ist, sind wieder sehr viele Ressourcenwechseln notwendig.
+Die Heuristiken, die ursprünglich die besten Ergebnisse lieferten (Gilmore Gomory und Simulated Annealing), schneiden hier deutlich am schlechtesten ab.
+Ihre Kurven verlaufen nahezu linear und es muss offenbar fast in jedem Zyklus die Ressource gewechselt werden.
+Relativ wenige Ressourcenwechsel werden offenbar durch die Resultate von $H_2$ verursacht.
 
+\subsubsection{Resultate des zweiten Dekompositionsansatzes}
+Bei den generierten Instanzen müssen beim Binpacking durchschnittlich $1{,}27$ Gruppen geteilt werden.
+Dabei kommen Instanzen mit vielen Jobgruppen häufig ohne Teilung aus, während kleinere Instanzen bis zu $6$ Teilungen benötigen,
+wie in Abbildung \ref{abb:plotsplits} zu sehen ist.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/plotsplits.pdf}
+    \end{center}
+    \caption{
+        \label{abb:plotsplits}
+        Anzahl der benötigten Jobgruppenteilungen.
+    }
+\end{figure}
+Dort ist außerdem zu sehen, dass bei einigen Instanzen keine Lösung gefunden werden konnte.
+Es war dort also nicht möglich, die Jobgruppen so anzuordnen, dass nur solche mit mehr als zwei Ressourcen geteilt werden.
+Die Möglichkeit, mit zusätzlichen Bedingungen in der zweiten Stufe dafür zu sorgen, 
+dass zwei Teilgruppen einer geteilten Jobgruppe mit nur einer Ressource sich nicht überlappen, wurde hier nicht weiter verfolgt.
+
+In Abbildung \ref{abb:plot2} werden die Resultate der Algorithmenvarianten präsentiert.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/plot.pdf}
+    \end{center}
+    \caption{
+        \label{abb:plot2}
+        Summe der Zykluszeiten der einzelnen Algorithmenvarianten. 
+        Das MIP mit fixierten Bins (MIP fix) wurde in den jeweiligen Varianten 20 Minuten laufen gelassen und das mit freien Bins (MIP var) 10 Minuten.
+    }
+\end{figure}
+Es lässt sich erkennen, dass die Varianten mit der Heuristik in der zweiten Stufe oft etwas schlechtere Ergebnisse liefern als die Varianten mit dem MIP mit fixierten Bins.
+Außerdem kommen die Resultate aller Varianten dichter an die unteren Schranke heran als bei den realen Instanzen,
+was durch einen Vergleich der Abbildungen \ref{abb:kbplotreln} und \ref{abb:plotrel} deutlich wird.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/plotrel.pdf}
+    \end{center}
+    \caption{
+        \label{abb:plotrel}
+        Relativer Abstand der Algorithmenvarianten zur unteren Schranke (LB).
+    }
+\end{figure}
+
+In Abbildung \ref{abb:plotmipdiff} ist zu sehen, um wie viel die Heuristik und das MIP mit fixierten Bins das Resultat des MIPs mit variablen Bins verbessern konnten.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/plotmipdiff.pdf}
+    \end{center}
+    \caption{
+        \label{abb:plotmipdiff}
+        Vergleich der Algorithmenvarianten mit dem MIP mit freien Bins in erster Stufe.
+    }
+\end{figure}
+Die Heuristik war offenbar nie in der Lage, auf Grundlage der vom MIP mit freien Bins generierten Binreihenfolge die Lösung dieses MIPs wieder zu erreichen.
+Das MIP mit fixierten Bins hingegen konnte vor allem bei großen Instanzen diesen Wert teils deutlich verbessern.
+Das kann dadurch erklärt werden, dass das MIP mit freien Bins bei kleinen Instanzen noch in der Lage ist, in relativ kurzer Zeit gute Lösungen zu erarbeiten.
+Bei großen Instanzen hingegen kann das MIP mit fixierten Bins oft noch weit bessere Lösungen (basierend auf derselben Binreihenfolge) erzeugen.
+
+\subsubsection{Vergleich}
+Zum Vergleich sind in Abbildung \ref{abb:plotcomp} die Summen der Zykluszeiten zweier Repräsentanten je eines der beiden Dekompositionsansätze nebeneinander aufgetragen.
+Für den ersten Dekompositionsansatz wurde $H_2$ gewählt, da dort die Anzahl der Ressourcenwechsel meist am niedrigsten war.
+Für den zweiten Dekompositionsansatz fiel die Wahl auf die Algorithmenvariante mit der Heuristik in der ersten Stufe und dem MIP mit fixierten Bins in der zweiten.
+Wie dort zu sehen ist, ist selbst bei $s=0$ der zweite Dekompositionsansatz fast bei allen Instanzen besser als der erste, wenn auch nur sehr gering.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/plotcomp.pdf}
+    \end{center}
+    \caption{
+        \label{abb:plotcomp}
+        Direkter Vergleich von $C_{\max}$ zwischen zwei Vertretern der beiden Dekompositionsansätze bei $s=0$.
+    }
+\end{figure}
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=.8\textwidth]{../prog/binpacking/results/plotcomp2.pdf}
+    \end{center}
+    \caption{
+        \label{abb:plotcomp2}
+        Direkter Vergleich von $C_{\max}$ zwischen zwei Vertretern der beiden Dekompositionsansätze bei $s=1$.
+    }
+\end{figure}
+Ist $s=1$ (s. Abbildung \ref{abb:plotcomp2}), wird der Unterschied deutlich größer.
+
+Es sollte daher bei Instanzen, die diesen generierten ähneln, der zweite Dekompositionsansatz gewählt werden.
+Bei den realen Instanzen in Unterabschnitt \ref{subsec:RealeInstanzen} wäre der erste Dekompositionsansatz wenigstens für sehr 
+geringe Rüstkosten im Vorteil gewesen.
+
+\chapter{Fazit und Ausblick}
+Die beiden Dekompositionsansätze liefern die erwarteten Ergebnisse:
+Der erste eignet sich gut, wenn die Rüstkosten sehr viel kleiner sind als die Prozesszeiten und wenn viele Ressourcen vorhanden sind.
+Bei seinen Lösungen muss regelmäßig die Ressource gewechselt werden.
+Der Fall, dass eine Ressource wiederverwendet werden kann, bildet die Ausnahme.
+Der zweite Dekompositionsansatz kommt hingegen mit einer minimalen Anzahl an Ressourcenwechseln aus und benötigt entsprechend wenige Ressourcen.
+In der Praxis genügt es, wenn für die meisten Jobgruppen (die nicht größer als $\frac{n}{m}$ sind) nur eine Ressource 
+und für einige wenige Jobgruppen noch eine zweite vorhanden ist für den Fall, dass Jobgruppen getrennt werden müssen.
+Erstaunlich beim ersten Dekompositionsansatz ist, dass die Wahl der Methode zur Berechnung einer initialen Reihenfolge nahezu keine Rolle spielt,
+obwohl die getesteten Heuristiken teilweise sehr unterschiedliche Ergebnisse produzieren.
+Die Qualität der Lösung ist erst nach der Korrektur der initial erzeugten Reihenfolge absehbar.
+Auch beim zweiten Dekompositionsansatz lässt sich nicht eindeutig sagen, welche Variante die beste ist.
+Es lässt sich lediglich festhalten, dass Simulated Annealing, welches als einziges der vorgestellten Verfahren auf eine zeitliche Trennung der beiden Schritte
+"`Anordnung der Bins"' und "`Anordnung der Jobgruppen in den Bins"' verzichtet, oft die besten Lösungen liefert und darüber hinaus eine weit bessere Laufzeit hat als die
+Verfahren, in denen ein MIP involviert ist.
+
+Da sowohl im zweiten Dekompositionsansatz als auch bei der Berechnung einer Jobreihenfolge ohne Ressourcen und Rüstkosten
+die Simulated-Annealing-Ansätze sehr gute Lösungen liefern, wäre es interessant, 
+weitere Verfahren zu entwickeln und zu verfeinern, die auf einer Nachbarschaftssuche basieren.
+Gerade für den zweiten Dekompositionsansatz, der dem ersten zwar häufig überlegen scheint, 
+aber in dieser Arbeit fast ausschließlich (bis auf Simulated Annealing) für den Spezialfall mit zwei dominierenden Maschinen, 
+konstanten Rüstkosten und disjunkten Ressourcenmengen erarbeitet wurde,
+ist ein Ansatz von Interesse, der diesen Restriktionen nicht unterliegt.
+Auch scheint es vielversprechend, für beide Dekompositionsansätze die jeweiligen Heuristiken in CPLEX zu integrieren, 
+damit beim Lösen der MIPs schneller besseren Schranken gefunden werden.
+Da generell Heuristiken gute Lösungen in beiden Dekompositionsansätzen liefern, könnte auch über gänzlich andere Ansätze als den der Dekomposition nachgedacht werden,
+etwa Heuristiken, die das gesamte Problem auf einmal lösen.
 
 \newpage
 \bibliographystyle{alphadin}
 \bibliography{quellen}
 
+\chapter*{Erklärung}
+\noindent
+Ich erkläre eidesstattlich, dass ich die vorliegende Arbeit selbstständig und ohne fremde Hilfe verfasst, 
+andere als die angegebenen Quellen nicht benutzt und die den benutzten Quellen entnommenen Stellen als 
+solche gekennzeichnet habe. Die Arbeit wurde bisher in gleicher oder ähnlicher Form keiner anderen 
+Prüfungsbehörde vorgelegt.
+\par
+\vspace{10mm}
+\noindent
+Osnabrück, den 26. September 2014
+\par
+\vspace{12mm}
+\noindent
+Sebastian Brockmeyer
 
 \end{document}

@@ -2,14 +2,14 @@ set term pdf
 set output "kbcoplot.pdf"
 
 set xlabel "Jobs"
-set ylabel "Anzahl Rüstkosten"
+set ylabel "Summe der Rüstkosten"
 
 set key left top 
 
-plot "< sort -k2nr ../kbres.txt" using 2:($6*1/$5) title "Simulated Annealing" with lines, \
-    "< sort -k2nr ../kbres.txt" using 2:($10*1/$9) title "Non-Full-Schedule" with lines, \
-    "< sort -k2nr ../kbres.txt" using 2:($14*1/$13) title "DE-Non-Full-Schedule" with lines, \
-    "< sort -k2nr ../kbres.txt" using 2:($18*1/$17) title "Gilmore Gomory" with lines, \
-    "< sort -k2nr ../kbres.txt" using 2:($22*1/$21) title "Soylu H1" with lines, \
-    "< sort -k2nr ../kbres.txt" using 2:($26*1/$25) title "Soylu H2" with lines, \
-    "< sort -k2nr ../kbres.txt" using 2:($30*1/$29) title "Soylu H3" with lines
+plot "< sort -k2nr ../kbsuperres.txt" using 2:($8/$7)*5 title "Simulated Annealing" with lines, \
+    "< sort -k2nr ../kbsuperres.txt" using 2:($14/$13)*5 title "Non-Full-Schedule" with lines, \
+    "< sort -k2nr ../kbsuperres.txt" using 2:($20/$19)*5 title "DE-Non-Full-Schedule" with lines, \
+    "< sort -k2nr ../kbsuperres.txt" using 2:($26/$25)*5 title "Gilmore Gomory" with lines, \
+    "< sort -k2nr ../kbsuperres.txt" using 2:($32/$31)*5 title "Soylu H1" with lines, \
+    "< sort -k2nr ../kbsuperres.txt" using 2:($38/$37)*5 title "Soylu H2" with lines, \
+    "< sort -k2nr ../kbsuperres.txt" using 2:($44/$43)*5 title "Soylu H3" with lines

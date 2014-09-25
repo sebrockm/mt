@@ -4,6 +4,8 @@ set output "plotrel.pdf"
 set xlabel "n"
 set ylabel "Abweichung von Gilmore Gomory in %"
 
+set yrange [-0.1:30]
+
 set key right top
 
 plot \
